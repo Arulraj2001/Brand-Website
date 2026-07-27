@@ -1,6 +1,23 @@
-export type ServiceType = 'web_dev' | 'seo' | 'meta_ads' | 'lead_gen';
+export type ServiceType =
+  | 'web_dev'
+  | 'app_dev'
+  | 'seo'
+  | 'website_upgrade'
+  | 'local_business'
+  | 'meta_ads'
+  | 'ugc_ads'
+  | 'sales_growth';
 
-export type BlogCategory = 'seo' | 'web_dev' | 'meta_ads' | 'lead_gen' | 'general';
+export type BlogCategory =
+  | 'seo'
+  | 'web_dev'
+  | 'app_dev'
+  | 'website_upgrade'
+  | 'local_business'
+  | 'meta_ads'
+  | 'ugc_ads'
+  | 'sales_growth'
+  | 'general';
 
 export interface BlogPost {
   id: string;
@@ -23,7 +40,8 @@ export interface PortfolioProject {
   title: string;
   slug: string;
   client_name: string;
-  client_city: string;
+  client_location: string; // City + Country format e.g. "Austin, USA"
+  client_city?: string; // Legacy fallback alias
   service_type: ServiceType;
   short_description: string;
   full_description: string;
@@ -41,9 +59,10 @@ export interface Lead {
   name: string;
   email: string;
   phone: string;
-  city: string;
+  country: string; // Renamed from city for international reach
+  city?: string; // Legacy fallback
   service_interested: string;
-  budget_range: string;
+  budget_range: string; // USD ranges e.g. "$1,000–$3,000"
   message: string;
   status?: 'new' | 'contacted' | 'qualified' | 'closed';
   created_at?: string;
@@ -53,7 +72,8 @@ export interface Testimonial {
   id: string;
   client_name: string;
   client_company: string;
-  client_city: string;
+  client_location: string; // City + Country format e.g. "London, UK"
+  client_city?: string; // Legacy fallback
   quote: string;
   rating: number;
   created_at?: string;

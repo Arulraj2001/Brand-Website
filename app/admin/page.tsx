@@ -52,49 +52,49 @@ import { createClient } from '@/lib/supabase/client';
 const INITIAL_LEADS: Lead[] = [
   {
     id: 'l1',
-    name: 'Vikram Choudhury',
-    email: 'vikram@workspace.in',
-    phone: '+91 98765 43210',
-    city: 'Bengaluru',
-    service_interested: 'Web Development',
-    budget_range: '₹50K–1L',
-    message: 'Looking for custom website & mobile app development for our retail chain.',
+    name: 'David Miller',
+    email: 'david@company.com',
+    phone: '+1 (512) 555-0199',
+    country: 'Austin, USA',
+    service_interested: 'Old Website Upgrade',
+    budget_range: '$3,000–$5,000',
+    message: 'Need a complete speed overhaul and technical SEO cleanup for our SaaS portal.',
     status: 'new',
     created_at: new Date().toISOString(),
   },
   {
     id: 'l2',
-    name: 'Priya Sharma',
-    email: 'priya@cleanenergy.in',
-    phone: '+91 98220 11223',
-    city: 'Pune',
-    service_interested: 'Web Development',
-    budget_range: '₹1L+',
-    message: 'Need a web portal rebuild for our clean energy SaaS platform.',
+    name: 'Sarah Jenkins',
+    email: 'sarah@cleanenergy.uk',
+    phone: '+44 20 7946 0912',
+    country: 'London, UK',
+    service_interested: 'UGC Video Ads',
+    budget_range: '$5,000+',
+    message: 'Looking for 12 A/B UGC video ad hooks for our D2C e-commerce campaign.',
     status: 'contacted',
     created_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: 'l3',
-    name: 'Anil Kulkarni',
-    email: 'anil@organicfarms.in',
-    phone: '+91 99001 77889',
-    city: 'Bengaluru',
-    service_interested: 'SEO Dominance',
-    budget_range: '₹25K–50K',
-    message: 'Want to rank top 3 in organic search for D2C organic groceries in South India.',
-    status: 'closed', // Won
+    name: 'Marcus Vance',
+    email: 'marcus@skyline.au',
+    phone: '+61 2 9374 4000',
+    country: 'Sydney, Australia',
+    service_interested: 'Local Business Marketing',
+    budget_range: '$1,000–$3,000',
+    message: 'Want to rank #1 on Google Map packs for our luxury property listings in Sydney.',
+    status: 'closed',
     created_at: new Date(Date.now() - 172800000).toISOString(),
   },
   {
     id: 'l4',
-    name: 'Rajiv Malhotra',
-    email: 'rajiv@malhotragroup.in',
-    phone: '+91 98110 33445',
-    city: 'Mumbai',
-    service_interested: 'Lead Generation',
-    budget_range: '₹50K–1L',
-    message: 'Require automated WhatsApp lead qualification funnel for luxury housing.',
+    name: 'Emma Dupont',
+    email: 'emma@techhub.de',
+    phone: '+49 30 1234567',
+    country: 'Berlin, Germany',
+    service_interested: 'Website Development',
+    budget_range: '$3,000–$5,000',
+    message: 'Require custom web portal engineering with Stripe payment integration.',
     status: 'new',
     created_at: new Date(Date.now() - 259200000).toISOString(),
   },
@@ -150,7 +150,6 @@ export default function AdminDashboardPage() {
 
   const router = useRouter();
 
-  // Toast Helper
   const addToast = (type: 'success' | 'error', text: string) => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, type, text }]);
@@ -159,7 +158,6 @@ export default function AdminDashboardPage() {
     }, 4000);
   };
 
-  // Initial Data Loading
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -173,7 +171,6 @@ export default function AdminDashboardPage() {
         setTestimonials(testData);
         setBlogPosts(postsData);
 
-        // Get user session if Supabase Auth is enabled
         const supabase = createClient();
         const { data } = await supabase.auth.getUser();
         if (data?.user?.email) {
@@ -206,7 +203,7 @@ export default function AdminDashboardPage() {
     const title = formData.get('title') as string;
     const slug = (formData.get('slug') as string) || title.toLowerCase().replace(/ /g, '-');
     const client_name = formData.get('client_name') as string;
-    const client_city = formData.get('client_city') as string;
+    const client_location = formData.get('client_location') as string;
     const service_type = formData.get('service_type') as ServiceType;
     const short_description = formData.get('short_description') as string;
     const full_description = formData.get('full_description') as string;
@@ -225,7 +222,7 @@ export default function AdminDashboardPage() {
                 title,
                 slug,
                 client_name,
-                client_city,
+                client_location,
                 service_type,
                 short_description,
                 full_description,
@@ -245,7 +242,7 @@ export default function AdminDashboardPage() {
         title,
         slug,
         client_name,
-        client_city,
+        client_location,
         service_type,
         short_description,
         full_description,
@@ -277,7 +274,7 @@ export default function AdminDashboardPage() {
     const formData = new FormData(e.currentTarget);
     const client_name = formData.get('client_name') as string;
     const client_company = formData.get('client_company') as string;
-    const client_city = formData.get('client_city') as string;
+    const client_location = formData.get('client_location') as string;
     const quote = formData.get('quote') as string;
     const rating = parseInt(formData.get('rating') as string) || 5;
 
@@ -285,7 +282,7 @@ export default function AdminDashboardPage() {
       setTestimonials((prev) =>
         prev.map((t) =>
           t.id === editingTestimonial.id
-            ? { ...t, client_name, client_company, client_city, quote, rating }
+            ? { ...t, client_name, client_company, client_location, quote, rating }
             : t
         )
       );
@@ -295,7 +292,7 @@ export default function AdminDashboardPage() {
         id: Math.random().toString(36).substring(2, 9),
         client_name,
         client_company,
-        client_city,
+        client_location,
         quote,
         rating,
         created_at: new Date().toISOString(),
@@ -462,7 +459,6 @@ export default function AdminDashboardPage() {
     );
   };
 
-  // Lead Status Update Handler
   const handleLeadStatusChange = (id: string, newStatus: Lead['status']) => {
     setLeads((prev) =>
       prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l))
@@ -470,12 +466,12 @@ export default function AdminDashboardPage() {
     addToast('success', `Lead status updated to ${newStatus?.toUpperCase()}`);
   };
 
-  // Filtered Lists
   const filteredProjects = projects.filter((p) => {
+    const loc = p.client_location || p.client_city || '';
     const matchesSearch =
       p.title.toLowerCase().includes(portfolioSearch.toLowerCase()) ||
       p.client_name.toLowerCase().includes(portfolioSearch.toLowerCase()) ||
-      p.client_city.toLowerCase().includes(portfolioSearch.toLowerCase());
+      loc.toLowerCase().includes(portfolioSearch.toLowerCase());
 
     if (portfolioFilter === 'featured') return matchesSearch && p.is_featured;
     if (portfolioFilter !== 'all') return matchesSearch && p.service_type === portfolioFilter;
@@ -483,10 +479,11 @@ export default function AdminDashboardPage() {
   });
 
   const filteredLeads = leads.filter((l) => {
+    const loc = l.country || l.city || '';
     const matchesSearch =
       l.name.toLowerCase().includes(leadSearch.toLowerCase()) ||
       l.email.toLowerCase().includes(leadSearch.toLowerCase()) ||
-      l.city.toLowerCase().includes(leadSearch.toLowerCase()) ||
+      loc.toLowerCase().includes(leadSearch.toLowerCase()) ||
       l.phone.includes(leadSearch);
 
     if (leadStatusFilter === 'closed') return matchesSearch && l.status === 'closed';
@@ -505,7 +502,6 @@ export default function AdminDashboardPage() {
     return matchesSearch;
   });
 
-  // Overview Counts
   const totalLeads = leads.length;
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;
   const contactedLeadsCount = leads.filter((l) => l.status === 'contacted').length;
@@ -533,7 +529,6 @@ export default function AdminDashboardPage() {
       {/* 220px LIGHT SURFACE SIDEBAR */}
       <aside className="w-full md:w-[220px] bg-[#F9FAFB] border-r border-[#E5E7EB] p-4 flex flex-col justify-between shrink-0">
         <div className="space-y-6">
-          {/* Logo Brand */}
           <div className="flex items-center gap-2 px-1 py-1">
             <div className="w-8 h-8 rounded-lg bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold border border-[#E5E7EB]">
               <Sparkles size={16} />
@@ -548,7 +543,6 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* Navigation Links */}
           <nav className="space-y-1">
             {NAV_ITEMS.map((nav) => {
               const Icon = nav.icon;
@@ -571,7 +565,6 @@ export default function AdminDashboardPage() {
           </nav>
         </div>
 
-        {/* Sidebar Footer User Info & Logout */}
         <div className="pt-3 border-t border-[#E5E7EB] space-y-2">
           <div className="text-[11px]">
             <p className="text-[#6B7280]">Logged in as:</p>
@@ -598,7 +591,7 @@ export default function AdminDashboardPage() {
                   System <GradientText>Overview & Metrics</GradientText>
                 </h1>
                 <p className="text-xs text-[#6B7280]">
-                  High-level performance snapshot for India regional leads and projects
+                  High-level performance snapshot for global leads and projects (USD $)
                 </p>
               </div>
             </div>
@@ -611,7 +604,6 @@ export default function AdminDashboardPage() {
                 <Skeleton className="h-24" />
               </div>
             ) : (
-              /* Stat Cards Grid */
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card className="p-4 bg-white border border-[#E5E7EB]">
                   <div className="flex items-center justify-between text-xs font-bold text-[#6B7280] mb-1">
@@ -654,14 +646,12 @@ export default function AdminDashboardPage() {
                     <Star size={16} className="text-[#FFD21E]" />
                   </div>
                   <p className="text-3xl font-extrabold text-[#1C1C1C] font-mono-stats">{testimonials.length}</p>
-                  <p className="text-[11px] text-[#6B7280] mt-1">5.0 Star Client Reviews</p>
+                  <p className="text-[11px] text-[#6B7280] mt-1">5.0 Star Global Reviews</p>
                 </Card>
               </div>
             )}
 
-            {/* Leads by Status Breakdown & Recent Inquiries */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              {/* Status Breakdown (5 cols) */}
               <Card className="lg:col-span-5 p-4 space-y-3">
                 <h3 className="text-sm font-bold text-[#1C1C1C]">Leads Status Breakdown</h3>
                 <div className="space-y-2 text-xs">
@@ -684,10 +674,9 @@ export default function AdminDashboardPage() {
                 </div>
               </Card>
 
-              {/* Recent Inquiries List (7 cols) */}
               <Card className="lg:col-span-7 p-4 space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
-                  <h3 className="text-sm font-bold text-[#1C1C1C]">Latest Inbound Requests</h3>
+                  <h3 className="text-sm font-bold text-[#1C1C1C]">Latest Global Inquiries</h3>
                   <button onClick={() => setActiveTab('leads')} className="text-xs font-bold text-[#FF9D00] hover:underline">
                     Manage All
                   </button>
@@ -698,7 +687,7 @@ export default function AdminDashboardPage() {
                     <div key={l.id} className="py-2 flex items-center justify-between text-xs">
                       <div>
                         <p className="font-bold text-[#1C1C1C]">{l.name}</p>
-                        <p className="text-[11px] text-[#6B7280]">{l.email} • {l.city}</p>
+                        <p className="text-[11px] text-[#6B7280]">{l.email} • {l.country || l.city}</p>
                       </div>
                       <span className="px-2 py-0.5 rounded-[4px] font-bold bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E] font-mono-stats">
                         {l.budget_range}
@@ -717,7 +706,7 @@ export default function AdminDashboardPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Portfolio Manager</h1>
-                <p className="text-xs text-[#6B7280]">Create, edit, or delete case studies displayed on the public site</p>
+                <p className="text-xs text-[#6B7280]">Create, edit, or delete global case studies</p>
               </div>
               <Button onClick={() => { setEditingProject(null); setProjectModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
@@ -725,7 +714,6 @@ export default function AdminDashboardPage() {
               </Button>
             </div>
 
-            {/* Search & Filter Toolbar */}
             <div className="flex flex-col sm:flex-row items-center gap-3 bg-[#F9FAFB] p-2.5 rounded-lg border border-[#E5E7EB]">
               <div className="relative flex-1 w-full">
                 <Search size={14} className="absolute left-3 top-2.5 text-[#9CA3AF]" />
@@ -733,14 +721,14 @@ export default function AdminDashboardPage() {
                   type="text"
                   value={portfolioSearch}
                   onChange={(e) => setPortfolioSearch(e.target.value)}
-                  placeholder="Search projects by title, client name, or city..."
+                  placeholder="Search projects by title, client name, or location..."
                   className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
                 />
               </div>
 
               <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
                 <Filter size={14} className="text-[#6B7280] shrink-0" />
-                {['all', 'featured', 'web_dev', 'seo', 'meta_ads', 'lead_gen'].map((st) => (
+                {['all', 'featured', 'web_dev', 'app_dev', 'website_upgrade', 'ugc_ads', 'seo', 'local_business', 'meta_ads', 'sales_growth'].map((st) => (
                   <button
                     key={st}
                     onClick={() => setPortfolioFilter(st)}
@@ -756,7 +744,6 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Projects Table */}
             {loading ? (
               <TableSkeleton rows={4} />
             ) : (
@@ -765,7 +752,7 @@ export default function AdminDashboardPage() {
                   <thead>
                     <tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-[#6B7280] font-bold uppercase">
                       <th className="py-2.5 px-3">Case Study Title</th>
-                      <th className="py-2.5 px-3">Client & City</th>
+                      <th className="py-2.5 px-3">Client & Location</th>
                       <th className="py-2.5 px-3">Service Type</th>
                       <th className="py-2.5 px-3">Featured</th>
                       <th className="py-2.5 px-3 text-right">Actions</th>
@@ -780,7 +767,7 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="py-3 px-3">
                           <p className="font-semibold text-[#1C1C1C]">{p.client_name}</p>
-                          <p className="text-[11px] text-[#6B7280]">{p.client_city}</p>
+                          <p className="text-[11px] text-[#6B7280]">{p.client_location || p.client_city}</p>
                         </td>
                         <td className="py-3 px-3">
                           <span className="px-2 py-0.5 rounded-[4px] font-bold uppercase text-[10px] bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20">
@@ -825,11 +812,10 @@ export default function AdminDashboardPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Leads Queue Manager</h1>
-                <p className="text-xs text-[#6B7280]">Sorted newest-first with inline status updates & instant WhatsApp links</p>
+                <p className="text-xs text-[#6B7280]">USD ($) budget ranges with country tags</p>
               </div>
             </div>
 
-            {/* Search & Status Filters */}
             <div className="flex flex-col sm:flex-row items-center gap-3 bg-[#F9FAFB] p-2.5 rounded-lg border border-[#E5E7EB]">
               <div className="relative flex-1 w-full">
                 <Search size={14} className="absolute left-3 top-2.5 text-[#9CA3AF]" />
@@ -837,7 +823,7 @@ export default function AdminDashboardPage() {
                   type="text"
                   value={leadSearch}
                   onChange={(e) => setLeadSearch(e.target.value)}
-                  placeholder="Search leads by name, email, phone, or city..."
+                  placeholder="Search leads by name, email, phone, or country..."
                   className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
                 />
               </div>
@@ -859,15 +845,14 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Leads Table */}
             <div className="border border-[#E5E7EB] rounded-lg overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-[#6B7280] font-bold uppercase">
                     <th className="py-2.5 px-3">Contact</th>
-                    <th className="py-2.5 px-3">City</th>
+                    <th className="py-2.5 px-3">Country</th>
                     <th className="py-2.5 px-3">Service</th>
-                    <th className="py-2.5 px-3">Budget (₹)</th>
+                    <th className="py-2.5 px-3">Budget ($ USD)</th>
                     <th className="py-2.5 px-3">Status Badge</th>
                     <th className="py-2.5 px-3 text-right">Update Status</th>
                   </tr>
@@ -878,17 +863,9 @@ export default function AdminDashboardPage() {
                       <td className="py-3 px-3">
                         <p className="font-bold text-[#1C1C1C]">{l.name}</p>
                         <p className="text-[11px] text-[#6B7280]">{l.email}</p>
-                        <a
-                          href={`https://wa.me/${l.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(l.name)}!%20This%20is%20ApexPulse.`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1 mt-0.5"
-                        >
-                          <WhatsAppIcon size={13} fill="#25D366" />
-                          <span>WhatsApp: {l.phone}</span>
-                        </a>
+                        <p className="text-[11px] font-semibold text-[#6B7280]">{l.phone}</p>
                       </td>
-                      <td className="py-3 px-3 font-semibold text-[#6B7280]">{l.city}</td>
+                      <td className="py-3 px-3 font-semibold text-[#6B7280]">{l.country || l.city}</td>
                       <td className="py-3 px-3 font-bold text-[#1C1C1C]">{l.service_interested}</td>
                       <td className="py-3 px-3 font-extrabold text-[#FF9D00] font-mono-stats">{l.budget_range}</td>
                       <td className="py-3 px-3">
@@ -932,7 +909,7 @@ export default function AdminDashboardPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Testimonials Manager</h1>
-                <p className="text-xs text-[#6B7280]">Client quotes and 5-star ratings displayed on home and service pages</p>
+                <p className="text-xs text-[#6B7280]">Client quotes and 5-star ratings displayed site-wide</p>
               </div>
               <Button onClick={() => { setEditingTestimonial(null); setTestimonialModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
@@ -946,7 +923,7 @@ export default function AdminDashboardPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-bold text-[#1C1C1C]">{t.client_name}</p>
-                      <p className="text-xs text-[#6B7280]">{t.client_company} • {t.client_city}</p>
+                      <p className="text-xs text-[#6B7280]">{t.client_company} • {t.client_location || t.client_city}</p>
                     </div>
                     <div className="flex text-[#FFD21E]">
                       {[...Array(t.rating)].map((_, i) => (
@@ -975,14 +952,14 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 5: BLOG POSTS MANAGER (Phase 11 — SEO & Organic Lead Gen) */}
+        {/* TAB 5: BLOG POSTS MANAGER */}
         {activeTab === 'blog' && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Blog Posts Manager</h1>
                 <p className="text-xs text-[#6B7280]">
-                  Create, edit, publish, or delete India SEO articles with keyword & city targeting
+                  Create, edit, publish, or delete SEO articles targeting global buyer keywords
                 </p>
               </div>
               <Button onClick={() => { setEditingBlogPost(null); setBlogModalOpen(true); }} variant="primary" size="sm">
@@ -991,7 +968,6 @@ export default function AdminDashboardPage() {
               </Button>
             </div>
 
-            {/* Search & Category Filter Toolbar */}
             <div className="flex flex-col sm:flex-row items-center gap-3 bg-[#F9FAFB] p-2.5 rounded-lg border border-[#E5E7EB]">
               <div className="relative flex-1 w-full">
                 <Search size={14} className="absolute left-3 top-2.5 text-[#9CA3AF]" />
@@ -1006,7 +982,7 @@ export default function AdminDashboardPage() {
 
               <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
                 <Filter size={14} className="text-[#6B7280] shrink-0" />
-                {['all', 'seo', 'web_dev', 'meta_ads', 'lead_gen', 'general'].map((cat) => (
+                {['all', 'seo', 'website_upgrade', 'web_dev', 'ugc_ads', 'local_business', 'meta_ads', 'sales_growth', 'general'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setBlogCategoryFilter(cat)}
@@ -1022,14 +998,13 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Blog Posts Table */}
             <div className="border border-[#E5E7EB] rounded-lg overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-[#6B7280] font-bold uppercase">
                     <th className="py-2.5 px-3">Article Title & Slug</th>
                     <th className="py-2.5 px-3">Category</th>
-                    <th className="py-2.5 px-3">SEO Keyword & City</th>
+                    <th className="py-2.5 px-3">SEO Keyword</th>
                     <th className="py-2.5 px-3">Status</th>
                     <th className="py-2.5 px-3 text-right">Actions</th>
                   </tr>
@@ -1048,7 +1023,6 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-3">
                         <p className="font-semibold text-[#FF9D00]">{post.target_keyword || '—'}</p>
-                        <p className="text-[11px] text-[#6B7280]">{post.city || 'National'}</p>
                       </td>
                       <td className="py-3 px-3">
                         <button
@@ -1060,7 +1034,7 @@ export default function AdminDashboardPage() {
                           }`}
                         >
                           {post.is_published ? <Eye size={11} /> : <EyeOff size={11} />}
-                          <span>{post.is_published ? 'LIVE (Published)' : 'Draft'}</span>
+                          <span>{post.is_published ? 'LIVE' : 'Draft'}</span>
                         </button>
                       </td>
                       <td className="py-3 px-3 text-right space-x-2">
@@ -1085,14 +1059,14 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 6: TEAM ARCHITECTS MANAGER ("Meet the Growth Architects") */}
+        {/* TAB 6: TEAM ARCHITECTS MANAGER */}
         {activeTab === 'team' && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Team Architects Manager</h1>
                 <p className="text-xs text-[#6B7280]">
-                  Manage team profiles on the About page ("Meet the Growth Architects") with profile image links
+                  Manage team profiles on the About page ("Meet the Growth Architects")
                 </p>
               </div>
               <Button onClick={() => { setEditingTeamMember(null); setTeamModalOpen(true); }} variant="primary" size="sm">
@@ -1105,7 +1079,6 @@ export default function AdminDashboardPage() {
               {teamMembers.map((m) => (
                 <Card key={m.id} className="p-4 space-y-3 border border-[#E5E7EB]">
                   <div className="flex items-start gap-3">
-                    {/* Profile Image Thumbnail Avatar */}
                     <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
                       {m.profile_image_url ? (
                         <Image src={m.profile_image_url} alt={m.name} fill className="object-cover" />
@@ -1159,26 +1132,25 @@ export default function AdminDashboardPage() {
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Site Contact Settings</h1>
                 <p className="text-xs text-[#6B7280]">
-                  Edit global address, phone, WhatsApp number, email, and social media links (changes reflect across all pages)
+                  Edit global address, phone, WhatsApp number, email, and social media links
                 </p>
               </div>
             </div>
 
             <Card className="p-6 max-w-3xl">
               <form onSubmit={handleSaveSiteSettings} className="space-y-4">
-                {/* Phone & WhatsApp */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
                       <Phone size={14} className="text-[#FF9D00]" />
-                      <span>Display Phone Number (+91) *</span>
+                      <span>Display Phone Number *</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={settingsForm.phone}
                       onChange={(e) => setSettingsForm({ ...settingsForm, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
+                      placeholder="+1 (800) 555-0199"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1186,20 +1158,19 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
                       <WhatsAppIcon size={14} fill="#25D366" />
-                      <span>WhatsApp Number (Digits only, e.g. 919876543210) *</span>
+                      <span>WhatsApp Number (Digits only, e.g. 18005550199) *</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={settingsForm.whatsapp_number}
                       onChange={(e) => setSettingsForm({ ...settingsForm, whatsapp_number: e.target.value })}
-                      placeholder="919876543210"
+                      placeholder="18005550199"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
                 </div>
 
-                {/* Email & Address */}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
@@ -1219,20 +1190,19 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
                       <MapPin size={14} className="text-[#FF9D00]" />
-                      <span>India HQ Full Address *</span>
+                      <span>Global Remote HQ Address *</span>
                     </label>
                     <textarea
                       rows={3}
                       required
                       value={settingsForm.address}
                       onChange={(e) => setSettingsForm({ ...settingsForm, address: e.target.value })}
-                      placeholder="100 Feet Rd, 4th Block, Koramangala, Bengaluru, Karnataka 560034"
+                      placeholder="Global Remote HQ • Austin, TX & International Hubs"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
                 </div>
 
-                {/* Social Media Links */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-[#E5E7EB]">
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
@@ -1307,7 +1277,7 @@ export default function AdminDashboardPage() {
                   name="title"
                   required
                   defaultValue={editingBlogPost?.title || ''}
-                  placeholder="e.g. SEO Services in Bangalore: What Works in 2026"
+                  placeholder="e.g. Why Is My Website Ranking Dropping?"
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>
@@ -1318,7 +1288,7 @@ export default function AdminDashboardPage() {
                   <input
                     name="slug"
                     defaultValue={editingBlogPost?.slug || ''}
-                    placeholder="seo-services-in-bangalore-2026"
+                    placeholder="why-is-my-website-ranking-dropping"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -1330,10 +1300,13 @@ export default function AdminDashboardPage() {
                     defaultValue={editingBlogPost?.category || 'seo'}
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   >
-                    <option value="seo">SEO Dominance</option>
+                    <option value="seo">SEO Optimization</option>
+                    <option value="website_upgrade">Speed & SEO Upgrade</option>
                     <option value="web_dev">Web Engineering</option>
+                    <option value="ugc_ads">UGC Video Ads</option>
+                    <option value="local_business">Local Business Marketing</option>
                     <option value="meta_ads">Meta & LinkedIn Ads</option>
-                    <option value="lead_gen">Lead Generation</option>
+                    <option value="sales_growth">Sales Growth & CRO</option>
                     <option value="general">General Industry</option>
                   </select>
                 </div>
@@ -1345,17 +1318,17 @@ export default function AdminDashboardPage() {
                   <input
                     name="target_keyword"
                     defaultValue={editingBlogPost?.target_keyword || ''}
-                    placeholder="e.g. SEO Services in Bangalore"
+                    placeholder="e.g. why is my website ranking dropping"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target City (Optional)</label>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Region</label>
                   <input
                     name="city"
-                    defaultValue={editingBlogPost?.city || ''}
-                    placeholder="e.g. Bengaluru"
+                    defaultValue={editingBlogPost?.city || 'Global'}
+                    placeholder="Global"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -1389,7 +1362,7 @@ export default function AdminDashboardPage() {
                   required
                   rows={2}
                   defaultValue={editingBlogPost?.excerpt || ''}
-                  placeholder="Brief 1-2 sentence meta description..."
+                  placeholder="Brief 1-2 sentence summary..."
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>
@@ -1432,7 +1405,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* BLOG POST DELETE CONFIRM MODAL */}
+      {/* BLOG DELETE CONFIRM */}
       {deleteConfirmBlogPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
           <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
@@ -1500,7 +1473,7 @@ export default function AdminDashboardPage() {
                     name="location"
                     required
                     defaultValue={editingTeamMember?.location || ''}
-                    placeholder="e.g. Bengaluru, Karnataka"
+                    placeholder="e.g. Austin, TX & Global Remote"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -1518,7 +1491,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Profile Image URL (Minimal Avatar) *</label>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Profile Image URL *</label>
                 <input
                   name="profile_image_url"
                   defaultValue={editingTeamMember?.profile_image_url || ''}
@@ -1534,7 +1507,7 @@ export default function AdminDashboardPage() {
                   required
                   rows={3}
                   defaultValue={editingTeamMember?.bio || ''}
-                  placeholder="Briefly describe background and expertise..."
+                  placeholder="Briefly describe background..."
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>
@@ -1552,7 +1525,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* TEAM MEMBER DELETE CONFIRM MODAL */}
+      {/* TEAM MEMBER DELETE CONFIRM */}
       {deleteConfirmTeamMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
           <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
@@ -1597,7 +1570,7 @@ export default function AdminDashboardPage() {
                   name="title"
                   required
                   defaultValue={editingProject?.title || ''}
-                  placeholder="e.g. Fintech Mobile App Portal"
+                  placeholder="e.g. Fintech SaaS Portal Rebuild"
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>
@@ -1609,18 +1582,18 @@ export default function AdminDashboardPage() {
                     name="client_name"
                     required
                     defaultValue={editingProject?.client_name || ''}
-                    placeholder="e.g. ZetaPay India"
+                    placeholder="e.g. ZetaPay Global"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Client City *</label>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Client Location *</label>
                   <input
-                    name="client_city"
+                    name="client_location"
                     required
-                    defaultValue={editingProject?.client_city || ''}
-                    placeholder="e.g. Bengaluru"
+                    defaultValue={editingProject?.client_location || editingProject?.client_city || ''}
+                    placeholder="e.g. Austin, USA"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -1634,10 +1607,14 @@ export default function AdminDashboardPage() {
                     defaultValue={editingProject?.service_type || 'web_dev'}
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   >
-                    <option value="web_dev">Web Development</option>
-                    <option value="seo">SEO Dominance</option>
-                    <option value="meta_ads">Meta Ads</option>
-                    <option value="lead_gen">Lead Gen Funnel</option>
+                    <option value="web_dev">Website Development</option>
+                    <option value="app_dev">App Development</option>
+                    <option value="website_upgrade">Old Website Upgrade</option>
+                    <option value="ugc_ads">UGC Video Ads</option>
+                    <option value="seo">SEO Optimization</option>
+                    <option value="local_business">Local Business Marketing</option>
+                    <option value="meta_ads">Meta & LinkedIn Ads</option>
+                    <option value="sales_growth">Sales Growth & Lead Gen</option>
                   </select>
                 </div>
 
@@ -1646,7 +1623,7 @@ export default function AdminDashboardPage() {
                   <input
                     name="slug"
                     defaultValue={editingProject?.slug || ''}
-                    placeholder="cred-pay-portal"
+                    placeholder="cred-pay-fintech-portal"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -1663,7 +1640,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Live Project Website URL (Visit Live Work Link)</label>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Live Project Website URL</label>
                 <input
                   name="live_url"
                   type="url"
@@ -1691,7 +1668,7 @@ export default function AdminDashboardPage() {
                   name="results"
                   required
                   defaultValue={editingProject?.results || ''}
-                  placeholder="+340% Leads | 0.8s Page Speed"
+                  placeholder="+340% Qualified Leads | 0.8s Page Speed"
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>
@@ -1705,7 +1682,7 @@ export default function AdminDashboardPage() {
                   className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
                 />
                 <label htmlFor="is_featured" className="text-xs font-semibold text-[#1C1C1C]">
-                  Mark as Featured Case Study (Highlighted on Homepage & Portfolio)
+                  Mark as Featured Case Study
                 </label>
               </div>
 
@@ -1767,7 +1744,7 @@ export default function AdminDashboardPage() {
                   name="client_name"
                   required
                   defaultValue={editingTestimonial?.client_name || ''}
-                  placeholder="e.g. Rajesh Sharma"
+                  placeholder="e.g. David Miller"
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C]"
                 />
               </div>
@@ -1779,17 +1756,17 @@ export default function AdminDashboardPage() {
                     name="client_company"
                     required
                     defaultValue={editingTestimonial?.client_company || ''}
-                    placeholder="CEO, ZetaPay"
+                    placeholder="CEO, ZetaPay USA"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">City *</label>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Location *</label>
                   <input
-                    name="client_city"
+                    name="client_location"
                     required
-                    defaultValue={editingTestimonial?.client_city || ''}
-                    placeholder="Bengaluru"
+                    defaultValue={editingTestimonial?.client_location || editingTestimonial?.client_city || ''}
+                    placeholder="Austin, USA"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C]"
                   />
                 </div>

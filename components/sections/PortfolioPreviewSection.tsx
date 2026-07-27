@@ -25,13 +25,13 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
           <div className="max-w-2xl space-y-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
               <Sparkles size={13} className="text-[#1C1C1C]" />
-              Featured Case Studies
+              Global Case Studies
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-              Real Impact for <GradientText>Ambitious Indian Brands</GradientText>
+              Real Impact for <GradientText>International Brands</GradientText>
             </h2>
             <p className="text-sm text-[#6B7280]">
-              Explore how we engineer custom web experiences and drive verified revenue results.
+              Explore how we engineer custom web experiences, speed overhauls, and UGC ad funnels across the US, UK, Canada & Australia.
             </p>
           </div>
           <Button href="/portfolio" variant="secondary" size="sm" className="shrink-0">
@@ -44,6 +44,7 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
           {displayProjects.map((project, idx) => {
             const isFeatured = project.is_featured;
+            const location = project.client_location || project.client_city || 'Austin, USA';
 
             return (
               <motion.div
@@ -71,17 +72,25 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
                       <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
                         {project.service_type === 'web_dev'
                           ? 'Web Dev'
-                          : project.service_type === 'seo'
-                          ? 'SEO'
+                          : project.service_type === 'app_dev'
+                          ? 'App Dev'
+                          : project.service_type === 'website_upgrade'
+                          ? 'Speed & SEO'
+                          : project.service_type === 'ugc_ads'
+                          ? 'UGC Ads'
+                          : project.service_type === 'local_business'
+                          ? 'Local SEO'
                           : project.service_type === 'meta_ads'
                           ? 'Meta Ads'
+                          : project.service_type === 'seo'
+                          ? 'SEO'
                           : 'Lead Gen'}
                       </span>
                     </div>
 
                     <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
                       <MapPin size={10} className="text-[#3B82F6]" />
-                      {project.client_city}
+                      {location}
                     </div>
                   </div>
 

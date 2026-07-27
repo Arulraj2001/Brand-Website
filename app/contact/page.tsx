@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Globe } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -16,12 +16,10 @@ import { useSiteSettings } from '@/lib/useSiteData';
 const leadSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
-  phone: z
-    .string()
-    .regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number (e.g. 9876543210)'),
-  city: z.string().min(2, 'Please enter your city'),
+  phone: z.string().min(6, 'Please enter a valid contact phone number'),
+  country: z.string().min(2, 'Please enter your country/location'),
   service_interested: z.string().min(1, 'Please select a service'),
-  budget_range: z.string().min(1, 'Please select or enter your budget in INR ₹'),
+  budget_range: z.string().min(1, 'Please select or enter your budget in USD ($)'),
   custom_budget: z.string().optional(),
   message: z.string().optional(),
 });
@@ -32,7 +30,7 @@ export default function ContactPage() {
   const { settings } = useSiteSettings();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [budgetSelection, setBudgetSelection] = useState<string>('₹25K–50K');
+  const [budgetSelection, setBudgetSelection] = useState<string>('$1,000–$3,000');
   const [customAmount, setCustomAmount] = useState<string>('');
 
   const whatsappClean = settings.whatsapp_number.replace(/[^0-9]/g, '');
@@ -46,8 +44,8 @@ export default function ContactPage() {
   } = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
     defaultValues: {
-      budget_range: '₹25K–50K',
-      service_interested: 'Web Development',
+      budget_range: '$1,000–$3,000',
+      service_interested: 'Website Development',
     },
   });
 
@@ -57,15 +55,15 @@ export default function ContactPage() {
     if (val !== 'custom') {
       setValue('budget_range', val);
     } else {
-      setValue('budget_range', customAmount ? `₹${customAmount}` : '');
+      setValue('budget_range', customAmount ? `$${customAmount}` : '');
     }
   };
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setCustomAmount(val);
-    const cleanVal = val.replace(/^₹\s*/, '');
-    setValue('budget_range', cleanVal ? `₹${cleanVal}` : '');
+    const cleanVal = val.replace(/^\$\s*/, '');
+    setValue('budget_range', cleanVal ? `$${cleanVal}` : '');
   };
 
   const onSubmit = async (data: LeadFormData) => {
@@ -73,25 +71,25 @@ export default function ContactPage() {
 
     const finalBudget =
       budgetSelection === 'custom'
-        ? customAmount.trim().startsWith('₹')
+        ? customAmount.trim().startsWith('$')
           ? customAmount.trim()
-          : `₹${customAmount.trim()}`
+          : `$${customAmount.trim()}`
         : data.budget_range;
 
     const result = await submitLead({
       name: data.name,
       email: data.email,
-      phone: `+91 ${data.phone}`,
-      city: data.city,
+      phone: data.phone,
+      country: data.country,
       service_interested: data.service_interested,
       budget_range: finalBudget,
-      message: data.message || 'General Quote Request',
+      message: data.message || 'General Strategy Request',
     });
     setSubmitting(false);
     if (result.success) {
       setSubmitted(true);
       reset();
-      setBudgetSelection('₹25K–50K');
+      setBudgetSelection('$1,000–$3,000');
       setCustomAmount('');
     }
   };
@@ -103,23 +101,32 @@ export default function ContactPage() {
         <div className="max-w-3xl mx-auto text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
             <Sparkles size={14} className="text-[#1C1C1C]" />
-            Get a Custom Proposal
+            Book a Free Strategy Call & Proposal
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Let’s Discuss Your <GradientText>Growth Goals</GradientText>
+            Let’s Discuss Your <GradientText>Project & Growth Goals</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Fill out the form below or chat directly with our team on WhatsApp. Response guaranteed under 2 hours during business hours.
+            Fill out the form below to receive a custom proposal and 15-minute strategy call. Response guaranteed within 12 hours across US, UK, Canada & Australia.
           </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-[#1C1C1C] pt-1">
+            <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
+              <Clock size={13} className="text-[#FF9D00]" /> Time-Zone Friendly (US/UK/AU/EU)
+            </span>
+            <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
+              <ShieldCheck size={13} className="text-[#3B82F6]" /> Stripe & PayPal Accepted
+            </span>
+          </div>
         </div>
 
-        {/* Two-Column Layout: Form on Left, Trust Content on Right */}
+        {/* Two-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Column 1: India Lead Form (7 Cols) */}
+          {/* Column 1: Lead Form (7 Cols) */}
           <div className="lg:col-span-7">
             <Card className="p-6 sm:p-8">
               {submitted ? (
-                /* Animated Success State */
+                /* Success State */
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -129,10 +136,10 @@ export default function ContactPage() {
                     <CheckCircle2 size={36} />
                   </div>
                   <h2 className="text-2xl font-bold text-[#1C1C1C]">
-                    Quote Request Received!
+                    Project Inquiry Received!
                   </h2>
                   <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                    Thank you! We'll get back to you within 24 hours with a custom project blueprint and transparent INR budget options.
+                    Thank you! We'll get back to you within 12 hours with a custom project proposal and transparent USD ($) budget options.
                   </p>
                   <div className="pt-2 flex justify-center gap-3">
                     <Button
@@ -142,22 +149,13 @@ export default function ContactPage() {
                     >
                       Submit Another Inquiry
                     </Button>
-                    <a
-                      href={`https://wa.me/${whatsappClean}?text=Hi%20ApexPulse!%20I%20just%20submitted%20a%20quote%20request.`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#25D366] text-white font-bold text-sm shadow-xs hover:bg-[#20bd5a] transition-colors min-h-[44px]"
-                    >
-                      <WhatsAppIcon size={18} fill="white" />
-                      <span>Instant WhatsApp Chat</span>
-                    </a>
                   </div>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF9D00] pb-2 border-b border-[#E5E7EB]">
                     <Sparkles size={14} />
-                    <span>Free 30-Minute Strategy & Architecture Session</span>
+                    <span>Free 15-Minute Strategy & Architecture Session</span>
                   </div>
 
                   {/* Name & Email */}
@@ -169,7 +167,7 @@ export default function ContactPage() {
                       <input
                         {...register('name')}
                         type="text"
-                        placeholder="e.g. Vikram Sharma"
+                        placeholder="e.g. David Miller"
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       />
                       {errors.name && (
@@ -186,7 +184,7 @@ export default function ContactPage() {
                       <input
                         {...register('email')}
                         type="email"
-                        placeholder="e.g. vikram@company.in"
+                        placeholder="e.g. david@company.com"
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       />
                       {errors.email && (
@@ -197,23 +195,18 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  {/* Phone (+91) & City */}
+                  {/* Phone & Country */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Mobile Number (+91) *
+                        Phone Number *
                       </label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-sm font-bold text-[#6B7280]">
-                          +91
-                        </span>
-                        <input
-                          {...register('phone')}
-                          type="tel"
-                          placeholder="9876543210"
-                          className="w-full pl-12 pr-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
-                        />
-                      </div>
+                      <input
+                        {...register('phone')}
+                        type="tel"
+                        placeholder="+1 (512) 555-0199"
+                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                      />
                       {errors.phone && (
                         <p className="text-xs text-[#EF4444] font-semibold mt-1">
                           {errors.phone.message}
@@ -223,23 +216,23 @@ export default function ContactPage() {
 
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        City *
+                        Country / Location *
                       </label>
                       <input
-                        {...register('city')}
+                        {...register('country')}
                         type="text"
-                        placeholder="e.g. Bengaluru, Mumbai"
+                        placeholder="e.g. Austin, USA"
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       />
-                      {errors.city && (
+                      {errors.country && (
                         <p className="text-xs text-[#EF4444] font-semibold mt-1">
-                          {errors.city.message}
+                          {errors.country.message}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Service & INR Budget */}
+                  {/* Service & USD Budget */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
@@ -249,28 +242,31 @@ export default function ContactPage() {
                         {...register('service_interested')}
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       >
-                        <option value="Web Development">Website & Mobile App Engineering</option>
-                        <option value="SEO Dominance">SEO & Search Dominance</option>
-                        <option value="Meta Ads">Meta & LinkedIn Paid Ads</option>
-                        <option value="Lead Generation">B2B Lead Generation Funnel</option>
-                        <option value="Full Retainer">Full 360° Retainer</option>
+                        <option value="Old Website Upgrade">Old Website Upgrade (Speed & SEO)</option>
+                        <option value="UGC Ads">UGC Video Ads (E-Commerce)</option>
+                        <option value="Website Development">Website Development</option>
+                        <option value="App Development">App Development (Web & Mobile)</option>
+                        <option value="SEO Optimization">SEO Optimization</option>
+                        <option value="Local Business Marketing">Local Business Marketing</option>
+                        <option value="Meta Ads">Meta & LinkedIn Ads</option>
+                        <option value="Sales Growth">Sales Growth & Lead Gen</option>
                       </select>
                     </div>
 
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Budget Range (INR ₹) *
+                        Budget Range (USD $) *
                       </label>
                       <select
                         value={budgetSelection}
                         onChange={handleBudgetDropdownChange}
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm font-semibold text-[#FF9D00] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors font-mono-stats"
                       >
-                        <option value="₹10K–25K">₹10,000 – ₹25,000</option>
-                        <option value="₹25K–50K">₹25,000 – ₹50,000</option>
-                        <option value="₹50K–1L">₹50,000 – ₹1,00,000</option>
-                        <option value="₹1L+">₹1,00,000+ (Enterprise)</option>
-                        <option value="custom">✏️ Custom Amount (Enter exact INR ₹)...</option>
+                        <option value="$500–$1,000">$500 – $1,000</option>
+                        <option value="$1,000–$3,000">$1,000 – $3,000</option>
+                        <option value="$3,000–$5,000">$3,000 – $5,000</option>
+                        <option value="$5,000+">$5,000+ (Enterprise / Retainer)</option>
+                        <option value="custom">✏️ Custom Amount (Enter exact USD $)...</option>
                       </select>
                     </div>
                   </div>
@@ -283,17 +279,17 @@ export default function ContactPage() {
                       className="relative"
                     >
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Custom Budget Amount (INR ₹) *
+                        Custom Budget Amount (USD $) *
                       </label>
                       <div className="relative">
                         <span className="absolute left-3 top-2.5 text-sm font-bold text-[#FF9D00]">
-                          ₹
+                          $
                         </span>
                         <input
                           type="text"
                           value={customAmount}
                           onChange={handleCustomAmountChange}
-                          placeholder="Enter custom budget (e.g. 75,000 or 2.5 Lakhs)"
+                          placeholder="Enter custom budget (e.g. 2,500 or 7,500)"
                           className="w-full pl-8 pr-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] font-mono-stats"
                         />
                       </div>
@@ -308,12 +304,12 @@ export default function ContactPage() {
                   {/* Message (Optional) */}
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                      Project Notes (Optional)
+                      Project Goals / Current Site URL (Optional)
                     </label>
                     <textarea
                       {...register('message')}
                       rows={4}
-                      placeholder="Tell us about your project objectives, timeline, or current challenge..."
+                      placeholder="Tell us about your current site speed, main pain points, or timeline..."
                       className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                     />
                   </div>
@@ -326,10 +322,10 @@ export default function ContactPage() {
                     className="w-full"
                   >
                     {submitting ? (
-                      <span>Submitting Request...</span>
+                      <span>Sending Request...</span>
                     ) : (
                       <>
-                        <span>Submit Proposal Request</span>
+                        <span>Book Free Strategy Call</span>
                         <Send size={16} />
                       </>
                     )}
@@ -339,75 +335,50 @@ export default function ContactPage() {
             </Card>
           </div>
 
-          {/* Column 2: Trust Content & Quick Options (5 Cols) */}
+          {/* Column 2: Trust Content & Contact Details (5 Cols) */}
           <div className="lg:col-span-5 space-y-4">
-            {/* Instant WhatsApp Option */}
-            <Card isFeatured className="p-5 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#25D366] text-white flex items-center justify-center">
-                  <WhatsAppIcon size={20} fill="white" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[#1C1C1C]">Prefer Instant WhatsApp Chat?</h3>
-                  <p className="text-xs text-[#6B7280]">Direct line to senior engineering team</p>
-                </div>
-              </div>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
-                Message our technical team on WhatsApp for instant answers regarding stack choices, pricing range, or project timelines.
-              </p>
-              <a
-                href={`https://wa.me/${whatsappClean}?text=Hi%20ApexPulse!%20I%20want%20to%20get%20a%20quick%20quote.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg bg-[#25D366] text-white font-bold text-sm shadow-xs hover:bg-[#20bd5a] transition-colors min-h-[44px]"
-              >
-                <WhatsAppIcon size={18} fill="white" />
-                <span>Chat on WhatsApp ({settings.phone})</span>
-              </a>
-            </Card>
-
-            {/* Mini "Why Work With Us" Recap */}
-            <Card className="p-5 space-y-3">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#FF9D00]">
-                <Award size={14} />
-                <span>Why Work With ApexPulse</span>
-              </div>
-              <h3 className="text-base font-bold text-[#1C1C1C]">
-                Zero Templates. Verified Revenue ROI.
-              </h3>
-              <div className="space-y-2 text-xs text-[#6B7280]">
-                <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>Sub-second page speeds across Tier 1 & Tier 2 India</span>
-                </div>
-                <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>SLA guarantees on deliverables & code quality</span>
-                </div>
-                <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>Transparent INR pricing & custom retainer plans</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Response Time SLA Banner */}
+            {/* SLA Banner */}
             <Card className="p-5 space-y-2 bg-[#FFF9E6] border border-[#FFD21E]">
               <div className="flex items-center gap-1.5 text-[#FF9D00] text-xs font-bold uppercase">
                 <Clock size={14} />
                 <span>Response SLA Guarantee</span>
               </div>
               <h3 className="text-base font-bold text-[#1C1C1C]">
-                Guaranteed Response Within 24 Hours
+                Guaranteed Response Within 12 Hours
               </h3>
               <p className="text-xs text-[#6B7280] leading-relaxed">
-                During IST business hours, our lead technical strategists review incoming requests within 2 hours and issue full proposals within 24 hours.
+                Our lead technical strategists review incoming requests continuously across US, UK & Australian business hours.
               </p>
+            </Card>
+
+            {/* Why Work With Us */}
+            <Card className="p-5 space-y-3">
+              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#FF9D00]">
+                <Award size={14} />
+                <span>Offshore Value Proposition</span>
+              </div>
+              <h3 className="text-base font-bold text-[#1C1C1C]">
+                Same Quality. 60% Lower Rates.
+              </h3>
+              <div className="space-y-2 text-xs text-[#6B7280]">
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
+                  <span>Sub-second Core Web Vitals speed scores</span>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
+                  <span>Fluent English communication with zero friction</span>
+                </div>
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
+                  <span>Stripe & PayPal international billing accepted</span>
+                </div>
+              </div>
             </Card>
 
             {/* Office Info Card */}
             <Card className="p-5 space-y-3">
-              <h3 className="text-base font-bold text-[#1C1C1C]">India HQ Contact</h3>
+              <h3 className="text-base font-bold text-[#1C1C1C]">Global Remote HQ</h3>
               <div className="space-y-2 text-xs text-[#6B7280]">
                 <div className="flex items-start gap-2">
                   <MapPin size={15} className="text-[#FF9D00] shrink-0 mt-0.5" />

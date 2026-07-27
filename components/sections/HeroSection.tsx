@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ShieldCheck, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ShieldCheck, Globe, Sparkles, Clock } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 import HeroMockup from './HeroMockup';
@@ -22,31 +22,31 @@ export default function HeroSection() {
             {/* Top Brand Yellow Pill Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB] shadow-xs">
               <Sparkles size={14} className="text-[#1C1C1C]" />
-              <span>India’s Leading Web & Growth Engineering Agency</span>
+              <span>Affordable Premium Web Engineering & Performance Marketing</span>
               <span className="text-[#1C1C1C]/40">•</span>
               <span className="flex items-center gap-1 font-semibold">
-                <MapPin size={12} /> Bengaluru • Mumbai • Delhi NCR
+                <Globe size={12} /> US • UK • CA • AU • EU
               </span>
             </div>
 
-            {/* H1 Headline (36px scale up to 48-56px on hero) */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold text-[#1C1C1C] tracking-[ -0.01em] leading-[1.15]">
-              We Build High-Converting Web Platforms & Drive <GradientText>Verified ROI</GradientText>
+            {/* H1 Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold text-[#1C1C1C] tracking-[-0.01em] leading-[1.15]">
+              Affordable Web Development, SEO & <GradientText>Digital Growth Agency</GradientText>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-[#6B7280] leading-[1.6] max-w-2xl">
-              From sub-second web & mobile applications to national search dominance, high-ROAS Meta Ads, and automated WhatsApp lead funnels built for growing Indian enterprises.
+              High-quality web engineering, old website speed overhauls, UGC video ads, and SEO dominance at a fraction of US & UK agency rates. Fluent English communication with 12-hour reply guarantees across all time zones.
             </p>
 
             {/* CTA Group */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Button href="/contact" variant="primary" size="md">
-                <span>Start Your Growth Sprint</span>
+                <span>Book a Free Strategy Call</span>
                 <ArrowRight size={16} />
               </Button>
               <Button href="/portfolio" variant="secondary" size="md">
-                View Case Studies
+                View Live Projects
               </Button>
             </div>
 
@@ -54,15 +54,15 @@ export default function HeroSection() {
             <div className="pt-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#6B7280] border-t border-[#E5E7EB]">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={15} className="text-[#10B981]" />
-                <span>₹8.5Cr+ Client Revenue Generated</span>
+                <span>Same Quality, 60% Lower Cost</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 size={15} className="text-[#10B981]" />
-                <span>Sub-Second Page Speeds</span>
+                <Clock size={15} className="text-[#FF9D00]" />
+                <span>Time-Zone Friendly (US/UK/AU)</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <ShieldCheck size={15} className="text-[#3B82F6]" />
-                <span>Supabase & UPI Ready</span>
+                <span>Stripe & PayPal Accepted</span>
               </div>
             </div>
           </motion.div>

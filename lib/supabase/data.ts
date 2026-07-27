@@ -2,10 +2,10 @@ import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost
 import { createClient } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
-  phone: '+91 98765 43210',
-  whatsapp_number: '919876543210',
+  phone: '+1 (800) 555-0199',
+  whatsapp_number: '18005550199',
   email: 'hello@apexpulse.in',
-  address: '100 Feet Rd, 4th Block, Koramangala, Bengaluru, Karnataka 560034',
+  address: 'Global Remote HQ • Austin, TX & International Hubs',
   linkedin_url: 'https://linkedin.com/company/apexpulse-india',
   twitter_url: 'https://twitter.com/apexpulse_in',
   instagram_url: 'https://instagram.com/apexpulse.in',
@@ -16,27 +16,27 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     id: 't1',
     name: 'Aarav Mehta',
     role: 'Co-Founder & Chief Software Architect',
-    location: 'Bengaluru, Karnataka',
+    location: 'Austin, TX & Global Remote',
     badge: 'EX-FAANG ARCHITECT',
-    bio: 'Pioneered sub-second web application architecture & enterprise database systems.',
+    bio: 'Pioneered sub-second web application architecture & enterprise database systems for global startups.',
     profile_image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 't2',
     name: 'Riya Sen',
-    role: 'Head of Paid Growth & Meta Ads',
-    location: 'Mumbai, Maharashtra',
-    badge: '₹12 CR+ AD SPEND',
-    bio: 'Specializes in CAPI pixel setups, visual video hooks, and high-ROAS acquisition funnels.',
+    role: 'Head of Paid Growth & UGC Ads',
+    location: 'London, UK & Global Remote',
+    badge: '$1.5M+ AD SPEND',
+    bio: 'Specializes in CAPI pixel setups, high-converting UGC video hooks, and 5.2x ROAS acquisition funnels.',
     profile_image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 't3',
     name: 'Karan Verma',
-    role: 'Director of Technical SEO & Search',
-    location: 'Gurgaon, Delhi NCR',
+    role: 'Director of Technical SEO & Speed Upgrades',
+    location: 'Toronto, Canada & Global Remote',
     badge: '140+ RANK 1 KEYWORDS',
-    bio: 'Architected structured JSON-LD schemas and Tier 1 city landing page ranking engines.',
+    bio: 'Architected structured JSON-LD schemas and 100/100 Core Web Vitals speed optimization engines.',
     profile_image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
   },
 ];
@@ -44,77 +44,81 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
 export const INITIAL_PORTFOLIO: PortfolioProject[] = [
   {
     id: '1',
-    title: 'FinTech App & High-Converting Web Portal',
+    title: 'FinTech App & High-Converting SaaS Portal',
     slug: 'cred-pay-fintech-portal',
-    client_name: 'ZetaPay Technologies',
-    client_city: 'Bengaluru',
+    client_name: 'ZetaPay Global',
+    client_location: 'Austin, USA',
+    client_city: 'Austin',
     service_type: 'web_dev',
-    short_description: 'Engineered a web application with 99.9% uptime, sub-second latency, and integrated UPI payment flows.',
-    full_description: 'ZetaPay needed a complete rebuild of their merchant acquisition platform. We redesigned the UX from the ground up using modern Tailwind CSS micro-animations, fast server-side rendering, and responsive UI components.',
+    short_description: 'Engineered a web application with 99.9% uptime, sub-second latency, and integrated Stripe/PayPal payment flows.',
+    full_description: 'ZetaPay needed a complete rebuild of their client acquisition platform. We redesigned the UX from the ground up using modern Tailwind CSS micro-animations, fast server-side rendering, and responsive UI components.',
     cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '+340% Qualified Merchant Leads | 0.8s Average Page Load | ₹4.2 Cr Processed Monthly',
-    testimonial: 'ApexPulse transformed our online acquisition flow completely. The visual depth and speed of the site impressed our investors and merchants alike.',
+    results: '+340% Qualified Leads | 0.8s Average Page Load | $520K Monthly Transactions',
+    testimonial: 'ApexPulse transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
     live_url: 'https://zetapay.in',
     is_featured: true,
     created_at: new Date().toISOString(),
   },
   {
     id: '2',
-    title: 'D2C E-Commerce Brand SEO & Organic Dominance',
+    title: 'D2C Brand Website Speed & Technical SEO Overhaul',
     slug: 'nutra-pure-organic-seo',
-    client_name: 'NutraPure India',
-    client_city: 'Mumbai',
-    service_type: 'seo',
-    short_description: 'Captured top 3 rank positions across 140+ high-intent keywords in health & organic wellness nationwide.',
-    full_description: 'We performed deep technical SEO fixes, structured data integration (JSON-LD), core web vitals speed optimization, and programmatic content scaling targeting buyers across Tier 1 & Tier 2 Indian cities.',
+    client_name: 'NutraPure Global',
+    client_location: 'London, UK',
+    client_city: 'London',
+    service_type: 'website_upgrade',
+    short_description: 'Overhauled a slow legacy e-commerce site to achieve 100/100 Core Web Vitals and top 3 Google rankings across high-intent keywords.',
+    full_description: 'We performed deep technical SEO fixes, structured data integration (JSON-LD), Core Web Vitals page speed optimization, and mobile rendering fixes.',
     cover_image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '4.8x Organic Traffic Growth | 120,000+ Monthly Visitors | ₹18L Monthly Organic Sales',
-    testimonial: 'Our organic sales surpassed our paid ad revenue within 6 months. ApexPulse knows Indian search intent inside out.',
+    results: '4.8x Organic Traffic Surge | Page Speed 99/100 | +220% Organic E-Commerce Sales',
+    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. ApexPulse delivered affordable premium engineering.',
     live_url: 'https://nutrapure.in',
     is_featured: true,
     created_at: new Date().toISOString(),
   },
   {
     id: '3',
-    title: 'B2B SaaS Lead Generation & High-ROAS Meta Ads',
+    title: 'UGC Video Ads & High-ROAS Meta Creative Scaling',
     slug: 'work-space-b2b-lead-gen',
-    client_name: 'WorkSpace India',
-    client_city: 'Delhi NCR',
-    service_type: 'meta_ads',
-    short_description: 'Scaled qualified corporate coworking lease inquiries using hyper-targeted LinkedIn and Meta ad funnels.',
-    full_description: 'Designed interactive lead magnets, high-converting landing pages, and multi-tier retargeting ads across Meta & LinkedIn targeting CTOs and Ops leads in Gurgaon and Noida.',
+    client_name: 'WorkSpace International',
+    client_city: 'Toronto',
+    client_location: 'Toronto, Canada',
+    service_type: 'ugc_ads',
+    short_description: 'Produced scroll-stopping UGC video ad creatives and automated funnel landing pages for corporate client acquisition.',
+    full_description: 'Produced 12 A/B UGC creator hooks, high-converting visual ad sequences, and retargeting campaigns across Meta & LinkedIn.',
     cover_image_url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '₹420 Cost Per Qualified Lead | 5.2x Verified ROAS | ₹1.8 Cr Deal Pipeline Generated',
-    testimonial: 'We got more high-value enterprise leads in 60 days than our previous agency delivered in an entire year.',
+    results: '5.2x Verified Ad ROAS | $24 Cost Per Acquisition | $1.2M Pipeline Generated',
+    testimonial: 'We got more high-value client bookings in 30 days with their UGC ads than our local agency delivered in 6 months.',
     live_url: 'https://workspace.in',
     is_featured: true,
     created_at: new Date().toISOString(),
   },
   {
     id: '4',
-    title: 'Real Estate Hyper-Local Lead Engine',
+    title: 'Local Business Marketing & Google Business Profile Strategy',
     slug: 'prestige-villas-lead-engine',
-    client_name: 'Skyline Luxury Homes',
-    client_city: 'Hyderabad',
-    service_type: 'lead_gen',
-    short_description: 'Automated WhatsApp-integrated lead capture funnel for premium luxury residential properties.',
-    full_description: 'Built a multi-step interactive property match tool that qualified buyers by budget range before directly routing verified WhatsApp leads to sales agents in Hyderabad and Pune.',
+    client_name: 'Skyline Real Estate',
+    client_city: 'Sydney',
+    client_location: 'Sydney, Australia',
+    service_type: 'local_business',
+    short_description: 'Dominated local search maps and built automated consultation booking funnels for luxury property listings.',
+    full_description: 'Built a local SEO strategy, Google Business Profile optimization, and automated booking funnel.',
     cover_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '850+ High-Intent Buyers | 68% WhatsApp Instant Conversion | ₹14 Cr Inventory Sold',
-    testimonial: 'The pre-filled WhatsApp lead funnel was a game changer for our site sales team.',
+    results: '850+ Monthly Consultations | 68% Online Booking Rate | #1 Local Map Rank',
+    testimonial: 'The automated consultation booking funnel transformed our sales workflow.',
     live_url: 'https://prestigevillas.in',
     is_featured: false,
     created_at: new Date().toISOString(),
@@ -124,28 +128,30 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
 export const INITIAL_TESTIMONIALS: Testimonial[] = [
   {
     id: '1',
-    client_name: 'Rajesh Sharma',
-    client_company: 'Founder & CEO, ZetaPay',
-    client_city: 'Bengaluru',
-    quote: 'ApexPulse delivered a sub-second web portal that instantly boosted our merchant onboarding conversions by 340%. Exceptional engineering execution.',
+    client_name: 'David Miller',
+    client_company: 'Founder & CEO, ZetaPay USA',
+    client_location: 'Austin, TX (USA)',
+    client_city: 'Austin, USA',
+    quote: 'ApexPulse delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
   {
     id: '2',
-    client_name: 'Anita Desai',
+    client_name: 'Sarah Jenkins',
     client_company: 'CMO, NutraPure Health',
-    client_city: 'Mumbai',
-    quote: 'Our organic search rankings jumped to top 3 nationwide in less than 4 months. Their commercial keyword targeting is unmatched in India.',
+    client_location: 'London, UK',
+    client_city: 'London, UK',
+    quote: 'Our website speed score jumped from 32 to 99/100. Their old website upgrade service is the best investment we made all year.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
   {
     id: '3',
-    client_name: 'Vikramaditya Roy',
-    client_company: 'Managing Director, Skyline Luxury Homes',
-    client_city: 'Hyderabad',
-    quote: 'The automated WhatsApp lead funnel qualified buyers before routing them to our sales desk. Our cost per verified lead dropped by 60%.',
+    client_name: 'Marcus Vance',
+    client_company: 'Director, Skyline Properties',
+    client_location: 'Sydney, Australia',
+    quote: 'Their UGC ad creatives doubled our Meta ad ROAS within 2 weeks. Seamless async communication across time zones.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -153,151 +159,146 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
 
 export const INITIAL_BLOG_POSTS: BlogPost[] = [
   {
-    id: 'b1',
-    title: 'SEO Services in Bangalore: What Actually Works for Indian Enterprises in 2026',
-    slug: 'seo-services-in-bangalore-2026',
-    excerpt: 'A technical breakdown of commercial keyword mapping, JSON-LD LocalBusiness schema, and Core Web Vitals speed optimization for tech hubs in India.',
+    id: 'b-p12-1',
+    title: 'Why Is My Website Ranking Dropping? 7 Technical SEO Fixes for 2026',
+    slug: 'why-is-my-website-ranking-dropping',
+    excerpt: 'Is your organic search traffic slipping? Discover 7 hidden technical SEO glitches, Core Web Vitals drops, and schema errors causing Google rank drops.',
     category: 'seo',
-    target_keyword: 'SEO Services in Bangalore',
-    city: 'Bengaluru',
+    target_keyword: 'why is my website ranking dropping',
+    city: 'Global',
     author_name: 'Karan Verma',
     is_published: true,
-    published_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
     cover_image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
     content: `
-# SEO Services in Bangalore: What Actually Works for Indian Enterprises in 2026
+# Why Is My Website Ranking Dropping? 7 Technical SEO Fixes for 2026
 
-Bengaluru's enterprise tech landscape is one of the most competitive search environments in Asia. Standard blogging and generic backlinking strategies no longer move the needle for high-intent B2B and D2C brands.
+Watching your organic traffic plummet on Google Analytics is every website owner's nightmare. When rankings drop unexpectedly, many founders rush to buy spammy backlinks or rewrite working copy.
 
-To dominate search engine results pages (SERPs) across Koramangala, Indiranagar, Whitefield, and electronic city hubs, companies need a precision-targeted technical SEO foundation.
+However, over 80% of sudden ranking losses stem from underlying technical SEO issues and page speed bottlenecks.
 
-## 1. Commercial Intent Keyword Mapping
+## 1. Core Web Vitals & INP Performance Degradation
+Google's latest algorithm updates heavily penalize websites with slow Interaction to Next Paint (INP) scores and high Cumulative Layout Shift (CLS). If your site loads in over 2.5 seconds on mobile networks, search bots will lower your visibility.
 
-Generic search queries like "best marketing" deliver empty impressions without buying intent. In 2026, ranking for commercial intent queries such as:
-- Custom web app development company in Bangalore
-- Enterprise SEO agency Koramangala
-- B2B WhatsApp lead generation funnel India
+## 2. Broken Canonical Tags & Duplicate Rendering
+If your canonical tags point to HTTP instead of HTTPS, or if parameters create infinite duplicate URLs, search crawlers get confused about which page is authoritative.
 
-yields 5x higher visitor-to-lead conversion rates.
+## 3. Outdated or Invalid JSON-LD Schema
+Search engines rely on structured JSON-LD data to understand your business offerings. Missing required fields in Organization or Product schema can revoke your rich snippets overnight.
 
-## 2. Technical Code Audit & Sub-Second Core Web Vitals
-
-Google's ranking algorithms heavily weight PageSpeed and Core Web Vitals (LCP under 1.2s, CLS 0, INP under 100ms). Traditional WordPress setups with 40+ plugins fail these checks on 4G mobile connections across Tier 1 Indian cities.
-
-By deploying modern frontend architectures, image optimization, and serverless edge delivery, websites consistently achieve 95+ desktop and mobile performance scores.
-
-## 3. JSON-LD LocalBusiness & Organization Schema
-
-Schema markup tells search engine crawlers exactly what services you offer, your physical HQ location, operating hours, price ranges, and verified client ratings.
-
-JSON-LD Schema Structure:
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "ApexPulse Digital Agency India",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "100 Feet Rd, Koramangala",
-    "addressLocality": "Bengaluru",
-    "addressRegion": "Karnataka",
-    "postalCode": "560034",
-    "addressCountry": "IN"
-  }
-}
-
-## Summary for Growth Leaders
-
-Ranking top 3 in Bengaluru requires combining technical code speed with hyper-local commercial keyword targeting. Partnering with a specialized web engineering agency ensures long-term organic lead flow.
+## How to Fix It
+Run a full technical code audit, eliminate heavy third-party plugins, optimize image payload sizes, and restore clean DOM structures.
 `,
   },
   {
-    id: 'b2',
-    title: 'Why Your Website Needs Technical SEO, Not Just Content',
-    slug: 'technical-seo-vs-content-india',
-    excerpt: 'Content is king, but technical infrastructure is the kingdom. Learn how crawl budget, rendering performance, and clean DOM structures impact rankings.',
-    category: 'seo',
-    target_keyword: 'Technical SEO India',
-    city: 'Mumbai',
-    author_name: 'ApexPulse Team',
-    is_published: true,
-    published_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    cover_image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
-    content: `
-# Why Your Website Needs Technical SEO, Not Just Content
-
-Many Indian business founders invest thousands of rupees into weekly blog content, only to find their organic traffic flatlining on Page 3 of Google search results.
-
-The culprit is almost always underlying technical debt.
-
-## The 3 Pillars of Technical SEO
-
-1. Crawlability & Indexing: Ensuring search engine bots can discover all your high-priority commercial pages without getting stuck in infinite redirect loops or JavaScript rendering errors.
-2. Site Speed & Performance: Sub-second page loads reduce bounce rates by over 40% on mobile devices.
-3. Structured Data Hierarchy: Using proper H1 -> H2 -> H3 semantic HTML tags, aria labels, and structured schema so algorithms comprehend page semantics instantly.
-
-## The Technical Solution
-
-Before publishing more articles, audit your website's DOM size, unminified scripts, unoptimized images, and broken canonical links. A clean technical foundation multiplies the organic impact of every piece of content you produce.
-`,
-  },
-  {
-    id: 'b3',
-    title: 'How ZetaPay Scaled Merchant Leads by 340% with Web Engineering',
-    slug: 'nextjs-scaling-case-study-india',
-    excerpt: 'An architectural deep-dive into how custom frontend components, Supabase DB integration, and sub-second loading increased fintech merchant signups.',
-    category: 'web_dev',
-    target_keyword: 'Fintech Web Development India',
-    city: 'Bengaluru',
+    id: 'b-p12-2',
+    title: 'How to Speed Up a Slow Website: Core Web Vitals Optimization Guide',
+    slug: 'how-to-speed-up-slow-website',
+    excerpt: 'Learn how to transform a sluggish 5-second website into a sub-second powerhouse. A step-by-step guide to fixing LCP, CLS, and mobile loading speeds.',
+    category: 'website_upgrade',
+    target_keyword: 'how to speed up a slow website',
+    city: 'Global',
     author_name: 'Aarav Mehta',
     is_published: true,
-    published_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-    created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-    cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    published_at: new Date(Date.now() - 86400000).toISOString(),
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    cover_image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
     content: `
-# How ZetaPay Scaled Merchant Leads by 340% with Web Engineering
+# How to Speed Up a Slow Website: Core Web Vitals Optimization Guide
 
-When ZetaPay approached ApexPulse, their merchant acquisition funnel was struggling with a 6.4-second initial page render time and an unoptimized onboarding form.
+Every second of delay on your website costs you 7% in sales conversions. If your website takes 4 seconds to load, over half of your paid ad visitors leave before seeing your offer.
 
-## The Engineering Strategy
+## Why Legacy Sites Are Slow
+- **Plugin Bloat**: WordPress or legacy CMS sites running 30+ unoptimized plugins.
+- **Uncompressed High-Res Images**: Uploading raw 4MB PNG files instead of WebP formats.
+- **Render-Blocking CSS & JS**: Scripts loading before main hero content renders.
 
-- Architectural Overhaul: Migrated from a legacy monolith to a lightweight, component-driven frontend with sub-second serverless rendering.
-- Database & Auth Integration: Synced real-time merchant signup forms with Supabase Auth and database tables.
-- UPI Gateway Webhooks: Enabled instant automated qualification for Indian merchants.
-
-## Results Achieved
-
-- 340% surge in qualified weekly merchant applications.
-- 0.8-second average page load time across 4G networks in India.
-- ₹4.2 Cr processed in monthly merchant transactions.
+## The Web Engineering Speed Fix
+1. **Convert Media to WebP**: Reduce image payload sizes by up to 80% without losing visual clarity.
+2. **Implement Serverless Caching**: Deliver content from global edge locations near your visitors.
+3. **Clean Code & Code-Splitting**: Load JavaScript asynchronously so hero sections render instantly.
 `,
   },
   {
-    id: 'b4',
-    title: 'The Definitive Guide to Building High-Converting WhatsApp Lead Funnels in India',
-    slug: 'b2b-whatsapp-lead-funnel-guide-2026',
-    excerpt: 'Discover how multi-step qualification forms combined with instant WhatsApp sales alerts convert cold site visitors into booked client meetings.',
-    category: 'lead_gen',
-    target_keyword: 'WhatsApp Lead Generation India',
-    city: 'Delhi NCR',
+    id: 'b-p12-3',
+    title: 'How Much Does Professional SEO Cost in 2026? Agency Pricing Guide',
+    slug: 'how-much-does-professional-seo-cost',
+    excerpt: 'Transparent breakdown of global SEO agency pricing models, monthly retainers vs project quotes, and why affordable offshore technical SEO delivers 5x ROI.',
+    category: 'seo',
+    target_keyword: 'how much does professional SEO cost',
+    city: 'Global',
+    author_name: 'Karan Verma',
+    is_published: true,
+    published_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    content: `
+# How Much Does Professional SEO Cost in 2026? Agency Pricing Guide
+
+Understanding SEO pricing models helps business owners avoid cheap $99/month spam packages while also avoiding overpriced $15,000/month US agency retainers.
+
+## Global SEO Cost Averages in 2026
+
+- **Cheap $99–$300/mo Packages**: Automated spam links that risk Google manual penalties.
+- **US/UK Local Agencies ($3,000–$10,000/mo)**: High overhead costs passed down to clients.
+- **Affordable Offshore Technical Agencies ($500–$2,000/mo)**: Same or superior code audits, schema architecture, and high-intent commercial ranking strategy at a fraction of Western rates.
+
+## What Should Be Included in Professional SEO?
+A legitimate SEO retainer includes full technical audits, Core Web Vitals fixes, JSON-LD schema implementation, high-intent keyword mapping, and transparent monthly rank tracking.
+`,
+  },
+  {
+    id: 'b-p12-4',
+    title: '5 Critical Signs Your Website Needs a Redesign Before You Lose More Leads',
+    slug: 'signs-your-website-needs-a-redesign',
+    excerpt: 'Is your current website scaring away prospective clients? Discover 5 warning signs it is time for a modern, high-converting website redesign.',
+    category: 'web_dev',
+    target_keyword: 'signs your website needs a redesign',
+    city: 'Global',
+    author_name: 'Aarav Mehta',
+    is_published: true,
+    published_at: new Date(Date.now() - 86400000 * 6).toISOString(),
+    created_at: new Date(Date.now() - 86400000 * 6).toISOString(),
+    cover_image_url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
+    content: `
+# 5 Critical Signs Your Website Needs a Redesign Before You Lose More Leads
+
+Your website is your 24/7 digital storefront. If it looks outdated or feels sluggish, prospective buyers immediately question your business's credibility.
+
+## 1. High Bounce Rate on Mobile Devices
+If over 60% of mobile visitors exit within 5 seconds, your site layout is not mobile-first responsive.
+
+## 2. Low Conversion Rates Despite Good Traffic
+If you get traffic but zero consultation bookings or sales, your user flow lacks clear CTAs and visual hierarchy.
+
+## 3. Slow Page Speeds & Outdated Visual Design
+If your site takes 4+ seconds to load or uses outdated font styling, visitors will jump to modern competitors.
+`,
+  },
+  {
+    id: 'b-p12-5',
+    title: 'UGC Ads vs Traditional Studio Ads for E-Commerce: Which Converts Better?',
+    slug: 'ugc-ads-vs-traditional-ads-ecommerce',
+    excerpt: 'Why authentic User-Generated Content video ads outperform expensive traditional studio commercials for Meta and TikTok ad campaigns.',
+    category: 'ugc_ads',
+    target_keyword: 'UGC ads vs traditional ads for ecommerce',
+    city: 'Global',
     author_name: 'Riya Sen',
     is_published: true,
-    published_at: new Date(Date.now() - 86400000 * 12).toISOString(),
-    created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+    published_at: new Date(Date.now() - 86400000 * 9).toISOString(),
+    created_at: new Date(Date.now() - 86400000 * 9).toISOString(),
     cover_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
     content: `
-# The Definitive Guide to Building High-Converting WhatsApp Lead Funnels in India
+# UGC Ads vs Traditional Studio Ads for E-Commerce: Which Converts Better?
 
-In India's mobile-first economy, traditional email-only contact forms suffer from abysmal response rates. Over 92% of business decision-makers prefer communicating via WhatsApp.
+Modern digital consumers skip slick TV commercials. Instead, they stop scrolling for authentic, relatable video reviews created by real people.
 
-## How the Automated WhatsApp Funnel Works
+## Why UGC Ads Drive 4x Higher ROAS
 
-1. Interactive Multi-Step Qualification: Instead of asking for a phone number upfront, guide the visitor through 3 quick questions regarding their budget range, service needs, and timeline.
-2. OTP Mobile Verification: Validate +91 Indian phone numbers to eliminate spam and fake contacts.
-3. Instant Sales Alert Webhook: Trigger an immediate automated WhatsApp notification to your sales rep with the prospect's verified details.
-
-By shortening the response time from hours to under 2 minutes, client booking rates jump by up to 68%.
+1. **Native Social Integration**: UGC videos look like natural posts from friends rather than intrusive ads.
+2. **Pain-Point Problem & Solution Hooks**: Real creators demonstrate product usage in 15-second mobile hooks.
+3. **Rapid A/B Testing**: You can test 10+ UGC video angles for the cost of a single traditional studio video shoot.
 `,
   },
 ];
@@ -352,7 +353,12 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
     if (error || !data || data.length === 0) {
       return INITIAL_PORTFOLIO;
     }
-    return data as PortfolioProject[];
+
+    // Ensure fallback mapping for client_location
+    return data.map((p: any) => ({
+      ...p,
+      client_location: p.client_location || p.client_city || 'Austin, USA',
+    })) as PortfolioProject[];
   } catch {
     return INITIAL_PORTFOLIO;
   }
@@ -376,7 +382,11 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     if (error || !data || data.length === 0) {
       return INITIAL_TESTIMONIALS;
     }
-    return data as Testimonial[];
+
+    return data.map((t: any) => ({
+      ...t,
+      client_location: t.client_location || t.client_city || 'USA',
+    })) as Testimonial[];
   } catch {
     return INITIAL_TESTIMONIALS;
   }
@@ -415,7 +425,13 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
     const supabase = createClient();
     const { error } = await supabase.from('leads').insert([
       {
-        ...lead,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        country: lead.country || lead.city || 'United States',
+        service_interested: lead.service_interested,
+        budget_range: lead.budget_range,
+        message: lead.message,
         created_at: new Date().toISOString(),
         status: 'new',
       },
@@ -426,12 +442,12 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
     }
     return {
       success: true,
-      message: 'Thank you! Your quote request has been received. Our team will contact you within 2 hours.',
+      message: 'Thank you! Your inquiry has been received. Our team will reply within 12 hours.',
     };
   } catch {
     return {
       success: true,
-      message: 'Thank you! Your quote request has been received. Our team will contact you within 2 hours.',
+      message: 'Thank you! Your inquiry has been received. Our team will reply within 12 hours.',
     };
   }
 }

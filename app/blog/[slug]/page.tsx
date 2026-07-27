@@ -147,19 +147,27 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
             <span className="px-2.5 py-0.5 rounded-[4px] bg-[#3B82F6] text-white text-xs font-bold uppercase">
               {post.category === 'web_dev'
                 ? 'Web Engineering'
-                : post.category === 'seo'
-                ? 'SEO Dominance'
+                : post.category === 'app_dev'
+                ? 'App Engineering'
+                : post.category === 'website_upgrade'
+                ? 'Speed & SEO Upgrade'
+                : post.category === 'ugc_ads'
+                ? 'UGC Ads'
+                : post.category === 'local_business'
+                ? 'Local SEO'
                 : post.category === 'meta_ads'
                 ? 'Meta Ads'
-                : post.category === 'lead_gen'
-                ? 'Lead Generation'
+                : post.category === 'seo'
+                ? 'SEO Optimization'
+                : post.category === 'sales_growth'
+                ? 'Sales Growth'
                 : 'General'}
             </span>
 
             {post.city && (
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1C1C] bg-white px-2.5 py-0.5 rounded-[4px] border border-[#E5E7EB]">
                 <MapPin size={11} className="text-[#3B82F6]" />
-                {post.city}, India
+                {post.city}
               </span>
             )}
 

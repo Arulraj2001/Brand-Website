@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Calendar, Clock, Sparkles, BookOpen, MapPin, Tag } from 'lucide-react';
+import { ArrowUpRight, Calendar, Clock, BookOpen, MapPin } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
-import { BlogPost, BlogCategory } from '@/types';
+import { BlogPost } from '@/types';
 import { getBlogPosts } from '@/lib/supabase/data';
 
 export default function BlogPage() {
@@ -34,13 +34,13 @@ export default function BlogPage() {
         <div className="max-w-3xl mx-auto text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
             <BookOpen size={14} className="text-[#1C1C1C]" />
-            Growth Insights & SEO Hub
+            Growth & Engineering Hub
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
             Engineering Insights & <GradientText>Search Strategy Guides</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Actionable strategies on sub-second web architecture, search engine dominance across Indian metro hubs, and high-ROAS lead acquisition.
+            Actionable strategies on sub-second web speed, old website upgrades, UGC video ads, and global search engine dominance.
           </p>
         </div>
 
@@ -48,16 +48,18 @@ export default function BlogPage() {
         <div className="flex flex-wrap justify-center items-center gap-2">
           {[
             { id: 'all', label: 'All Articles' },
-            { id: 'seo', label: 'SEO Dominance' },
+            { id: 'seo', label: 'SEO' },
+            { id: 'website_upgrade', label: 'Speed & SEO Upgrade' },
             { id: 'web_dev', label: 'Web Engineering' },
-            { id: 'meta_ads', label: 'Meta & LinkedIn Ads' },
-            { id: 'lead_gen', label: 'Lead Generation' },
-            { id: 'general', label: 'Industry Insights' },
+            { id: 'ugc_ads', label: 'UGC Ads' },
+            { id: 'local_business', label: 'Local Business' },
+            { id: 'meta_ads', label: 'Meta Ads' },
+            { id: 'lead_gen', label: 'Lead Gen' },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setFilter(item.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
                 filter === item.id
                   ? 'bg-[#FF9D00] text-white shadow-xs'
                   : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
@@ -79,14 +81,13 @@ export default function BlogPage() {
               {filteredPosts.map((post) => {
                 const pubDate = post.published_at || post.created_at;
                 const formattedDate = pubDate
-                  ? new Date(pubDate).toLocaleDateString('en-IN', {
+                  ? new Date(pubDate).toLocaleDateString('en-US', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
                     })
                   : 'Recent';
 
-                // Rough read time calculation (200 words/min)
                 const wordCount = post.content ? post.content.split(/\s+/).length : 300;
                 const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
 
@@ -120,12 +121,16 @@ export default function BlogPage() {
                           <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
                             {post.category === 'web_dev'
                               ? 'Web Dev'
+                              : post.category === 'website_upgrade'
+                              ? 'Speed Overhaul'
+                              : post.category === 'ugc_ads'
+                              ? 'UGC Ads'
                               : post.category === 'seo'
                               ? 'SEO'
+                              : post.category === 'local_business'
+                              ? 'Local SEO'
                               : post.category === 'meta_ads'
                               ? 'Meta Ads'
-                              : post.category === 'lead_gen'
-                              ? 'Lead Gen'
                               : 'General'}
                           </span>
                         </div>

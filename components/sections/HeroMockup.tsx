@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Users, ArrowUpRight, CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { TrendingUp, CheckCircle2, Sparkles, Globe } from 'lucide-react';
 
 export default function HeroMockup() {
   return (
@@ -25,7 +25,7 @@ export default function HeroMockup() {
           </div>
           <span className="px-2 py-0.5 rounded-[4px] bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] text-xs font-bold flex items-center gap-1">
             <Sparkles size={12} className="text-[#FF9D00]" />
-            Live Client Feed
+            Global Client Feed
           </span>
         </div>
 
@@ -43,7 +43,7 @@ export default function HeroMockup() {
             <p className="text-[11px] font-semibold text-[#6B7280]">Avg ROAS</p>
             <p className="text-lg font-bold text-[#FF9D00] font-mono-stats">5.2x</p>
             <span className="text-[10px] text-[#3B82F6] font-bold flex items-center gap-0.5 mt-0.5">
-              Verified INR
+              Verified USD ($)
             </span>
           </div>
 
@@ -59,8 +59,10 @@ export default function HeroMockup() {
         {/* SVG Wave Graph */}
         <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-4 rounded-lg space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-[#1C1C1C]">Qualified Lead Volume (India Region)</span>
-            <span className="text-[#3B82F6] font-bold">Live Stream</span>
+            <span className="font-bold text-[#1C1C1C]">Qualified Inquiry Stream (US / UK / CA / AU)</span>
+            <span className="text-[#3B82F6] font-bold flex items-center gap-1">
+              <Globe size={11} /> Live Stream
+            </span>
           </div>
 
           <div className="h-24 w-full relative overflow-hidden">
@@ -93,8 +95,8 @@ export default function HeroMockup() {
               <CheckCircle2 size={16} />
             </div>
             <div>
-              <p className="text-xs font-bold text-[#1C1C1C]">New +91 Qualified Lead Verified</p>
-              <p className="text-[10px] text-[#6B7280]">Bengaluru • Budget: ₹1L+ • Instant WhatsApp Alert</p>
+              <p className="text-xs font-bold text-[#1C1C1C]">New Verified Client Strategy Call</p>
+              <p className="text-[10px] text-[#6B7280]">Austin, TX (USA) • Budget: $3,000–$5,000 • Web & Speed Overhaul</p>
             </div>
           </div>
           <span className="text-[10px] font-bold text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-0.5 rounded-[4px]">

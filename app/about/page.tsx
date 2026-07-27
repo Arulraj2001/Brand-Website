@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ShieldCheck, Award, MapPin, Zap, ArrowRight, Code2, Target, User } from 'lucide-react';
+import { ShieldCheck, Award, MapPin, Zap, ArrowRight, Code2, Target, User, Globe, Clock } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import IconBox from '@/components/ui/IconBox';
@@ -17,62 +17,62 @@ export default function AboutPage() {
       {/* Header */}
       <div className="max-w-3xl mx-auto text-center px-4 space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
-          Agency Origins & Philosophy
+          Global Agency Origins & Philosophy
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-          Engineering Software & Funnels That <GradientText>Redefine Online Growth</GradientText>
+          Affordable Engineering & Performance Growth <GradientText>For International Brands</GradientText>
         </h1>
         <p className="text-base text-[#6B7280] leading-relaxed">
-          Founded in Koramangala, Bengaluru, ApexPulse was created to eliminate slow agency templates and deliver custom software and verified INR revenue streams.
+          ApexPulse delivers high-quality web software, old website speed overhauls, and high-ROAS UGC video ads at a fraction of US & UK agency rates.
         </p>
       </div>
 
-      {/* Story Section (Asymmetrical 2-Column Layout) */}
+      {/* Story Section */}
       <div className="max-w-[1200px] mx-auto px-4">
         <Card className="p-6 sm:p-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left 7 Cols: Story Content */}
             <div className="lg:col-span-7 space-y-4">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#10B981]/15 text-[#10B981] text-xs font-bold border border-[#10B981]/20">
-                The Story Behind ApexPulse
+                The Offshore Advantage
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
-                Why We Built a New Kind of Digital Agency for India
+                High Quality. 60% Lower Rates. Async Time-Zone Coverage.
               </h2>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">
-                In 2023, we saw a critical problem: ambitious companies in Bengaluru, Mumbai, and Delhi were spending millions on outdated templates and vanity impression reports that never generated real sales.
+                Western agencies often charge $10,000+ for slow WordPress templates and bloated project management layers. ApexPulse brings together senior software architects and performance growth leads to deliver custom engineering at affordable rates.
               </p>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">
-                We set out to build an agency that treats every client website as enterprise software. We combine high-performance web architecture, dynamic server rendering, hyper-local SEO schema, and automated WhatsApp lead qualification funnels.
+                We operate around your local time zone (US EST/PST, GMT & AEST) with fluent English communication, guaranteed 12-hour reply SLAs, and secure international payments via Stripe and PayPal.
               </p>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="p-3.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg">
-                  <p className="text-2xl font-bold text-[#FF9D00] font-mono-stats">100%</p>
-                  <p className="text-xs font-bold text-[#1C1C1C]">Custom Web & App Code</p>
-                  <p className="text-[11px] text-[#6B7280]">Zero page templates</p>
+                  <p className="text-2xl font-bold text-[#FF9D00] font-mono-stats">60% Lower</p>
+                  <p className="text-xs font-bold text-[#1C1C1C]">Cost Compared to US/UK Agencies</p>
+                  <p className="text-[11px] text-[#6B7280]">Same or superior code quality</p>
                 </div>
                 <div className="p-3.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg">
-                  <p className="text-2xl font-bold text-[#10B981] font-mono-stats">₹10 Cr+</p>
-                  <p className="text-xs font-bold text-[#1C1C1C]">Verified Client Pipeline</p>
-                  <p className="text-[11px] text-[#6B7280]">Tracked across India</p>
+                  <p className="text-2xl font-bold text-[#10B981] font-mono-stats">&lt; 12 Hours</p>
+                  <p className="text-xs font-bold text-[#1C1C1C]">Guaranteed Reply SLA</p>
+                  <p className="text-[11px] text-[#6B7280]">Seamless async collaboration</p>
                 </div>
               </div>
             </div>
 
-            {/* Right 5 Cols: Core Pillars / Visual Stack */}
+            {/* Right 5 Cols: Core Pillars */}
             <div className="lg:col-span-5 space-y-3">
               <Card isFeatured className="p-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-sm">
                     01
                   </div>
-                  <h3 className="font-bold text-[#1C1C1C] text-sm">Code Precision & Speed</h3>
+                  <h3 className="font-bold text-[#1C1C1C] text-sm">Sub-Second Code Speed</h3>
                 </div>
-                <p className="text-xs text-[#6B7280]">Sub-second loading times across Tier 1 & Tier 2 Indian 4G/5G mobile networks.</p>
+                <p className="text-xs text-[#6B7280]">Zero plugin bloat, 100/100 Core Web Vitals speed scores.</p>
               </Card>
 
               <Card className="p-4 space-y-2">
@@ -80,9 +80,9 @@ export default function AboutPage() {
                   <div className="w-8 h-8 rounded-lg bg-[#3B82F6] text-white flex items-center justify-center font-bold text-sm">
                     02
                   </div>
-                  <h3 className="font-bold text-[#1C1C1C] text-sm">Hyper-Local Intent SEO</h3>
+                  <h3 className="font-bold text-[#1C1C1C] text-sm">High-ROAS UGC Ad Hooks</h3>
                 </div>
-                <p className="text-xs text-[#6B7280]">Target high-converting transactional keywords for buyers in metro hubs.</p>
+                <p className="text-xs text-[#6B7280]">Authentic user-generated video ad creatives for e-commerce brands.</p>
               </Card>
 
               <Card className="p-4 space-y-2">
@@ -90,16 +90,16 @@ export default function AboutPage() {
                   <div className="w-8 h-8 rounded-lg bg-[#10B981] text-white flex items-center justify-center font-bold text-sm">
                     03
                   </div>
-                  <h3 className="font-bold text-[#1C1C1C] text-sm">Verified WhatsApp Lead Pipelines</h3>
+                  <h3 className="font-bold text-[#1C1C1C] text-sm">Global Technical SEO</h3>
                 </div>
-                <p className="text-xs text-[#6B7280]">Instant qualification webhooks routing leads directly to your sales reps.</p>
+                <p className="text-xs text-[#6B7280]">Structured JSON-LD schema & commercial intent keyword dominance.</p>
               </Card>
             </div>
           </div>
         </Card>
       </div>
 
-      {/* Team Section ("Meet the Growth Architects") */}
+      {/* Team Section */}
       <div className="max-w-[1200px] mx-auto px-4 space-y-8">
         <div className="text-center space-y-2 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#FFF9E6] text-[#FF9D00] text-xs font-bold border border-[#FFD21E]">
@@ -109,7 +109,7 @@ export default function AboutPage() {
             Meet the Growth <GradientText>Architects</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
-            Our leadership brings expertise across web & software engineering, performance marketing, and national SEO.
+            Our engineering & performance leads bring experience building web applications and scaling ad campaigns worldwide.
           </p>
         </div>
 
@@ -117,7 +117,6 @@ export default function AboutPage() {
           {teamMembers.map((member) => (
             <Card key={member.id} className="space-y-4 p-6 bg-white border border-[#E5E7EB] hover:border-[#FF9D00] group transition-all">
               <div className="flex items-start justify-between gap-3">
-                {/* Minimal Size Profile Avatar Image Link */}
                 <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
                   {member.profile_image_url ? (
                     <Image
@@ -144,7 +143,7 @@ export default function AboutPage() {
                 </h3>
                 <p className="text-xs font-semibold text-[#FF9D00] mt-0.5">{member.role}</p>
                 <div className="inline-flex items-center gap-1 text-[11px] text-[#6B7280] mt-1">
-                  <MapPin size={12} className="text-[#3B82F6]" />
+                  <Globe size={12} className="text-[#3B82F6]" />
                   <span>{member.location}</span>
                 </div>
               </div>
@@ -157,15 +156,15 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Final CTA Banner */}
+      {/* Final CTA */}
       <div className="max-w-[1200px] mx-auto px-4 text-center">
         <Card isFeatured className="p-8 sm:p-10 space-y-4">
-          <h2 className="text-2xl font-bold text-[#1C1C1C]">Ready to Work With Us?</h2>
+          <h2 className="text-2xl font-bold text-[#1C1C1C]">Ready to Upgrade Your Platform & Growth?</h2>
           <p className="text-sm text-[#6B7280] max-w-lg mx-auto">
-            Book a 30-minute growth strategy session with our lead architects.
+            Book a 15-minute strategy call and receive your proposal within 12 hours.
           </p>
           <Button href="/contact" variant="primary" size="md">
-            <span>Schedule Free Consultation</span>
+            <span>Book a Free Strategy Call</span>
             <ArrowRight size={16} />
           </Button>
         </Card>

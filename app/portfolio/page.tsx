@@ -60,13 +60,13 @@ export default function PortfolioPage() {
         <div className="max-w-3xl mx-auto text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
             <Sparkles size={14} className="text-[#1C1C1C]" />
-            Live Case Studies Grid
+            Global Client Case Studies
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Our Case Studies & <GradientText>Verified Client Results</GradientText>
+            Case Studies & <GradientText>Verified Client Results</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Discover how ApexPulse engineered scalable web platforms and performance channels for ambitious brands across India.
+            Discover how ApexPulse engineered sub-second web platforms, speed overhauls, and high-ROAS ad campaigns for clients across US, UK, Canada & Australia.
           </p>
         </div>
 
@@ -74,15 +74,19 @@ export default function PortfolioPage() {
         <div className="flex flex-wrap justify-center items-center gap-2">
           {[
             { id: 'all', label: 'All Projects' },
-            { id: 'web_dev', label: 'Web Development' },
-            { id: 'seo', label: 'SEO Dominance' },
-            { id: 'meta_ads', label: 'Meta & LinkedIn Ads' },
-            { id: 'lead_gen', label: 'Lead Generation' },
+            { id: 'web_dev', label: 'Web Dev' },
+            { id: 'app_dev', label: 'App Dev' },
+            { id: 'website_upgrade', label: 'Speed & SEO' },
+            { id: 'ugc_ads', label: 'UGC Ads' },
+            { id: 'seo', label: 'SEO' },
+            { id: 'local_business', label: 'Local Business' },
+            { id: 'meta_ads', label: 'Meta Ads' },
+            { id: 'sales_growth', label: 'Lead Gen' },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setFilter(item.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
                 filter === item.id
                   ? 'bg-[#FF9D00] text-white shadow-xs'
                   : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
@@ -101,6 +105,7 @@ export default function PortfolioPage() {
             <AnimatePresence>
               {filteredProjects.map((project) => {
                 const isFeatured = project.is_featured;
+                const location = project.client_location || project.client_city || 'Austin, USA';
 
                 return (
                   <motion.div
@@ -132,10 +137,18 @@ export default function PortfolioPage() {
                           <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
                             {project.service_type === 'web_dev'
                               ? 'Web Dev'
-                              : project.service_type === 'seo'
-                              ? 'SEO'
+                              : project.service_type === 'app_dev'
+                              ? 'App Dev'
+                              : project.service_type === 'website_upgrade'
+                              ? 'Speed & SEO'
+                              : project.service_type === 'ugc_ads'
+                              ? 'UGC Ads'
+                              : project.service_type === 'local_business'
+                              ? 'Local SEO'
                               : project.service_type === 'meta_ads'
                               ? 'Meta Ads'
+                              : project.service_type === 'seo'
+                              ? 'SEO'
                               : 'Lead Gen'}
                           </span>
                           {isFeatured && (
@@ -148,7 +161,7 @@ export default function PortfolioPage() {
 
                         <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
                           <MapPin size={10} className="text-[#3B82F6]" />
-                          {project.client_city}
+                          {location}
                         </div>
                       </div>
 

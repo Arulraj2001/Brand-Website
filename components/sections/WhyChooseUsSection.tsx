@@ -4,7 +4,7 @@ import React from 'react';
 import StatCounter from '@/components/ui/StatCounter';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
-import { ShieldCheck, Award, TrendingUp, Users, Sparkles } from 'lucide-react';
+import { ShieldCheck, Award, TrendingUp, Users, Sparkles, Clock, Globe } from 'lucide-react';
 
 export default function WhyChooseUsSection() {
   return (
@@ -14,13 +14,13 @@ export default function WhyChooseUsSection() {
         <div className="max-w-3xl mx-auto text-center mb-12 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
             <Sparkles size={14} className="text-[#1C1C1C]" />
-            Proven Track Record
+            Proven Global Track Record
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-            Why High-Growth Brands <GradientText>Partner With Us</GradientText>
+            Why International Brands <GradientText>Partner With Us</GradientText>
           </h2>
           <p className="text-base text-[#6B7280]">
-            We bridge the gap between custom web software engineering and revenue-driven performance marketing.
+            Same high-quality web software engineering and performance marketing as top US & UK agencies, delivered at 60% lower rates.
           </p>
         </div>
 
@@ -35,22 +35,26 @@ export default function WhyChooseUsSection() {
                 </div>
 
                 <h3 className="text-xl sm:text-2xl font-bold text-[#1C1C1C] leading-snug">
-                  No Vanity Metrics. Just <span className="text-[#FF9D00]">Verified INR Revenue Growth</span> & Enterprise Code.
+                  No Overpriced Overhead. Just <span className="text-[#FF9D00]">Verified USD Revenue Growth</span> & Sub-Second Code.
                 </h3>
 
                 <p className="text-sm text-[#6B7280] leading-relaxed">
-                  Most agencies deliver slow template sites and generate fake clicks. We build custom web & mobile platforms engineered for speed, target high-intent commercial keywords across India, and route verified +91 lead pipelines straight to your team.
+                  Most Western agencies charge $10,000+ for slow WordPress templates. We engineer sub-second web platforms, overhaul sluggish legacy sites to 100/100 Core Web Vitals, and run high-converting UGC video ad campaigns across US, UK, Canada & Australia.
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-[#FFD21E]/60 flex items-center gap-4 text-xs font-bold text-[#1C1C1C]">
+              <div className="pt-3 border-t border-[#FFD21E]/60 flex flex-wrap items-center gap-4 text-xs font-bold text-[#1C1C1C]">
                 <div className="flex items-center gap-1">
-                  <Award size={14} className="text-[#FF9D00]" />
-                  <span>100% Code Ownership</span>
+                  <Clock size={14} className="text-[#FF9D00]" />
+                  <span>12-Hour Reply SLA</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <TrendingUp size={14} className="text-[#10B981]" />
-                  <span>Zero Swallowed Exceptions</span>
+                  <Globe size={14} className="text-[#3B82F6]" />
+                  <span>Time-Zone Friendly (US/UK/AU)</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <ShieldCheck size={14} className="text-[#10B981]" />
+                  <span>Stripe / PayPal Accepted</span>
                 </div>
               </div>
             </Card>
@@ -65,8 +69,8 @@ export default function WhyChooseUsSection() {
               <div className="font-mono-stats text-2xl font-extrabold text-[#1C1C1C]">
                 <StatCounter value={80} suffix="+" />
               </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Projects Delivered</p>
-              <p className="text-[11px] text-[#6B7280]">Web platforms & app portals across Tier 1 Indian cities</p>
+              <p className="text-xs font-bold text-[#1C1C1C]">Global Projects Delivered</p>
+              <p className="text-[11px] text-[#6B7280]">Web platforms & speed overhauls across US, UK, CA & AU</p>
             </Card>
 
             <Card className="p-4 flex flex-col justify-between space-y-2">
@@ -76,8 +80,8 @@ export default function WhyChooseUsSection() {
               <div className="font-mono-stats text-2xl font-extrabold text-[#FF9D00]">
                 <StatCounter value={96} suffix="%" />
               </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Client Retention %</p>
-              <p className="text-[11px] text-[#6B7280]">Long-term retainer contracts for SEO & performance ads</p>
+              <p className="text-xs font-bold text-[#1C1C1C]">Client Retention Rate</p>
+              <p className="text-[11px] text-[#6B7280]">Long-term retainer contracts for SEO & performance growth</p>
             </Card>
 
             <Card className="p-4 flex flex-col justify-between space-y-2">
@@ -99,7 +103,7 @@ export default function WhyChooseUsSection() {
                 <StatCounter value={100} suffix="%" />
               </div>
               <p className="text-xs font-bold text-[#1C1C1C]">Core Web Vitals</p>
-              <p className="text-[11px] text-[#6B7280]">Sub-second speed score across Indian mobile networks</p>
+              <p className="text-[11px] text-[#6B7280]">Sub-second speed scores guaranteed for upgraded sites</p>
             </Card>
           </div>
         </div>

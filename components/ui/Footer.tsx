@@ -18,42 +18,28 @@ export default function Footer() {
 
   const jsonLdData = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'ApexPulse Digital Agency India',
+    '@type': 'Organization',
+    name: 'ApexPulse Digital Agency',
     image: 'https://apexpulse.in/logo.png',
     '@id': 'https://apexpulse.in',
     url: 'https://apexpulse.in',
     telephone: settings.phone,
     email: settings.email,
-    priceRange: '₹10,000 - ₹5,000,000',
+    priceRange: '$500 - $10,000',
     address: {
       '@type': 'PostalAddress',
       streetAddress: settings.address,
-      addressLocality: 'Bengaluru',
-      addressRegion: 'Karnataka',
-      postalCode: '560034',
-      addressCountry: 'IN',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 12.9352,
-      longitude: 77.6245,
-    },
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '09:00',
-      closes: '20:00',
+      addressLocality: 'Austin',
+      addressRegion: 'TX',
+      postalCode: '78701',
+      addressCountry: 'US',
     },
     areaServed: [
-      'Bengaluru',
-      'Mumbai',
-      'Delhi NCR',
-      'Hyderabad',
-      'Chennai',
-      'Pune',
-      'Ahmedabad',
-      'Kolkata',
+      'United States',
+      'United Kingdom',
+      'Canada',
+      'Australia',
+      'Europe',
     ],
   };
 
@@ -80,7 +66,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm leading-relaxed max-w-sm text-[#6B7280]">
-              India’s premier web engineering & performance marketing agency. We build dynamic digital experiences, dominate search engines, and drive scalable lead generation for growth-focused companies.
+              Affordable premium web engineering, old website speed overhauls, UGC video ads, and SEO dominance for growing businesses across the US, UK, Canada, Australia & Europe.
             </p>
             <div className="flex items-center gap-2.5 pt-1">
               {settings.linkedin_url && (
@@ -123,7 +109,7 @@ export default function Footer() {
                 </a>
               )}
               <a
-                href={`https://wa.me/${whatsappClean}?text=Hi%20ApexPulse!%20I%20want%20to%20connect.`}
+                href={`https://wa.me/${whatsappClean}?text=Hi%20ApexPulse!%20I%20want%20to%20book%20a%20strategy%20call.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-[#25D366] text-white flex items-center justify-center hover:bg-[#20bd5a] transition-colors min-h-[44px] min-w-[44px]"
@@ -165,12 +151,12 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-[#FF9D00] transition-colors">
-                  Get a Quote
+                  Book a Strategy Call
                 </Link>
               </li>
               <li>
                 <Link href="/admin/login" className="hover:text-[#FF9D00] transition-colors text-xs text-[#9CA3AF]">
-                  Admin Portal
+                  Admin Console
                 </Link>
               </li>
             </ul>
@@ -181,31 +167,41 @@ export default function Footer() {
             <h4 className="text-[#1C1C1C] font-bold text-sm">Services</h4>
             <ul className="space-y-1.5 text-sm">
               <li>
+                <Link href="/services#website-upgrade" className="hover:text-[#FF9D00] transition-colors">
+                  Old Website Upgrade
+                </Link>
+              </li>
+              <li>
+                <Link href="/services#ugc-ads" className="hover:text-[#FF9D00] transition-colors">
+                  UGC Video Ads
+                </Link>
+              </li>
+              <li>
                 <Link href="/services#web-dev" className="hover:text-[#FF9D00] transition-colors">
-                  Website Engineering
+                  Website Development
+                </Link>
+              </li>
+              <li>
+                <Link href="/services#app-dev" className="hover:text-[#FF9D00] transition-colors">
+                  App Development
                 </Link>
               </li>
               <li>
                 <Link href="/services#seo" className="hover:text-[#FF9D00] transition-colors">
-                  National & Local SEO
+                  SEO Optimization
                 </Link>
               </li>
               <li>
-                <Link href="/services#meta-ads" className="hover:text-[#FF9D00] transition-colors">
-                  Meta & LinkedIn Ads
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#lead-gen" className="hover:text-[#FF9D00] transition-colors">
-                  B2B Lead Generation
+                <Link href="/services#local-business" className="hover:text-[#FF9D00] transition-colors">
+                  Local Business Marketing
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Contact & Address */}
+          {/* Column 4: Contact & Location */}
           <div className="space-y-2.5">
-            <h4 className="text-[#1C1C1C] font-bold text-sm">India HQ</h4>
+            <h4 className="text-[#1C1C1C] font-bold text-sm">Global HQ</h4>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <MapPin size={15} className="text-[#FF9D00] shrink-0 mt-0.5" />
@@ -227,15 +223,15 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Serving Businesses Line */}
+        {/* Global Reach Footer Line */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[#6B7280]">
           <div className="flex items-center gap-1.5">
             <Globe size={14} className="text-[#3B82F6]" />
             <span>
-              <strong>Serving Metro Cities Across India:</strong> Bengaluru • Mumbai • Delhi NCR • Hyderabad • Chennai • Pune • Ahmedabad • Kolkata
+              <strong>Serving Clients Worldwide:</strong> United States • United Kingdom • Canada • Australia • Europe
             </span>
           </div>
-          <p>© {new Date().getFullYear()} ApexPulse Digital Technologies Pvt Ltd.</p>
+          <p>© {new Date().getFullYear()} ApexPulse Global Digital Agency. All rights reserved.</p>
         </div>
       </div>
     </footer>

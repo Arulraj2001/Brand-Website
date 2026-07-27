@@ -1,56 +1,67 @@
 'use client';
 
 import React from 'react';
-import { MapPin, Compass, Sparkles } from 'lucide-react';
+import { Globe, Clock, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 
-const CITIES = [
-  { name: 'Bengaluru', tier: 'IT & FinTech Hub', state: 'Karnataka' },
-  { name: 'Mumbai', tier: 'Financial Capital', state: 'Maharashtra' },
-  { name: 'Delhi NCR', tier: 'Corporate & D2C', state: 'Delhi/Haryana/UP' },
-  { name: 'Hyderabad', tier: 'Pharma & Tech Hub', state: 'Telangana' },
-  { name: 'Chennai', tier: 'SaaS & Enterprise', state: 'Tamil Nadu' },
-  { name: 'Pune', tier: 'Automotive & SaaS', state: 'Maharashtra' },
-  { name: 'Ahmedabad', tier: 'Manufacturing & Commerce', state: 'Gujarat' },
-  { name: 'Kolkata', tier: 'Trade & Logistics', state: 'West Bengal' },
+const GLOBAL_REGIONS = [
+  { flag: '🇺🇸', name: 'United States', detail: 'Austin, NYC, SF, Chicago, Miami' },
+  { flag: '🇬🇧', name: 'United Kingdom', detail: 'London, Manchester, Edinburgh' },
+  { flag: '🇨🇦', name: 'Canada', detail: 'Toronto, Vancouver, Montreal' },
+  { flag: '🇦🇺', name: 'Australia', detail: 'Sydney, Melbourne, Brisbane' },
+  { flag: '🇪🇺', name: 'Europe', detail: 'Berlin, Amsterdam, Dublin, Zurich' },
 ];
 
 export default function CitiesServedSection() {
   return (
-    <section className="py-16 bg-[#F9FAFB] border-t border-[#E5E7EB] relative overflow-hidden bg-line-pattern">
+    <section className="py-14 bg-[#F9FAFB] border-t border-[#E5E7EB] relative overflow-hidden bg-line-pattern">
       <div className="max-w-[1200px] mx-auto px-4 text-center">
         {/* Header */}
-        <div className="max-w-2xl mx-auto mb-10 space-y-2">
+        <div className="max-w-2xl mx-auto mb-8 space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
-            <Compass size={14} className="text-[#1C1C1C]" />
-            National Service Footprint
+            <Globe size={14} className="text-[#1C1C1C]" />
+            Global Client Footprint
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-            Serving Growing Businesses <GradientText>Across India</GradientText>
+            Trusted by Clients <GradientText>Across US, UK, Canada & Europe</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
-            Deep understanding of local commercial search behavior, regional buyer personas, and multi-state compliance.
+            Affordable premium web engineering, speed overhaul, and performance ad growth with guaranteed 12-hour reply times.
           </p>
         </div>
 
-        {/* City Pills Tag Grid */}
-        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-          {CITIES.map((city, idx) => (
+        {/* Region Tags Grid */}
+        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto mb-6">
+          {GLOBAL_REGIONS.map((region, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-[4px] bg-white border border-[#E5E7EB] shadow-xs hover:border-[#FF9D00] transition-colors group"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-[4px] bg-white border border-[#E5E7EB] shadow-xs hover:border-[#FF9D00] transition-colors group"
             >
-              <div className="w-7 h-7 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold">
-                <MapPin size={14} />
-              </div>
+              <span className="text-xl shrink-0">{region.flag}</span>
               <div className="text-left">
                 <p className="font-bold text-[#1C1C1C] text-xs group-hover:text-[#FF9D00] transition-colors">
-                  {city.name}
+                  {region.name}
                 </p>
-                <p className="text-[10px] text-[#6B7280]">{city.tier}</p>
+                <p className="text-[10px] text-[#6B7280]">{region.detail}</p>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* International Trust Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-[#1C1C1C] pt-2">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB]">
+            <Clock size={13} className="text-[#FF9D00]" />
+            <span>Time-Zone Friendly (US EST/PST, GMT & AEST)</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB]">
+            <CheckCircle2 size={13} className="text-[#10B981]" />
+            <span>Guaranteed 12-Hour Reply SLA</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB]">
+            <ShieldCheck size={13} className="text-[#3B82F6]" />
+            <span>Stripe & PayPal International Payments</span>
+          </div>
         </div>
       </div>
     </section>

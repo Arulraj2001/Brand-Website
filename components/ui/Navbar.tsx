@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, PhoneCall, Menu, X, ArrowRight } from 'lucide-react';
+import { Sparkles, PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
 import Button from './Button';
 
 export default function Navbar() {
@@ -44,8 +44,8 @@ export default function Navbar() {
             <span className="font-extrabold text-lg text-[#1C1C1C] tracking-tight">
               Apex<span className="text-[#FF9D00]">Pulse</span>
             </span>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-1.5 py-0.5 rounded-[4px]">
-              India
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
+              <Globe size={10} /> Global
             </span>
           </div>
         </Link>
@@ -76,14 +76,14 @@ export default function Navbar() {
         {/* CTA Right */}
         <div className="hidden md:flex items-center gap-4">
           <a
-            href="tel:+919876543210"
+            href="tel:+18005550199"
             className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"
           >
             <PhoneCall size={14} className="text-[#FF9D00]" />
-            +91 98765 43210
+            +1 (800) 555-0199
           </a>
           <Button href="/contact" variant="primary" size="sm">
-            <span>Get a Quote</span>
+            <span>Book a Call</span>
             <ArrowRight size={14} />
           </Button>
         </div>
@@ -119,14 +119,14 @@ export default function Navbar() {
           </nav>
           <div className="pt-2 border-t border-[#E5E7EB] flex flex-col gap-2">
             <a
-              href="tel:+919876543210"
+              href="tel:+18005550199"
               className="flex items-center justify-center gap-2 text-xs font-semibold text-[#1C1C1C] py-2 bg-[#F9FAFB] rounded-lg"
             >
               <PhoneCall size={14} className="text-[#FF9D00]" />
-              Call +91 98765 43210
+              Call +1 (800) 555-0199
             </a>
             <Button href="/contact" variant="primary" size="sm" className="w-full">
-              Get Free Consultation
+              Book a Free Strategy Call
             </Button>
           </div>
         </div>

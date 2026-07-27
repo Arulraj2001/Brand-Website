@@ -28,8 +28,10 @@ export async function generateMetadata({ params }: CaseStudyProps) {
     };
   }
 
+  const location = project.client_location || project.client_city || 'Austin, USA';
+
   return {
-    title: `${project.title} | ${project.client_name} ${project.client_city}`,
+    title: `${project.title} | ${project.client_name} (${location})`,
     description: `${project.short_description} Results: ${project.results}`,
     openGraph: {
       title: `${project.title} - ${project.client_name}`,
@@ -46,6 +48,8 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
   if (!project) {
     notFound();
   }
+
+  const location = project.client_location || project.client_city || 'Austin, USA';
 
   const breadcrumbLd = {
     '@context': 'https://schema.org',
@@ -73,49 +77,57 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
   };
 
   return (
-    <div className="pt-32 pb-24 bg-[#F7F8FB] min-h-screen bg-line-pattern">
+    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-5xl mx-auto px-4 space-y-10">
         {/* Back Link */}
         <Link
           href="/portfolio"
-          className="inline-flex items-center gap-2 text-sm font-bold text-[#4B4F63] hover:text-[#4F46E5] transition-colors min-h-[44px]"
+          className="inline-flex items-center gap-2 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C] transition-colors min-h-[44px]"
         >
           <ArrowLeft size={16} />
           <span>Back to All Case Studies</span>
         </Link>
 
         {/* Hero Header */}
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3.5 py-1 rounded-full bg-[#F1F0FE] text-[#4F46E5] text-xs font-extrabold uppercase tracking-wider border border-[#4F46E5]/20">
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-[4px] bg-[#3B82F6] text-white text-xs font-bold uppercase">
               {project.service_type === 'web_dev'
                 ? 'Web Development'
-                : project.service_type === 'seo'
-                ? 'SEO Dominance'
+                : project.service_type === 'app_dev'
+                ? 'App Development'
+                : project.service_type === 'website_upgrade'
+                ? 'Old Website Upgrade'
+                : project.service_type === 'ugc_ads'
+                ? 'UGC Video Ads'
+                : project.service_type === 'local_business'
+                ? 'Local Business Marketing'
                 : project.service_type === 'meta_ads'
                 ? 'Meta Ads'
+                : project.service_type === 'seo'
+                ? 'SEO Optimization'
                 : 'Lead Generation'}
             </span>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#4B4F63] bg-white px-3 py-1 rounded-full border border-[#E7E8F0]">
-              <MapPin size={12} className="text-[#0EA5E9]" />
-              {project.client_city}, India
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1C1C] bg-white px-2.5 py-0.5 rounded-[4px] border border-[#E5E7EB]">
+              <MapPin size={11} className="text-[#3B82F6]" />
+              {location}
             </span>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#4B4F63] bg-white px-3 py-1 rounded-full border border-[#E7E8F0]">
-              <Building size={12} className="text-[#7C3AED]" />
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1C1C] bg-white px-2.5 py-0.5 rounded-[4px] border border-[#E5E7EB]">
+              <Building size={11} className="text-[#FF9D00]" />
               {project.client_name}
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F1222] tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
             {project.title}
           </h1>
 
-          <p className="text-lg text-[#4B4F63] leading-relaxed">
+          <p className="text-base text-[#6B7280] leading-relaxed">
             {project.short_description}
           </p>
 
@@ -127,29 +139,29 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3B82F6] hover:bg-[#2563EB] text-white text-xs font-bold shadow-xs transition-colors min-h-[44px]"
               >
-                <span>Visit Live Website</span>
+                <span>Visit Live Work</span>
                 <ExternalLink size={14} />
               </a>
             </div>
           )}
 
           {/* Results Summary Banner */}
-          <div className="p-6 rounded-2xl bg-gradient-to-r from-[#4F46E5] via-[#7C3AED] to-[#0EA5E9] text-white shadow-lg space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/80">
-              <Sparkles size={16} />
+          <div className="p-5 rounded-xl bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] shadow-xs space-y-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FF9D00]">
+              <Sparkles size={15} />
               <span>Verified Impact Metrics</span>
             </div>
-            <p className="text-xl sm:text-2xl font-extrabold tracking-tight">
+            <p className="text-lg sm:text-xl font-extrabold font-mono-stats text-[#1C1C1C]">
               {project.results}
             </p>
           </div>
         </div>
 
         {/* Hero Cover Image */}
-        <div className="relative h-96 sm:h-[480px] w-full rounded-3xl overflow-hidden border border-[#E7E8F0] shadow-md">
+        <div className="relative h-72 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-xs bg-white">
           <Image
             src={project.cover_image_url}
-            alt={`${project.title} - ${project.client_name} ${project.client_city}`}
+            alt={`${project.title} - ${project.client_name} ${location}`}
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 1000px"
@@ -157,94 +169,74 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
           />
         </div>
 
-        {/* Structured Problem → Solution → Results Matrix */}
-        <div className="space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F1222]">
-              Case Study <GradientText>Breakdown Matrix</GradientText>
-            </h2>
-            <p className="text-sm text-[#4B4F63]">
-              How we diagnosed the bottleneck, built custom code, and scaled revenue.
+        {/* Problem -> Solution -> Results Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Problem */}
+          <Card className="bg-white border-2 border-[#EF4444]/20 p-5 rounded-xl space-y-3">
+            <div className="w-8 h-8 rounded-lg bg-[#EF4444]/10 text-[#EF4444] flex items-center justify-center font-bold">
+              <AlertTriangle size={16} />
+            </div>
+            <h3 className="text-base font-bold text-[#1C1C1C]">1. The Challenge</h3>
+            <p className="text-xs text-[#6B7280] leading-relaxed">
+              {project.full_description}
             </p>
-          </div>
+          </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 1. Problem */}
-            <Card className="bg-white border-2 border-red-100 p-6 rounded-3xl space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
-                <AlertTriangle size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#0F1222]">1. The Problem</h3>
-              <p className="text-xs text-[#4B4F63] leading-relaxed">
-                {project.full_description}
-              </p>
-              <div className="pt-2 border-t border-[#E7E8F0] text-xs font-semibold text-red-600">
-                • High drop-off rate & unverified leads
-              </div>
-            </Card>
+          {/* Solution */}
+          <Card className="bg-white border-2 border-[#3B82F6]/20 p-5 rounded-xl space-y-3">
+            <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] flex items-center justify-center font-bold">
+              <ShieldCheck size={16} />
+            </div>
+            <h3 className="text-base font-bold text-[#1C1C1C]">2. Engineering Fix</h3>
+            <p className="text-xs text-[#6B7280] leading-relaxed">
+              Engineered sub-second web software components, optimized Core Web Vitals, and deployed high-converting buyer funnels with instant strategy scheduling.
+            </p>
+          </Card>
 
-            {/* 2. Solution */}
-            <Card className="bg-white border-2 border-[#4F46E5]/20 p-6 rounded-3xl space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center font-bold">
-                <ShieldCheck size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#0F1222]">2. The Solution</h3>
-              <p className="text-xs text-[#4B4F63] leading-relaxed">
-                Engineered custom web software architecture with high-speed server-rendered pages, automated WhatsApp qualification webhooks, and targeted local SEO schema for Tier 1 Indian cities.
-              </p>
-              <div className="pt-2 border-t border-[#E7E8F0] text-xs font-semibold text-[#4F46E5]">
-                • Custom Web & App + Supabase build
-              </div>
-            </Card>
-
-            {/* 3. Results */}
-            <Card className="bg-[#F1F0FE] border-2 border-[#10B981]/30 p-6 rounded-3xl space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-[#10B981]/15 text-[#10B981] flex items-center justify-center font-bold">
-                <TrendingUp size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#0F1222]">3. The Results</h3>
-              <p className="text-xs font-bold text-[#10B981] leading-relaxed">
-                {project.results}
-              </p>
-              <div className="pt-2 border-t border-[#10B981]/20 text-xs font-semibold text-[#10B981]">
-                • Sustained 300%+ pipeline growth
-              </div>
-            </Card>
-          </div>
+          {/* Results */}
+          <Card className="bg-[#FFF9E6] border-2 border-[#FFD21E] p-5 rounded-xl space-y-3">
+            <div className="w-8 h-8 rounded-lg bg-[#10B981]/15 text-[#10B981] flex items-center justify-center font-bold">
+              <TrendingUp size={16} />
+            </div>
+            <h3 className="text-base font-bold text-[#1C1C1C]">3. The Impact</h3>
+            <p className="text-xs font-bold text-[#FF9D00] leading-relaxed font-mono-stats">
+              {project.results}
+            </p>
+          </Card>
         </div>
 
-        {/* Gallery Component with Interactive Lightbox */}
+        {/* Gallery Component */}
         <GalleryLightbox images={project.gallery_urls || []} />
 
         {/* Client Testimonial Block */}
         {project.testimonial && (
-          <Card className="bg-[#0F1222] text-white p-8 sm:p-10 rounded-3xl relative overflow-hidden border-none shadow-xl">
-            <Quote size={48} className="text-white/10 absolute top-6 right-6" />
-            <p className="text-lg sm:text-xl font-medium italic text-white leading-relaxed mb-6">
+          <Card className="bg-white border border-[#E5E7EB] p-6 sm:p-8 rounded-2xl relative overflow-hidden shadow-xs space-y-4">
+            <Quote size={36} className="text-[#FFD21E] absolute top-4 right-4 opacity-40" />
+            <p className="text-base sm:text-lg text-[#1C1C1C] font-medium leading-relaxed italic">
               "{project.testimonial}"
             </p>
-            <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+            <div className="border-t border-[#E5E7EB] pt-3 flex items-center justify-between">
               <div>
-                <p className="font-bold text-white text-base">{project.client_name}</p>
-                <p className="text-xs text-[#0EA5E9] font-medium">{project.client_city}, India</p>
+                <p className="font-bold text-[#1C1C1C] text-sm">{project.client_name}</p>
+                <p className="text-xs text-[#3B82F6] font-semibold">{location}</p>
               </div>
             </div>
           </Card>
         )}
 
-        {/* "Get Similar Results" CTA */}
-        <div className="bg-[#F1F0FE] border border-[#7C3AED]/20 rounded-3xl p-8 sm:p-12 text-center space-y-6">
-          <h2 className="text-3xl font-extrabold text-[#0F1222]">
-            Want Similar Results for Your <GradientText>Indian Brand?</GradientText>
-          </h2>
-          <p className="text-base text-[#4B4F63] max-w-xl mx-auto">
-            Book a free 30-minute consultation and get a tailored growth proposal within 2 hours.
+        {/* CTA */}
+        <Card className="p-8 bg-white border-2 border-[#FFD21E] text-center space-y-4">
+          <h3 className="text-2xl font-bold text-[#1C1C1C]">
+            Want Similar Results for Your Business?
+          </h3>
+          <p className="text-xs text-[#6B7280] max-w-lg mx-auto">
+            Book a free 15-minute strategy call and receive your custom technical proposal within 12 hours.
           </p>
-          <Button href="/contact" variant="primary" size="lg">
-            <span>Get Similar Results — Get a Quote</span>
-            <ArrowRight size={18} />
+          <Button href="/contact" variant="primary" size="md">
+            <span>Book a Free Strategy Call</span>
+            <ArrowRight size={16} />
           </Button>
-        </div>
+        </Card>
       </div>
     </div>
   );
