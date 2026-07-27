@@ -56,7 +56,21 @@ import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import ToastContainer, { ToastMessage } from '@/components/admin/Toast';
 import { TableSkeleton, Skeleton } from '@/components/admin/Skeleton';
 import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory } from '@/types';
-import { getPortfolioProjects, getTestimonials, getBlogPosts } from '@/lib/supabase/data';
+import {
+  getPortfolioProjects,
+  saveProjectToSupabase,
+  deleteProjectFromSupabase,
+  getTestimonials,
+  saveTestimonialToSupabase,
+  deleteTestimonialFromSupabase,
+  getBlogPosts,
+  saveBlogPostToSupabase,
+  deleteBlogPostFromSupabase,
+  getLeadsFromSupabase,
+  updateLeadStatusInSupabase,
+  deleteLeadFromSupabase,
+  deleteTeamMemberFromSupabase,
+} from '@/lib/supabase/data';
 import { useSiteSettings, useTeamMembers } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
 
@@ -213,14 +227,18 @@ export default function AdminDashboardPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [projData, testData, postsData] = await Promise.all([
+        const [projData, testData, postsData, leadsData] = await Promise.all([
           getPortfolioProjects(),
           getTestimonials(),
           getBlogPosts(false),
+          getLeadsFromSupabase(),
         ]);
         setProjects(projData);
         setTestimonials(testData);
         setBlogPosts(postsData);
+        if (leadsData && leadsData.length > 0) {
+          setLeads(leadsData);
+        }
 
         const supabase = createClient();
         const { data } = await supabase.auth.getUser();
@@ -327,7 +345,7 @@ export default function AdminDashboardPage() {
   };
 
   // Portfolio Save Handler
-  const handleSaveProject = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = formData.get('title') as string;
@@ -344,27 +362,23 @@ export default function AdminDashboardPage() {
     const is_featured = formData.get('is_featured') === 'on';
 
     if (editingProject) {
-      setProjects((prev) =>
-        prev.map((p) =>
-          p.id === editingProject.id
-            ? {
-                ...p,
-                title,
-                slug,
-                client_name,
-                client_location,
-                service_type,
-                short_description,
-                full_description,
-                cover_image_url,
-                results,
-                testimonial,
-                live_url,
-                is_featured,
-              }
-            : p
-        )
-      );
+      const updatedItem: PortfolioProject = {
+        ...editingProject,
+        title,
+        slug,
+        client_name,
+        client_location,
+        service_type,
+        short_description,
+        full_description,
+        cover_image_url,
+        results,
+        testimonial,
+        live_url,
+        is_featured,
+      };
+      setProjects((prev) => prev.map((p) => (p.id === editingProject.id ? updatedItem : p)));
+      await saveProjectToSupabase(updatedItem);
       addToast('success', `Project "${title}" updated successfully`);
     } else {
       const newProj: PortfolioProject = {
@@ -385,6 +399,10 @@ export default function AdminDashboardPage() {
         created_at: new Date().toISOString(),
       };
       setProjects((prev) => [newProj, ...prev]);
+      const saved = await saveProjectToSupabase(newProj);
+      if (saved && saved.id) {
+        setProjects((prev) => prev.map((p) => (p.slug === slug ? saved : p)));
+      }
       addToast('success', `Project "${title}" created successfully`);
     }
 
@@ -392,14 +410,16 @@ export default function AdminDashboardPage() {
     setEditingProject(null);
   };
 
-  const handleDeleteProject = (id: string) => {
+  const handleDeleteProject = async (id: string) => {
+    const target = projects.find((p) => p.id === id);
     setProjects((prev) => prev.filter((p) => p.id !== id));
+    await deleteProjectFromSupabase(id, target?.slug);
     addToast('success', 'Project deleted');
     setDeleteConfirmProject(null);
   };
 
   // Testimonial Save Handler
-  const handleSaveTestimonial = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveTestimonial = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const client_name = formData.get('client_name') as string;
@@ -409,13 +429,9 @@ export default function AdminDashboardPage() {
     const rating = parseInt(formData.get('rating') as string) || 5;
 
     if (editingTestimonial) {
-      setTestimonials((prev) =>
-        prev.map((t) =>
-          t.id === editingTestimonial.id
-            ? { ...t, client_name, client_company, client_location, quote, rating }
-            : t
-        )
-      );
+      const updated: Testimonial = { ...editingTestimonial, client_name, client_company, client_location, quote, rating };
+      setTestimonials((prev) => prev.map((t) => (t.id === editingTestimonial.id ? updated : t)));
+      await saveTestimonialToSupabase(updated);
       addToast('success', `Testimonial from "${client_name}" updated`);
     } else {
       const newTest: Testimonial = {
@@ -428,6 +444,10 @@ export default function AdminDashboardPage() {
         created_at: new Date().toISOString(),
       };
       setTestimonials((prev) => [newTest, ...prev]);
+      const saved = await saveTestimonialToSupabase(newTest);
+      if (saved && saved.id) {
+        setTestimonials((prev) => prev.map((t) => (t.id === newTest.id ? saved : t)));
+      }
       addToast('success', `Testimonial from "${client_name}" added`);
     }
 
@@ -435,8 +455,9 @@ export default function AdminDashboardPage() {
     setEditingTestimonial(null);
   };
 
-  const handleDeleteTestimonial = (id: string) => {
+  const handleDeleteTestimonial = async (id: string) => {
     setTestimonials((prev) => prev.filter((t) => t.id !== id));
+    await deleteTestimonialFromSupabase(id);
     addToast('success', 'Testimonial deleted');
     setDeleteConfirmTestimonial(null);
   };
@@ -479,9 +500,10 @@ export default function AdminDashboardPage() {
     setEditingTeamMember(null);
   };
 
-  const handleDeleteTeamMember = (id: string) => {
+  const handleDeleteTeamMember = async (id: string) => {
     const updated = teamMembers.filter((m) => m.id !== id);
     saveTeam(updated);
+    await deleteTeamMemberFromSupabase(id);
     addToast('success', 'Team member profile deleted');
     setDeleteConfirmTeamMember(null);
   };
@@ -494,7 +516,7 @@ export default function AdminDashboardPage() {
   };
 
   // Advanced Blog Post Save Handler
-  const handleSaveBlogPost = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveBlogPost = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = blogTitleText || (formData.get('title') as string);
@@ -518,29 +540,25 @@ export default function AdminDashboardPage() {
     const is_published = formData.get('is_published') === 'on';
 
     if (editingBlogPost) {
-      setBlogPosts((prev) =>
-        prev.map((post) =>
-          post.id === editingBlogPost.id
-            ? {
-                ...post,
-                title,
-                slug,
-                category,
-                target_keyword,
-                secondary_keywords,
-                city,
-                author_name,
-                cover_image_url,
-                excerpt,
-                content,
-                is_published,
-                published_at: is_published
-                  ? post.published_at || new Date().toISOString()
-                  : post.published_at,
-              }
-            : post
-        )
-      );
+      const updated: BlogPost = {
+        ...editingBlogPost,
+        title,
+        slug,
+        category,
+        target_keyword,
+        secondary_keywords,
+        city,
+        author_name,
+        cover_image_url,
+        excerpt,
+        content,
+        is_published,
+        published_at: is_published
+          ? editingBlogPost.published_at || new Date().toISOString()
+          : editingBlogPost.published_at,
+      };
+      setBlogPosts((prev) => prev.map((post) => (post.id === editingBlogPost.id ? updated : post)));
+      await saveBlogPostToSupabase(updated);
       addToast('success', `Blog post "${title}" updated successfully`);
     } else {
       const newPost: BlogPost = {
@@ -560,6 +578,10 @@ export default function AdminDashboardPage() {
         created_at: new Date().toISOString(),
       };
       setBlogPosts((prev) => [newPost, ...prev]);
+      const saved = await saveBlogPostToSupabase(newPost);
+      if (saved && saved.id) {
+        setBlogPosts((prev) => prev.map((p) => (p.slug === slug ? saved : p)));
+      }
       addToast('success', `Blog post "${title}" created successfully`);
     }
 
@@ -567,36 +589,32 @@ export default function AdminDashboardPage() {
     setEditingBlogPost(null);
   };
 
-  const handleDeleteBlogPost = (id: string) => {
+  const handleDeleteBlogPost = async (id: string) => {
+    const target = blogPosts.find((p) => p.id === id);
     setBlogPosts((prev) => prev.filter((p) => p.id !== id));
+    await deleteBlogPostFromSupabase(id, target?.slug);
     addToast('success', 'Blog post deleted');
     setDeleteConfirmBlogPost(null);
   };
 
-  const handleTogglePublishPost = (id: string) => {
-    setBlogPosts((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          const nextPublished = !p.is_published;
-          addToast(
-            'success',
-            `Post "${p.title}" ${nextPublished ? 'published' : 'unpublished'}`
-          );
-          return {
-            ...p,
-            is_published: nextPublished,
-            published_at: nextPublished ? p.published_at || new Date().toISOString() : p.published_at,
-          };
-        }
-        return p;
-      })
-    );
+  const handleTogglePublishPost = async (id: string) => {
+    const target = blogPosts.find((p) => p.id === id);
+    if (!target) return;
+    const nextPublished = !target.is_published;
+    const updated: BlogPost = {
+      ...target,
+      is_published: nextPublished,
+      published_at: nextPublished ? target.published_at || new Date().toISOString() : target.published_at,
+    };
+
+    setBlogPosts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+    await saveBlogPostToSupabase(updated);
+    addToast('success', `Post "${target.title}" ${nextPublished ? 'published' : 'unpublished'}`);
   };
 
-  const handleLeadStatusChange = (id: string, newStatus: Lead['status']) => {
-    setLeads((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l))
-    );
+  const handleLeadStatusChange = async (id: string, newStatus: Lead['status']) => {
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l)));
+    await updateLeadStatusInSupabase(id, newStatus);
     addToast('success', `Lead status updated to ${newStatus?.toUpperCase()}`);
   };
 

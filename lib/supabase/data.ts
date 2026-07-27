@@ -390,3 +390,203 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
     };
   }
 }
+
+// Fetch leads for Admin
+export async function getLeadsFromSupabase(): Promise<Lead[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      return data.map((l: any) => ({
+        ...l,
+        country: l.country || l.city || 'United States',
+      })) as Lead[];
+    }
+  } catch {}
+  return [];
+}
+
+const isUUID = (str?: string) =>
+  typeof str === 'string' &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
+export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
+  try {
+    const supabase = createClient();
+    const payload: any = {
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      cover_image_url: post.cover_image_url,
+      category: post.category,
+      target_keyword: post.target_keyword,
+      secondary_keywords: Array.isArray(post.secondary_keywords)
+        ? post.secondary_keywords.join(', ')
+        : post.secondary_keywords,
+      city: post.city || 'Global',
+      author_name: post.author_name || 'ApexPulse Team',
+      is_published: post.is_published,
+      published_at: post.published_at || (post.is_published ? new Date().toISOString() : null),
+    };
+
+    if (isUUID(post.id)) {
+      payload.id = post.id;
+    }
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .upsert(payload, { onConflict: 'slug' })
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as BlogPost;
+    }
+  } catch (err) {
+    console.error('Error saving blog post to Supabase:', err);
+  }
+  return post;
+}
+
+export async function deleteBlogPostFromSupabase(id: string, slug?: string): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('blog_posts').delete().eq('id', id);
+    } else if (slug) {
+      await supabase.from('blog_posts').delete().eq('slug', slug);
+    }
+  } catch (err) {
+    console.error('Error deleting blog post from Supabase:', err);
+  }
+}
+
+export async function saveProjectToSupabase(project: PortfolioProject): Promise<PortfolioProject> {
+  try {
+    const supabase = createClient();
+    const payload: any = {
+      title: project.title,
+      slug: project.slug,
+      client_name: project.client_name,
+      client_location: project.client_location || project.client_city || 'Austin, USA',
+      service_type: project.service_type,
+      short_description: project.short_description,
+      full_description: project.full_description,
+      cover_image_url: project.cover_image_url,
+      gallery_urls: project.gallery_urls || [project.cover_image_url],
+      results: project.results,
+      testimonial: project.testimonial,
+      live_url: project.live_url,
+      is_featured: project.is_featured,
+    };
+
+    if (isUUID(project.id)) {
+      payload.id = project.id;
+    }
+
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .upsert(payload, { onConflict: 'slug' })
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as PortfolioProject;
+    }
+  } catch (err) {
+    console.error('Error saving project to Supabase:', err);
+  }
+  return project;
+}
+
+export async function deleteProjectFromSupabase(id: string, slug?: string): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('portfolio_projects').delete().eq('id', id);
+    } else if (slug) {
+      await supabase.from('portfolio_projects').delete().eq('slug', slug);
+    }
+  } catch (err) {
+    console.error('Error deleting project from Supabase:', err);
+  }
+}
+
+export async function saveTestimonialToSupabase(t: Testimonial): Promise<Testimonial> {
+  try {
+    const supabase = createClient();
+    const payload: any = {
+      client_name: t.client_name,
+      client_company: t.client_company,
+      client_location: t.client_location || t.client_city || 'USA',
+      quote: t.quote,
+      rating: t.rating || 5,
+    };
+
+    if (isUUID(t.id)) {
+      payload.id = t.id;
+    }
+
+    const { data, error } = await supabase
+      .from('testimonials')
+      .upsert(payload)
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as Testimonial;
+    }
+  } catch (err) {
+    console.error('Error saving testimonial to Supabase:', err);
+  }
+  return t;
+}
+
+export async function deleteTestimonialFromSupabase(id: string): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('testimonials').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error deleting testimonial from Supabase:', err);
+  }
+}
+
+export async function updateLeadStatusInSupabase(id: string, status: Lead['status']): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('leads').update({ status }).eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error updating lead status in Supabase:', err);
+  }
+}
+
+export async function deleteLeadFromSupabase(id: string): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('leads').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error deleting lead from Supabase:', err);
+  }
+}
+
+export async function deleteTeamMemberFromSupabase(id: string): Promise<void> {
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('team_members').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error deleting team member from Supabase:', err);
+  }
+}
