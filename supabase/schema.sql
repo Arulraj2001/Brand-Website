@@ -70,6 +70,23 @@ create table if not exists team_members (
   created_at timestamp with time zone default now()
 );
 
+-- 6. Blog Posts Table (Phase 11 — SEO & Organic Lead Generation)
+create table if not exists blog_posts (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text unique not null,
+  excerpt text,
+  content text not null,
+  cover_image_url text,
+  category text check (category in ('seo', 'web_dev', 'meta_ads', 'lead_gen', 'general')),
+  target_keyword text,
+  city text,
+  author_name text default 'ApexPulse Team',
+  is_published boolean default false,
+  published_at timestamp with time zone,
+  created_at timestamp with time zone default now()
+);
+
 -- Insert Default Site Settings Row
 insert into site_settings (id, phone, whatsapp_number, email, address, linkedin_url, twitter_url, instagram_url)
 values (
@@ -90,12 +107,16 @@ alter table leads enable row level security;
 alter table testimonials enable row level security;
 alter table site_settings enable row level security;
 alter table team_members enable row level security;
+alter table blog_posts enable row level security;
 
 -- Public READ access
 create policy "Allow public read on portfolio_projects" on portfolio_projects for select using (true);
 create policy "Allow public read on testimonials" on testimonials for select using (true);
 create policy "Allow public read on site_settings" on site_settings for select using (true);
 create policy "Allow public read on team_members" on team_members for select using (true);
+
+-- Public SELECT only where is_published = true for blog_posts
+create policy "Allow public read on published blog_posts" on blog_posts for select using (is_published = true);
 
 -- Public INSERT on leads
 create policy "Allow public insert on leads" on leads for insert with check (true);
@@ -106,6 +127,7 @@ create policy "Allow full access for authenticated admin on leads" on leads for 
 create policy "Allow full access for authenticated admin on testimonials" on testimonials for all using (auth.role() = 'authenticated');
 create policy "Allow full access for authenticated admin on site_settings" on site_settings for all using (auth.role() = 'authenticated');
 create policy "Allow full access for authenticated admin on team_members" on team_members for all using (auth.role() = 'authenticated');
+create policy "Allow full access for authenticated admin on blog_posts" on blog_posts for all using (auth.role() = 'authenticated');
 
 -- Storage Bucket Setup & Policies
 insert into storage.buckets (id, name, public)

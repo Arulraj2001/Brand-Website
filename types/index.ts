@@ -1,5 +1,23 @@
 export type ServiceType = 'web_dev' | 'seo' | 'meta_ads' | 'lead_gen';
 
+export type BlogCategory = 'seo' | 'web_dev' | 'meta_ads' | 'lead_gen' | 'general';
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  cover_image_url: string;
+  category: BlogCategory;
+  target_keyword?: string;
+  city?: string;
+  author_name: string;
+  is_published: boolean;
+  published_at?: string;
+  created_at: string;
+}
+
 export interface PortfolioProject {
   id: string;
   title: string;

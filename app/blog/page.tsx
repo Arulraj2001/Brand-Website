@@ -1,115 +1,186 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUpRight, Calendar, Clock, User, BookOpen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowUpRight, Calendar, Clock, Sparkles, BookOpen, MapPin, Tag } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
-
-export const metadata = {
-  title: 'Blog & Insights | Technical SEO & Web Engineering India',
-  description: 'Articles on web application performance, commercial keyword targeting, Meta Ads ROAS, and lead qualification for Indian businesses.',
-};
-
-const BLOG_POSTS = [
-  {
-    title: 'How Much Does Custom Web & App Development Cost in India (2026 Breakdown)',
-    slug: 'nextjs-website-cost-india-2026',
-    excerpt: 'Detailed pricing guide comparing WordPress template costs vs custom web software engineering ROI for Tier 1 Indian companies.',
-    category: 'Engineering',
-    date: 'July 24, 2026',
-    readTime: '6 min read',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    title: 'Commercial Intent Keyword SEO Strategy for Bengaluru & Mumbai Brands',
-    slug: 'commercial-keyword-seo-strategy-india',
-    excerpt: 'How to rank top 3 across local search results in major metro hubs using JSON-LD schemas and high-authority Indian media backlinks.',
-    category: 'SEO',
-    date: 'July 18, 2026',
-    readTime: '8 min read',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    title: 'Scaling Meta Ads ROAS to 5x+ with Instant WhatsApp Lead Funnels',
-    slug: 'scaling-meta-ads-whatsapp-funnel-india',
-    excerpt: 'Step-by-step guide to eliminating fake ad clicks and routing verified +91 mobile leads straight to your sales team.',
-    category: 'Performance Ads',
-    date: 'July 10, 2026',
-    readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80',
-  },
-];
+import { BlogPost, BlogCategory } from '@/types';
+import { getBlogPosts } from '@/lib/supabase/data';
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [filter, setFilter] = useState<string>('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      const data = await getBlogPosts(true);
+      setPosts(data);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
+
+  const filteredPosts =
+    filter === 'all' ? posts : posts.filter((p) => p.category === filter);
+
   return (
-    <div className="pt-32 pb-24 bg-[#F7F8FB] min-h-screen bg-line-pattern">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <div className="max-w-[1200px] mx-auto px-4 space-y-10">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F1F0FE] text-[#4F46E5] text-xs font-bold uppercase tracking-wider border border-[#4F46E5]/20">
-            <BookOpen size={14} /> Knowledge & SEO Hub
+        <div className="max-w-3xl mx-auto text-center space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
+            <BookOpen size={14} className="text-[#1C1C1C]" />
+            Growth Insights & SEO Hub
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0F1222] tracking-tight">
-            Growth Insights & <GradientText>Web Engineering Guides</GradientText>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
+            Engineering Insights & <GradientText>Search Strategy Guides</GradientText>
           </h1>
-          <p className="text-lg text-[#4B4F63] leading-relaxed">
-            Actionable strategies on web application speed, search engine dominance, and performance marketing in India.
+          <p className="text-base text-[#6B7280] leading-relaxed">
+            Actionable strategies on sub-second web architecture, search engine dominance across Indian metro hubs, and high-ROAS lead acquisition.
           </p>
         </div>
 
-        {/* Blog Post Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {BLOG_POSTS.map((post) => (
-            <Card
-              key={post.slug}
-              className="flex flex-col justify-between bg-white border border-[#E7E8F0] rounded-3xl overflow-hidden hover:border-[#7C3AED]/40 hover:shadow-[0_12px_36px_rgba(79,70,229,0.12)] transition-all group p-0"
+        {/* Filter Pills Bar */}
+        <div className="flex flex-wrap justify-center items-center gap-2">
+          {[
+            { id: 'all', label: 'All Articles' },
+            { id: 'seo', label: 'SEO Dominance' },
+            { id: 'web_dev', label: 'Web Engineering' },
+            { id: 'meta_ads', label: 'Meta & LinkedIn Ads' },
+            { id: 'lead_gen', label: 'Lead Generation' },
+            { id: 'general', label: 'Industry Insights' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setFilter(item.id)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+                filter === item.id
+                  ? 'bg-[#FF9D00] text-white shadow-xs'
+                  : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
+              }`}
             >
-              <div className="relative h-56 w-full overflow-hidden bg-[#F1F0FE]">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-[#4F46E5]">
-                  {post.category}
-                </span>
-              </div>
-
-              <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3 text-xs text-[#9497AC]">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} /> {post.date}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} /> {post.readTime}
-                    </span>
-                  </div>
-
-                  <h2 className="text-xl font-bold text-[#0F1222] group-hover:text-[#4F46E5] transition-colors leading-snug">
-                    {post.title}
-                  </h2>
-
-                  <p className="text-sm text-[#4B4F63] line-clamp-3 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-[#E7E8F0] flex items-center justify-between">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0F1222] group-hover:text-[#4F46E5] transition-colors"
-                  >
-                    <span>Read Article</span>
-                    <ArrowUpRight size={16} />
-                  </Link>
-                </div>
-              </div>
-            </Card>
+              {item.label}
+            </button>
           ))}
         </div>
+
+        {/* Blog Post Cards Grid */}
+        {loading ? (
+          <div className="py-16 text-center text-[#6B7280] font-medium text-sm">
+            Loading published articles...
+          </div>
+        ) : (
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+            <AnimatePresence>
+              {filteredPosts.map((post) => {
+                const pubDate = post.published_at || post.created_at;
+                const formattedDate = pubDate
+                  ? new Date(pubDate).toLocaleDateString('en-IN', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })
+                  : 'Recent';
+
+                // Rough read time calculation (200 words/min)
+                const wordCount = post.content ? post.content.split(/\s+/).length : 300;
+                const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
+
+                return (
+                  <motion.div
+                    layout
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.25 }}
+                    className="flex col-span-1"
+                  >
+                    <Card className="flex flex-col justify-between w-full p-0 overflow-hidden group">
+                      {/* Cover Image Container */}
+                      <div className="relative h-48 w-full overflow-hidden bg-[#F9FAFB]">
+                        <Image
+                          src={
+                            post.cover_image_url ||
+                            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                          }
+                          alt={post.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/60 via-transparent to-transparent opacity-80" />
+
+                        {/* Category Badge */}
+                        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                          <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
+                            {post.category === 'web_dev'
+                              ? 'Web Dev'
+                              : post.category === 'seo'
+                              ? 'SEO'
+                              : post.category === 'meta_ads'
+                              ? 'Meta Ads'
+                              : post.category === 'lead_gen'
+                              ? 'Lead Gen'
+                              : 'General'}
+                          </span>
+                        </div>
+
+                        {post.city && (
+                          <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
+                            <MapPin size={10} className="text-[#3B82F6]" />
+                            {post.city}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content Body */}
+                      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2 text-[11px] text-[#6B7280] font-semibold">
+                            <span className="flex items-center gap-1">
+                              <Calendar size={11} /> {formattedDate}
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                              <Clock size={11} /> {readTimeMinutes} min read
+                            </span>
+                          </div>
+
+                          <h2 className="font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-base line-clamp-2 leading-snug">
+                            {post.title}
+                          </h2>
+
+                          <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed">
+                            {post.excerpt}
+                          </p>
+                        </div>
+
+                        {/* Author & Read Link Bar */}
+                        <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between">
+                          <span className="text-[11px] font-semibold text-[#6B7280] truncate max-w-[120px]">
+                            By {post.author_name}
+                          </span>
+                          <Link
+                            href={`/blog/${post.slug}`}
+                            className="inline-flex items-center gap-1 text-xs font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors min-h-[44px]"
+                          >
+                            <span>Read Article</span>
+                            <ArrowUpRight size={13} />
+                          </Link>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
     </div>
   );

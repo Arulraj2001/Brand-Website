@@ -33,6 +33,10 @@ import {
   User,
   Link2,
   Send,
+  FileText,
+  Tag,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
@@ -40,8 +44,8 @@ import Button from '@/components/ui/Button';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import ToastContainer, { ToastMessage } from '@/components/admin/Toast';
 import { TableSkeleton, Skeleton } from '@/components/admin/Skeleton';
-import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember } from '@/types';
-import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
+import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory } from '@/types';
+import { getPortfolioProjects, getTestimonials, getBlogPosts } from '@/lib/supabase/data';
 import { useSiteSettings, useTeamMembers } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
 
@@ -97,10 +101,11 @@ const INITIAL_LEADS: Lead[] = [
 ];
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog'>('overview');
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [userEmail, setUserEmail] = useState<string>('admin@apexpulse.in');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -123,6 +128,9 @@ export default function AdminDashboardPage() {
   const [leadSearch, setLeadSearch] = useState('');
   const [leadStatusFilter, setLeadStatusFilter] = useState('all');
 
+  const [blogSearch, setBlogSearch] = useState('');
+  const [blogCategoryFilter, setBlogCategoryFilter] = useState('all');
+
   // Modal States
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
@@ -135,6 +143,10 @@ export default function AdminDashboardPage() {
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null);
   const [deleteConfirmTeamMember, setDeleteConfirmTeamMember] = useState<TeamMember | null>(null);
+
+  const [blogModalOpen, setBlogModalOpen] = useState(false);
+  const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+  const [deleteConfirmBlogPost, setDeleteConfirmBlogPost] = useState<BlogPost | null>(null);
 
   const router = useRouter();
 
@@ -152,12 +164,14 @@ export default function AdminDashboardPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [projData, testData] = await Promise.all([
+        const [projData, testData, postsData] = await Promise.all([
           getPortfolioProjects(),
           getTestimonials(),
+          getBlogPosts(false),
         ]);
         setProjects(projData);
         setTestimonials(testData);
+        setBlogPosts(postsData);
 
         // Get user session if Supabase Auth is enabled
         const supabase = createClient();
@@ -352,6 +366,102 @@ export default function AdminDashboardPage() {
     addToast('success', 'Global contact settings & social links updated across all pages');
   };
 
+  // Blog Post Save Handler
+  const handleSaveBlogPost = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get('title') as string;
+    const slug =
+      (formData.get('slug') as string) ||
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+    const category = (formData.get('category') as BlogCategory) || 'seo';
+    const target_keyword = formData.get('target_keyword') as string;
+    const city = formData.get('city') as string;
+    const author_name = (formData.get('author_name') as string) || 'ApexPulse Team';
+    const cover_image_url =
+      (formData.get('cover_image_url') as string) ||
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+    const excerpt = formData.get('excerpt') as string;
+    const content = formData.get('content') as string;
+    const is_published = formData.get('is_published') === 'on';
+
+    if (editingBlogPost) {
+      setBlogPosts((prev) =>
+        prev.map((post) =>
+          post.id === editingBlogPost.id
+            ? {
+                ...post,
+                title,
+                slug,
+                category,
+                target_keyword,
+                city,
+                author_name,
+                cover_image_url,
+                excerpt,
+                content,
+                is_published,
+                published_at: is_published
+                  ? post.published_at || new Date().toISOString()
+                  : post.published_at,
+              }
+            : post
+        )
+      );
+      addToast('success', `Blog post "${title}" updated successfully`);
+    } else {
+      const newPost: BlogPost = {
+        id: Math.random().toString(36).substring(2, 9),
+        title,
+        slug,
+        category,
+        target_keyword,
+        city,
+        author_name,
+        cover_image_url,
+        excerpt,
+        content,
+        is_published,
+        published_at: is_published ? new Date().toISOString() : undefined,
+        created_at: new Date().toISOString(),
+      };
+      setBlogPosts((prev) => [newPost, ...prev]);
+      addToast('success', `Blog post "${title}" created successfully`);
+    }
+
+    setBlogModalOpen(false);
+    setEditingBlogPost(null);
+  };
+
+  const handleDeleteBlogPost = (id: string) => {
+    setBlogPosts((prev) => prev.filter((p) => p.id !== id));
+    addToast('success', 'Blog post deleted');
+    setDeleteConfirmBlogPost(null);
+  };
+
+  const handleTogglePublishPost = (id: string) => {
+    setBlogPosts((prev) =>
+      prev.map((p) => {
+        if (p.id === id) {
+          const nextPublished = !p.is_published;
+          addToast(
+            'success',
+            `Post "${p.title}" ${nextPublished ? 'published' : 'unpublished'}`
+          );
+          return {
+            ...p,
+            is_published: nextPublished,
+            published_at: nextPublished ? p.published_at || new Date().toISOString() : p.published_at,
+          };
+        }
+        return p;
+      })
+    );
+  };
+
   // Lead Status Update Handler
   const handleLeadStatusChange = (id: string, newStatus: Lead['status']) => {
     setLeads((prev) =>
@@ -384,6 +494,17 @@ export default function AdminDashboardPage() {
     return matchesSearch;
   });
 
+  const filteredBlogPosts = blogPosts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
+      post.slug.toLowerCase().includes(blogSearch.toLowerCase()) ||
+      (post.target_keyword && post.target_keyword.toLowerCase().includes(blogSearch.toLowerCase())) ||
+      (post.city && post.city.toLowerCase().includes(blogSearch.toLowerCase()));
+
+    if (blogCategoryFilter !== 'all') return matchesSearch && post.category === blogCategoryFilter;
+    return matchesSearch;
+  });
+
   // Overview Counts
   const totalLeads = leads.length;
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;
@@ -396,6 +517,7 @@ export default function AdminDashboardPage() {
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
     { id: 'leads', label: 'Leads Queue', icon: Users },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
+    { id: 'blog', label: 'Blog Posts', icon: FileText },
     { id: 'team', label: 'Team Architects', icon: UserCheck },
     { id: 'settings', label: 'Site Settings', icon: SettingsIcon },
   ];
@@ -515,11 +637,15 @@ export default function AdminDashboardPage() {
 
                 <Card className="p-4 bg-white border border-[#E5E7EB]">
                   <div className="flex items-center justify-between text-xs font-bold text-[#6B7280] mb-1">
-                    <span>CLOSED / WON DEALS</span>
-                    <CheckCircle2 size={16} className="text-[#10B981]" />
+                    <span>PUBLISHED BLOG POSTS</span>
+                    <FileText size={16} className="text-[#3B82F6]" />
                   </div>
-                  <p className="text-3xl font-extrabold text-[#10B981] font-mono-stats">{wonLeadsCount}</p>
-                  <p className="text-[11px] text-[#6B7280] mt-1">Verified Revenue Pipeline</p>
+                  <p className="text-3xl font-extrabold text-[#1C1C1C] font-mono-stats">
+                    {blogPosts.filter((b) => b.is_published).length}
+                  </p>
+                  <p className="text-[11px] text-[#6B7280] mt-1">
+                    {blogPosts.length} Total Draft & Live Posts
+                  </p>
                 </Card>
 
                 <Card className="p-4 bg-white border border-[#E5E7EB]">
@@ -849,7 +975,117 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 5: TEAM ARCHITECTS MANAGER ("Meet the Growth Architects") */}
+        {/* TAB 5: BLOG POSTS MANAGER (Phase 11 — SEO & Organic Lead Gen) */}
+        {activeTab === 'blog' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Blog Posts Manager</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Create, edit, publish, or delete India SEO articles with keyword & city targeting
+                </p>
+              </div>
+              <Button onClick={() => { setEditingBlogPost(null); setBlogModalOpen(true); }} variant="primary" size="sm">
+                <Plus size={14} />
+                <span>Add New Post</span>
+              </Button>
+            </div>
+
+            {/* Search & Category Filter Toolbar */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 bg-[#F9FAFB] p-2.5 rounded-lg border border-[#E5E7EB]">
+              <div className="relative flex-1 w-full">
+                <Search size={14} className="absolute left-3 top-2.5 text-[#9CA3AF]" />
+                <input
+                  type="text"
+                  value={blogSearch}
+                  onChange={(e) => setBlogSearch(e.target.value)}
+                  placeholder="Search posts by title, slug, keyword, or city..."
+                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
+                <Filter size={14} className="text-[#6B7280] shrink-0" />
+                {['all', 'seo', 'web_dev', 'meta_ads', 'lead_gen', 'general'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setBlogCategoryFilter(cat)}
+                    className={`px-2.5 py-1 rounded-[4px] text-xs font-bold uppercase whitespace-nowrap transition-all ${
+                      blogCategoryFilter === cat
+                        ? 'bg-[#FF9D00] text-white'
+                        : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
+                    }`}
+                  >
+                    {cat === 'all' ? 'All' : cat.replace('_', ' ')}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Blog Posts Table */}
+            <div className="border border-[#E5E7EB] rounded-lg overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[#E5E7EB] bg-[#F9FAFB] text-[#6B7280] font-bold uppercase">
+                    <th className="py-2.5 px-3">Article Title & Slug</th>
+                    <th className="py-2.5 px-3">Category</th>
+                    <th className="py-2.5 px-3">SEO Keyword & City</th>
+                    <th className="py-2.5 px-3">Status</th>
+                    <th className="py-2.5 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E5E7EB]">
+                  {filteredBlogPosts.map((post) => (
+                    <tr key={post.id} className="hover:bg-[#F9FAFB] transition-colors">
+                      <td className="py-3 px-3">
+                        <p className="font-bold text-[#1C1C1C] max-w-sm truncate">{post.title}</p>
+                        <p className="text-[11px] text-[#6B7280]">/blog/{post.slug}</p>
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-0.5 rounded-[4px] font-bold uppercase text-[10px] bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20">
+                          {post.category.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <p className="font-semibold text-[#FF9D00]">{post.target_keyword || '—'}</p>
+                        <p className="text-[11px] text-[#6B7280]">{post.city || 'National'}</p>
+                      </td>
+                      <td className="py-3 px-3">
+                        <button
+                          onClick={() => handleTogglePublishPost(post.id)}
+                          className={`px-2 py-0.5 rounded-[4px] font-bold text-[10px] border flex items-center gap-1 transition-all ${
+                            post.is_published
+                              ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30'
+                              : 'bg-[#6B7280]/15 text-[#6B7280] border-[#6B7280]/30'
+                          }`}
+                        >
+                          {post.is_published ? <Eye size={11} /> : <EyeOff size={11} />}
+                          <span>{post.is_published ? 'LIVE (Published)' : 'Draft'}</span>
+                        </button>
+                      </td>
+                      <td className="py-3 px-3 text-right space-x-2">
+                        <button
+                          onClick={() => { setEditingBlogPost(post); setBlogModalOpen(true); }}
+                          className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C] transition-colors"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirmBlogPost(post)}
+                          className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444] transition-colors"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: TEAM ARCHITECTS MANAGER ("Meet the Growth Architects") */}
         {activeTab === 'team' && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -916,7 +1152,7 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 6: SITE CONTACT SETTINGS MANAGER */}
+        {/* TAB 7: SITE CONTACT SETTINGS MANAGER */}
         {activeTab === 'settings' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -1050,6 +1286,176 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </main>
+
+      {/* BLOG POST MODAL */}
+      {blogModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white border border-[#E5E7EB] rounded-[10px] p-6 space-y-4 my-8">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+              <h3 className="font-bold text-lg text-[#1C1C1C]">
+                {editingBlogPost ? 'Edit Blog Post' : 'Add New Blog Post'}
+              </h3>
+              <button onClick={() => setBlogModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C]">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveBlogPost} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Article Title *</label>
+                <input
+                  name="title"
+                  required
+                  defaultValue={editingBlogPost?.title || ''}
+                  placeholder="e.g. SEO Services in Bangalore: What Works in 2026"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">URL Slug</label>
+                  <input
+                    name="slug"
+                    defaultValue={editingBlogPost?.slug || ''}
+                    placeholder="seo-services-in-bangalore-2026"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Category *</label>
+                  <select
+                    name="category"
+                    defaultValue={editingBlogPost?.category || 'seo'}
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  >
+                    <option value="seo">SEO Dominance</option>
+                    <option value="web_dev">Web Engineering</option>
+                    <option value="meta_ads">Meta & LinkedIn Ads</option>
+                    <option value="lead_gen">Lead Generation</option>
+                    <option value="general">General Industry</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Keyword</label>
+                  <input
+                    name="target_keyword"
+                    defaultValue={editingBlogPost?.target_keyword || ''}
+                    placeholder="e.g. SEO Services in Bangalore"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target City (Optional)</label>
+                  <input
+                    name="city"
+                    defaultValue={editingBlogPost?.city || ''}
+                    placeholder="e.g. Bengaluru"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Author Name *</label>
+                  <input
+                    name="author_name"
+                    required
+                    defaultValue={editingBlogPost?.author_name || 'ApexPulse Team'}
+                    placeholder="ApexPulse Team"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL *</label>
+                <input
+                  name="cover_image_url"
+                  defaultValue={editingBlogPost?.cover_image_url || ''}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Excerpt / Summary *</label>
+                <textarea
+                  name="excerpt"
+                  required
+                  rows={2}
+                  defaultValue={editingBlogPost?.excerpt || ''}
+                  placeholder="Brief 1-2 sentence meta description..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Full Article Content (Markdown) *</label>
+                <textarea
+                  name="content"
+                  required
+                  rows={6}
+                  defaultValue={editingBlogPost?.content || ''}
+                  placeholder="# Article Heading&#10;&#10;Write markdown article content here..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] font-mono focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="is_published"
+                  name="is_published"
+                  defaultChecked={editingBlogPost?.is_published ?? true}
+                  className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
+                />
+                <label htmlFor="is_published" className="text-xs font-semibold text-[#1C1C1C]">
+                  Publish Article (Make visible to public visitors & sitemap.xml)
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" onClick={() => setBlogModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Article
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* BLOG POST DELETE CONFIRM MODAL */}
+      {deleteConfirmBlogPost && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Confirm Delete</h3>
+            <p className="text-xs text-[#6B7280]">
+              Are you sure you want to delete article <strong className="text-[#1C1C1C]">{deleteConfirmBlogPost.title}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmBlogPost(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteBlogPost(deleteConfirmBlogPost.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete Article
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TEAM MEMBER MODAL */}
       {teamModalOpen && (

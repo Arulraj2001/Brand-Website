@@ -1,125 +1,278 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Clock, User, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import {
+  Calendar,
+  Clock,
+  User,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  MapPin,
+  Tag,
+  Share2,
+  BookOpen,
+} from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
 
-interface BlogArticleProps {
+interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return [
-    { slug: 'nextjs-website-cost-india-2026' },
-    { slug: 'commercial-keyword-seo-strategy-india' },
-    { slug: 'scaling-meta-ads-whatsapp-funnel-india' },
-  ];
+  const posts = await getBlogPosts(true);
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({ params }: BlogArticleProps) {
+export async function generateMetadata({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const title = slug.replace(/-/g, ' ').toUpperCase();
+  const post = await getBlogPostBySlug(slug);
+
+  if (!post || !post.is_published) {
+    return {
+      title: 'Article Not Found',
+    };
+  }
+
+  const siteUrl = 'https://apexpulse.in';
+  const postUrl = `${siteUrl}/blog/${post.slug}`;
+
   return {
-    title: `${title} | ApexPulse India Blog`,
-    description: `Read technical insights on ${title} for Indian business growth.`,
+    title: `${post.title} | ApexPulse Growth Hub`,
+    description: post.excerpt || `Read ${post.title} on ApexPulse India.`,
+    alternates: {
+      canonical: postUrl,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: postUrl,
+      type: 'article',
+      publishedTime: post.published_at || post.created_at,
+      authors: [post.author_name || 'ApexPulse Team'],
+      images: [
+        {
+          url: post.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [post.cover_image_url],
+    },
   };
 }
 
-export default async function BlogArticlePage({ params }: BlogArticleProps) {
+export default async function BlogPostDetailPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
+
+  if (!post || !post.is_published) {
+    notFound();
+  }
+
+  const allPublished = await getBlogPosts(true);
+  const relatedPosts = allPublished
+    .filter((p) => p.slug !== post.slug && p.category === post.category)
+    .slice(0, 3);
+
+  // Fallback to general related if no category match
+  const finalRelated =
+    relatedPosts.length > 0
+      ? relatedPosts
+      : allPublished.filter((p) => p.slug !== post.slug).slice(0, 3);
+
+  const wordCount = post.content ? post.content.split(/\s+/).length : 300;
+  const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
+
+  const pubDate = post.published_at || post.created_at;
+  const formattedDate = pubDate
+    ? new Date(pubDate).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : 'Recent';
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt,
+    image: post.cover_image_url,
+    datePublished: post.published_at || post.created_at,
+    author: {
+      '@type': 'Person',
+      name: post.author_name || 'ApexPulse Team',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'ApexPulse Digital Agency India',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://apexpulse.in/logo.png',
+      },
+    },
+  };
 
   return (
-    <div className="pt-32 pb-24 bg-[#F7F8FB] min-h-screen bg-line-pattern">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+
+      <article className="max-w-4xl mx-auto px-4 space-y-8">
+        {/* Back Link */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-bold text-[#4B4F63] hover:text-[#4F46E5] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C] transition-colors"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={14} />
           <span>Back to All Articles</span>
         </Link>
 
-        {/* Article Header */}
+        {/* Hero Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-3 text-xs text-[#9497AC]">
-            <span className="bg-[#F1F0FE] text-[#4F46E5] font-bold px-3 py-1 rounded-full uppercase">
-              Engineering & Growth
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-[4px] bg-[#3B82F6] text-white text-xs font-bold uppercase">
+              {post.category === 'web_dev'
+                ? 'Web Engineering'
+                : post.category === 'seo'
+                ? 'SEO Dominance'
+                : post.category === 'meta_ads'
+                ? 'Meta Ads'
+                : post.category === 'lead_gen'
+                ? 'Lead Generation'
+                : 'General'}
             </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Calendar size={14} /> July 2026
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Clock size={14} /> 6 min read
-            </span>
+
+            {post.city && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1C1C] bg-white px-2.5 py-0.5 rounded-[4px] border border-[#E5E7EB]">
+                <MapPin size={11} className="text-[#3B82F6]" />
+                {post.city}, India
+              </span>
+            )}
+
+            {post.target_keyword && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#FF9D00] bg-[#FFF9E6] px-2.5 py-0.5 rounded-[4px] border border-[#FFD21E]/60">
+                <Tag size={11} className="text-[#FF9D00]" />
+                {post.target_keyword}
+              </span>
+            )}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F1222] tracking-tight leading-tight">
-            How Much Does Custom Web & App Development Cost in India? <GradientText>(2026 Guide)</GradientText>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
+            {post.title}
           </h1>
+
+          <div className="flex items-center gap-4 text-xs font-semibold text-[#6B7280] pt-1">
+            <span className="flex items-center gap-1">
+              <User size={13} className="text-[#FF9D00]" /> {post.author_name}
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <Calendar size={13} /> {formattedDate}
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <Clock size={13} /> {readTimeMinutes} min read
+            </span>
+          </div>
         </div>
 
-        {/* Hero Image */}
-        <div className="relative h-96 w-full rounded-3xl overflow-hidden border border-[#E7E8F0] shadow-md">
+        {/* Hero Cover Image */}
+        <div className="relative h-64 sm:h-[400px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-xs bg-white">
           <Image
-            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
-            alt="Custom Web & Mobile App Development Cost India"
+            src={
+              post.cover_image_url ||
+              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+            }
+            alt={post.title}
             fill
+            priority
+            sizes="(max-width: 768px) 100vw, 80vw"
             className="object-cover"
           />
         </div>
 
-        {/* Body Content */}
-        <Card className="bg-white p-8 sm:p-12 space-y-6 text-[#4B4F63] leading-relaxed">
-          <h2 className="text-2xl font-bold text-[#0F1222]">The Evolution of Web Development in India</h2>
-          <p>
-            For over a decade, Indian agencies defaulted to cheap WordPress or PHP templates. While these worked for basic brochure sites, they quickly become slow, bloated with plugins, and vulnerable to security breaches as traffic scales.
-          </p>
-
-          <h3 className="text-xl font-bold text-[#0F1222]">Why Modern Ambitious Brands Choose Custom Web Software</h3>
-          <p>
-            Modern server-rendered web architectures provide static generation and edge API routes that load in less than 0.8 seconds even on mobile networks across Tier 2 Indian cities.
-          </p>
-
-          <div className="p-6 bg-[#F1F0FE] border-l-4 border-[#4F46E5] rounded-r-2xl space-y-2">
-            <p className="font-bold text-[#0F1222] text-sm">Key Takeaway for Founders:</p>
-            <p className="text-xs text-[#4B4F63]">
-              A custom engineered web portal reduces user drop-off by up to 40% compared to legacy WordPress templates, delivering immediate return on investment for ad campaigns.
+        {/* Main Content Body */}
+        <Card className="p-6 sm:p-10 bg-white border border-[#E5E7EB] space-y-6 text-[#1C1C1C] leading-relaxed">
+          {post.excerpt && (
+            <p className="text-base sm:text-lg font-semibold text-[#6B7280] italic border-l-4 border-[#FF9D00] pl-4 py-1">
+              "{post.excerpt}"
             </p>
-          </div>
+          )}
 
-          <h3 className="text-xl font-bold text-[#0F1222]">Budget Ranges for Web & App Development in India</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-2 font-semibold text-[#0F1222]">
-              <CheckCircle2 size={16} className="text-[#10B981]" />
-              <strong>₹25,000 – ₹50,000:</strong> Custom Web & App Marketing Site (5-8 Pages + Supabase Integration)
-            </div>
-            <div className="flex items-center gap-2 font-semibold text-[#0F1222]">
-              <CheckCircle2 size={16} className="text-[#10B981]" />
-              <strong>₹50,000 – ₹100,000:</strong> High-Converting Web Application + Custom Dashboard & WhatsApp Lead Webhooks
-            </div>
-            <div className="flex items-center gap-2 font-semibold text-[#0F1222]">
-              <CheckCircle2 size={16} className="text-[#10B981]" />
-              <strong>₹100,000+:</strong> Enterprise Platform with Multi-Tenant Auth, Payment Gateway & Custom Database
-            </div>
+          {/* Simple Structured Markdown / HTML Renderer */}
+          <div className="space-y-4 text-sm sm:text-base text-[#1C1C1C] whitespace-pre-line font-sans">
+            {post.content}
           </div>
         </Card>
 
-        {/* CTA */}
-        <div className="bg-[#F1F0FE] border border-[#7C3AED]/20 p-8 sm:p-12 rounded-3xl text-center space-y-4">
-          <h2 className="text-2xl font-extrabold text-[#0F1222]">Ready to Build a Custom Web & App Platform?</h2>
-          <p className="text-sm text-[#4B4F63] max-w-md mx-auto">
-            Book a free strategy session with our lead architects in Bengaluru.
-          </p>
-          <Button href="/contact" variant="primary" size="lg">
-            <span>Get a Custom Proposal</span>
-            <ArrowRight size={18} />
+        {/* Free Consultation CTA Block */}
+        <Card className="p-6 sm:p-8 bg-white border-2 border-[#FFD21E] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold">
+              <Sparkles size={13} /> Ready to Scale Your Organic Pipeline?
+            </div>
+            <h3 className="text-xl font-bold text-[#1C1C1C]">
+              Get a Free Growth & Technical SEO Audit
+            </h3>
+            <p className="text-xs text-[#6B7280]">
+              Our engineering team will analyze your site speed, keyword gaps, and conversion funnel for free.
+            </p>
+          </div>
+
+          <Button href="/contact" variant="primary" size="md" className="shrink-0">
+            <span>Get Free Consultation</span>
+            <ArrowRight size={15} />
           </Button>
-        </div>
-      </div>
+        </Card>
+
+        {/* Related Posts Section (2-3 posts from same category) */}
+        {finalRelated.length > 0 && (
+          <div className="pt-8 border-t border-[#E5E7EB] space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-[#1C1C1C]">Related Articles</h3>
+              <Link href="/blog" className="text-xs font-bold text-[#FF9D00] hover:underline">
+                View All Articles →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {finalRelated.map((rel) => (
+                <Card key={rel.id} className="p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold text-[#3B82F6] uppercase">
+                      {rel.category.replace('_', ' ')}
+                    </span>
+                    <h4 className="font-bold text-sm text-[#1C1C1C] line-clamp-2 hover:text-[#FF9D00] transition-colors">
+                      <Link href={`/blog/${rel.slug}`}>{rel.title}</Link>
+                    </h4>
+                  </div>
+                  <Link
+                    href={`/blog/${rel.slug}`}
+                    className="text-xs font-bold text-[#FF9D00] hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Read Article</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </article>
     </div>
   );
 }
