@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --brand-yellow: #FFD21E;
+  --primary-orange: #FF9D00;
+  --accent-blue: #3B82F6;
+  --text-primary: #1C1C1C;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --bg-primary: #FFFFFF;
+  --surface: #F9FAFB;
+  --surface-warm: #FFF9E6;
+  --border: #E5E7EB;
+  --success: #10B981;
+  --error: #EF4444;
+  --warning: #F59E0B;
+  
+  --shadow-raised: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-overlay: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-orange-hover: 0 2px 8px rgba(255, 157, 0, 0.15);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-source-sans), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+.font-mono-stats {
+  font-family: var(--font-source-code), monospace;
+}
+
+.hf-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.hf-card:hover {
+  border-color: #FF9D00;
+  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.12);
+}
+
+.hf-card-featured {
+  background-color: #FFF9E6;
+  border: 1px solid #FFD21E;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(255, 157, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+}
+
+.hf-card-featured:hover {
+  border-color: #FF9D00;
+  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.15);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #1C1C1C 0%, #FF9D00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 157, 0, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-line-pattern {
+  background-image: repeating-linear-gradient(45deg, rgba(255, 210, 30, 0.04) 0, rgba(255, 210, 30, 0.04) 1px, transparent 0, transparent 32px);
+}
+
+.glass-nav {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #E5E7EB;
+}
