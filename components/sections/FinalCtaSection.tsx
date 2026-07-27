@@ -14,11 +14,11 @@ export default function FinalCtaSection() {
         </div>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight max-w-3xl mx-auto">
-          Let’s Build a Digital Platform That Drives <span className="text-[#FF9D00]">Verified USD Revenue</span>
+          Scale Your Business with Sub-Second Engineering & <span className="text-[#FF9D00]">Verified Growth</span>
         </h2>
 
-        <p className="text-base text-[#6B7280] max-w-xl mx-auto leading-relaxed">
-          Book a free 15-minute strategy call with our software architects and performance growth leads. Get your custom proposal within 12 hours.
+        <p className="text-base text-[#6B7280] max-w-2xl mx-auto leading-relaxed">
+          Partner with senior software architects and performance leads to replace legacy websites, achieve 100/100 Core Web Vitals speed scores, and launch high-converting UGC video ad campaigns. Receive your custom strategy proposal within 12 hours.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -35,11 +35,11 @@ export default function FinalCtaSection() {
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 size={15} className="text-[#10B981]" />
-            Free Technical Audit Included
+            Free Technical & Speed Audit Included
           </span>
           <span className="flex items-center gap-1.5">
             <ShieldCheck size={15} className="text-[#3B82F6]" />
-            Stripe & PayPal Accepted
+            Stripe & PayPal Accepted Worldwide
           </span>
         </div>
       </div>

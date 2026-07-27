@@ -104,6 +104,15 @@ values (
 )
 on conflict (id) do nothing;
 
+-- 7. Exchange Rates Table (Phase 14)
+create table if not exists exchange_rates (
+  id uuid primary key default gen_random_uuid(),
+  base_currency text default 'USD',
+  target_currency text not null unique,
+  rate numeric not null,
+  updated_at timestamp with time zone default now()
+);
+
 -- RLS Security Policies
 alter table portfolio_projects enable row level security;
 alter table leads enable row level security;
@@ -111,12 +120,14 @@ alter table testimonials enable row level security;
 alter table site_settings enable row level security;
 alter table team_members enable row level security;
 alter table blog_posts enable row level security;
+alter table exchange_rates enable row level security;
 
 -- Public READ access
 create policy "Allow public read on portfolio_projects" on portfolio_projects for select using (true);
 create policy "Allow public read on testimonials" on testimonials for select using (true);
 create policy "Allow public read on site_settings" on site_settings for select using (true);
 create policy "Allow public read on team_members" on team_members for select using (true);
+create policy "Allow public read on exchange_rates" on exchange_rates for select using (true);
 
 -- Public SELECT only where is_published = true for blog_posts
 create policy "Allow public read on published blog_posts" on blog_posts for select using (is_published = true);

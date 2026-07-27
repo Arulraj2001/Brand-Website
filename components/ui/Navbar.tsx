@@ -5,15 +5,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Sparkles, PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
 import Button from './Button';
+import CurrencySelector from './CurrencySelector';
 import { useSiteSettings } from '@/lib/useSiteData';
+import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function Navbar() {
   const { settings } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setScrolled(true);
@@ -34,7 +38,8 @@ export default function Navbar() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const cleanPhoneTel = settings.phone.replace(/[^0-9+]/g, '');
+  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const cleanPhoneTel = activeSettings.phone.replace(/[^0-9+]/g, '');
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-[#E5E7EB] h-[56px] flex items-center">
@@ -78,13 +83,14 @@ export default function Navbar() {
         </nav>
 
         {/* CTA Right */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
+          <CurrencySelector />
           <a
             href={`tel:${cleanPhoneTel}`}
             className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"
           >
             <PhoneCall size={14} className="text-[#FF9D00]" />
-            {settings.phone}
+            {activeSettings.phone}
           </a>
           <Button href="/contact" variant="primary" size="sm">
             <span>Book a Call</span>

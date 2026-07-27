@@ -7,6 +7,7 @@ import GradientText from '@/components/ui/GradientText';
 const GLOBAL_REGIONS = [
   { flag: '🇺🇸', name: 'United States', detail: 'Austin, NYC, SF, Chicago, Miami' },
   { flag: '🇬🇧', name: 'United Kingdom', detail: 'London, Manchester, Edinburgh' },
+  { flag: '🇮🇳', name: 'India', detail: 'Bangalore, Mumbai, Delhi, Hyderabad' },
   { flag: '🇨🇦', name: 'Canada', detail: 'Toronto, Vancouver, Montreal' },
   { flag: '🇦🇺', name: 'Australia', detail: 'Sydney, Melbourne, Brisbane' },
   { flag: '🇪🇺', name: 'Europe', detail: 'Berlin, Amsterdam, Dublin, Zurich' },
@@ -23,7 +24,7 @@ export default function CitiesServedSection() {
             Global Client Footprint
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-            Trusted by Clients <GradientText>Across US, UK, Canada & Europe</GradientText>
+            Trusted by Clients <GradientText>Across US, UK, India & Worldwide</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
             Affordable premium web engineering, speed overhaul, and performance ad growth with guaranteed 12-hour reply times.

@@ -28,7 +28,7 @@ A high-performance agency website & administrative platform built with Next.js 1
 3. **Admin Dashboard Features (`http://localhost:3000/admin`)**:
    - **Overview Tab**: Live analytics (Total Leads, New This Week, Portfolio Count, Won Deals, and status breakdown).
    - **Portfolio Manager**: Search/filter projects, click **"+ Add New Project"**, edit details, toggle `is_featured`, or delete projects with confirmation modals and toast alerts.
-   - **Leads Queue**: View leads sorted newest-first, update status inline (`New` / `Contacted` / `Won`), and trigger instant WhatsApp links (`+91`).
+   - **Leads Queue**: View leads sorted newest-first, update status inline (`New` / `Contacted` / `Won`), and trigger instant WhatsApp links.
    - **Testimonials Manager**: Manage client reviews and 1-5 star ratings with full CRUD functionality.
    - **Sign Out**: Click **"Sign Out"** at the bottom of the sidebar to terminate your session and return to `/admin/login`.
 
@@ -40,5 +40,5 @@ A high-performance agency website & administrative platform built with Next.js 1
 - **Database & Auth**: Supabase PostgreSQL + Supabase Auth (`@supabase/ssr`)
 - **Styling & Design System**: Tailwind CSS v4 (Hugging Face-inspired palette: `#FFD21E` Brand Yellow, `#FF9D00` Primary Orange, `#3B82F6` Accent Blue)
 - **Typography**: Source Sans 3 (UI text) & Source Code Pro (Monospace / Stats)
-- **Form Validation**: React Hook Form + Zod (`+91` Indian mobile validation & ₹ INR budget ranges)
+- **Form Validation**: React Hook Form + Zod (Strict USD $ budget ranges & international country validation)
 - **Animations**: Framer Motion

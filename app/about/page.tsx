@@ -20,10 +20,10 @@ export default function AboutPage() {
           Global Agency Origins & Philosophy
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-          Affordable Engineering & Performance Growth <GradientText>For International Brands</GradientText>
+          Affordable Engineering & Performance Growth <GradientText>For Global & Indian Brands</GradientText>
         </h1>
         <p className="text-base text-[#6B7280] leading-relaxed">
-          ApexPulse delivers high-quality web software, old website speed overhauls, and high-ROAS UGC video ads at a fraction of US & UK agency rates.
+          ApexPulse delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises across the US, UK, India, Canada, Australia, and Europe at affordable USD rates.
         </p>
       </div>
 

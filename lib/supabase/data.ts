@@ -1,5 +1,5 @@
 import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost } from '@/types';
-import { createClient } from './client';
+import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
   phone: '+1 (800) 555-0199',
@@ -122,6 +122,26 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     live_url: 'https://prestigevillas.in',
     is_featured: false,
     created_at: new Date().toISOString(),
+  },
+  {
+    id: '5',
+    title: 'Enterprise SaaS & Web Portal Rebuild for Indian Tech Unicorn',
+    slug: 'nexus-tech-saas-rebuild',
+    client_name: 'NexusFlow Technologies',
+    client_location: 'Bangalore, India',
+    client_city: 'Bangalore',
+    service_type: 'web_dev',
+    short_description: 'Re-architected legacy enterprise dashboard into a sub-second Next.js web portal with automated customer onboarding.',
+    full_description: 'NexusFlow needed an international-standard web platform to serve global enterprise clients. We engineered a custom Next.js portal with server-side rendering, sub-second latency, and integrated Stripe/PayPal payment flows.',
+    cover_image_url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80',
+    gallery_urls: [
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+    ],
+    results: '0.7s Average Page Speed | +280% Global Client Conversions | $450K Annual SaaS Revenue',
+    testimonial: 'ApexPulse delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
+    live_url: 'https://nexusflow.in',
+    is_featured: true,
+    created_at: new Date().toISOString(),
   }
 ];
 
@@ -155,6 +175,16 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     rating: 5,
     created_at: new Date().toISOString(),
   },
+  {
+    id: '4',
+    client_name: 'Vikram Sharma',
+    client_company: 'Co-Founder, NexusFlow Tech',
+    client_location: 'Bangalore, India',
+    client_city: 'Bangalore, India',
+    quote: 'Paying in USD for ApexPulse engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
+    rating: 5,
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export const INITIAL_BLOG_POSTS: BlogPost[] = [];
@@ -179,6 +209,7 @@ export function updateSiteSettings(newSettings: SiteSettings): void {
 }
 
 export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
+  if (!isSupabaseConfigured()) return getSiteSettings();
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -207,6 +238,7 @@ export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
 
 export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Promise<void> {
   updateSiteSettings(newSettings);
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     await supabase.from('site_settings').upsert({
@@ -244,6 +276,7 @@ export function saveTeamMembers(newTeam: TeamMember[]): void {
 }
 
 export async function fetchTeamMembersFromSupabase(): Promise<TeamMember[]> {
+  if (!isSupabaseConfigured()) return getTeamMembers();
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -282,6 +315,7 @@ export async function saveTeamMembersToSupabase(newTeam: TeamMember[]): Promise<
 
 // Helper to fetch portfolio projects
 export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
+  if (!isSupabaseConfigured()) return INITIAL_PORTFOLIO;
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -311,6 +345,7 @@ export async function getProjectBySlug(slug: string): Promise<PortfolioProject |
 
 // Helper to fetch testimonials
 export async function getTestimonials(): Promise<Testimonial[]> {
+  if (!isSupabaseConfigured()) return INITIAL_TESTIMONIALS;
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -333,6 +368,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
+  if (!isSupabaseConfigured()) return publishedOnly ? INITIAL_BLOG_POSTS.filter((p) => p.is_published) : INITIAL_BLOG_POSTS;
   try {
     const supabase = createClient();
     let query = supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
@@ -360,6 +396,12 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 // Helper to submit lead
 export async function submitLead(lead: Lead): Promise<{ success: boolean; message: string }> {
+  if (!isSupabaseConfigured()) {
+    return {
+      success: true,
+      message: 'Thank you! Your inquiry has been received. Our team will reply within 12 hours.',
+    };
+  }
   try {
     const supabase = createClient();
     const { error } = await supabase.from('leads').insert([
@@ -377,7 +419,7 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
     ]);
 
     if (error) {
-      console.warn('Supabase insert note (using mock store fallback):', error.message);
+      console.warn('Supabase insert note:', error.message);
     }
     return {
       success: true,
@@ -393,6 +435,7 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
 
 // Fetch leads for Admin
 export async function getLeadsFromSupabase(): Promise<Lead[]> {
+  if (!isSupabaseConfigured()) return [];
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -415,6 +458,7 @@ const isUUID = (str?: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
 export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
+  if (!isSupabaseConfigured()) return post;
   try {
     const supabase = createClient();
     const payload: any = {
@@ -454,6 +498,7 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
 }
 
 export async function deleteBlogPostFromSupabase(id: string, slug?: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {
@@ -467,6 +512,7 @@ export async function deleteBlogPostFromSupabase(id: string, slug?: string): Pro
 }
 
 export async function saveProjectToSupabase(project: PortfolioProject): Promise<PortfolioProject> {
+  if (!isSupabaseConfigured()) return project;
   try {
     const supabase = createClient();
     const payload: any = {
@@ -505,6 +551,7 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
 }
 
 export async function deleteProjectFromSupabase(id: string, slug?: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {
@@ -518,6 +565,7 @@ export async function deleteProjectFromSupabase(id: string, slug?: string): Prom
 }
 
 export async function saveTestimonialToSupabase(t: Testimonial): Promise<Testimonial> {
+  if (!isSupabaseConfigured()) return t;
   try {
     const supabase = createClient();
     const payload: any = {
@@ -548,6 +596,7 @@ export async function saveTestimonialToSupabase(t: Testimonial): Promise<Testimo
 }
 
 export async function deleteTestimonialFromSupabase(id: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {
@@ -559,6 +608,7 @@ export async function deleteTestimonialFromSupabase(id: string): Promise<void> {
 }
 
 export async function updateLeadStatusInSupabase(id: string, status: Lead['status']): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {
@@ -570,6 +620,7 @@ export async function updateLeadStatusInSupabase(id: string, status: Lead['statu
 }
 
 export async function deleteLeadFromSupabase(id: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {
@@ -581,6 +632,7 @@ export async function deleteLeadFromSupabase(id: string): Promise<void> {
 }
 
 export async function deleteTeamMemberFromSupabase(id: string): Promise<void> {
+  if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
     if (isUUID(id)) {

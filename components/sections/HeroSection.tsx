@@ -25,7 +25,7 @@ export default function HeroSection() {
               <span>Affordable Premium Web Engineering & Performance Marketing</span>
               <span className="text-[#1C1C1C]/40">•</span>
               <span className="flex items-center gap-1 font-semibold">
-                <Globe size={12} /> US • UK • CA • AU • EU
+                <Globe size={12} /> US • UK • IN • CA • AU • EU
               </span>
             </div>
 

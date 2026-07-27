@@ -30,12 +30,17 @@ interface LeadFormModalProps {
   defaultService?: string;
 }
 
+import CurrencySelector from './CurrencySelector';
+import { useCurrency } from './CurrencyContext';
+import { Info } from 'lucide-react';
+
 export default function LeadFormModal({
   isOpen,
   onClose,
   defaultService = 'Website Development',
 }: LeadFormModalProps) {
   const { settings } = useSiteSettings();
+  const { formatBudgetLabel, isConverted } = useCurrency();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [budgetSelection, setBudgetSelection] = useState<string>('$1,000–$3,000');
@@ -225,9 +230,20 @@ export default function LeadFormModal({
                     </label>
                     <input
                       {...register('country')}
-                      placeholder="e.g. Austin, USA"
+                      list="country-suggestions-modal"
+                      placeholder="e.g. United States, India, UK..."
                       className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors"
                     />
+                    <datalist id="country-suggestions-modal">
+                      <option value="United States" />
+                      <option value="India" />
+                      <option value="United Kingdom" />
+                      <option value="Canada" />
+                      <option value="Australia" />
+                      <option value="Germany" />
+                      <option value="Singapore" />
+                      <option value="United Arab Emirates" />
+                    </datalist>
                     {errors.country && (
                       <p className="text-xs font-semibold text-[#EF4444] mt-1">{errors.country.message}</p>
                     )}
@@ -255,20 +271,30 @@ export default function LeadFormModal({
 
                 {/* Budget Range (USD) with Custom Entry Support */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                    Project Budget (USD $) *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-[#1C1C1C]">
+                      Project Budget (USD $) *
+                    </label>
+                    <CurrencySelector />
+                  </div>
                   <select
                     value={budgetSelection}
                     onChange={handleBudgetDropdownChange}
                     className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats"
                   >
-                    <option value="$500–$1,000">$500 – $1,000</option>
-                    <option value="$1,000–$3,000">$1,000 – $3,000</option>
-                    <option value="$3,000–$5,000">$3,000 – $5,000</option>
-                    <option value="$5,000+">$5,000+ (Enterprise / Retainer)</option>
+                    <option value="$500–$1,000">{formatBudgetLabel('$500–$1,000')}</option>
+                    <option value="$1,000–$3,000">{formatBudgetLabel('$1,000–$3,000')}</option>
+                    <option value="$3,000–$5,000">{formatBudgetLabel('$3,000–$5,000')}</option>
+                    <option value="$5,000+">{formatBudgetLabel('$5,000+')}</option>
                     <option value="custom">✏️ Custom Amount (Enter exact USD $)...</option>
                   </select>
+
+                  {isConverted && (
+                    <p className="text-[11px] font-semibold text-[#6B7280] mt-1 flex items-center gap-1">
+                      <Info size={12} className="text-[#FF9D00] shrink-0" />
+                      <span>Approximate — final pricing and invoices are in USD ($).</span>
+                    </p>
+                  )}
 
                   {/* Custom Budget Text Input */}
                   {budgetSelection === 'custom' && (
