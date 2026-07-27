@@ -8,7 +8,7 @@ interface GradientTextProps {
 export default function GradientText({ children, className = '' }: GradientTextProps) {
   return (
     <span
-      className={`text-[#FF9D00] bg-[#FFF9E6] px-1.5 py-0.5 rounded border border-[#FFD21E]/60 ${className}`}
+      className={`text-[#FF9D00] bg-[#FFF9E6] px-1.5 py-[1px] rounded-[3px] border border-[#FFD21E]/60 inline-block leading-tight ${className}`}
     >
       {children}
     </span>
