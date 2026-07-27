@@ -289,6 +289,22 @@ export default function AdminDashboardPage() {
     setTimeout(() => setCopiedUrl(null), 2500);
   };
 
+  const handleDeleteMedia = async (id: string, url: string) => {
+    try {
+      const supabase = createClient();
+      const urlParts = url.split('/portfolio-images/');
+      if (urlParts.length > 1) {
+        const storagePath = urlParts[1];
+        await supabase.storage.from('portfolio-images').remove([storagePath]);
+      }
+    } catch (e) {
+      console.warn('Storage remove warning', e);
+    }
+
+    setMediaList((prev) => prev.filter((m) => m.id !== id));
+    addToast('success', 'Image removed from media library');
+  };
+
   // Portfolio Save Handler
   const handleSaveProject = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -858,13 +874,22 @@ export default function AdminDashboardPage() {
                         className="w-full px-2 py-1 bg-[#F9FAFB] border border-[#E5E7EB] rounded text-[11px] font-mono text-[#6B7280] truncate"
                       />
                     </div>
-                    <button
-                      onClick={() => copyToClipboard(item.url)}
-                      className="px-3 py-2 rounded-lg bg-[#3B82F6] text-white font-bold text-xs flex items-center gap-1.5 hover:bg-[#2563EB] transition-colors shrink-0 min-h-[44px]"
-                    >
-                      {copiedUrl === item.url ? <Check size={14} /> : <Copy size={14} />}
-                      <span>{copiedUrl === item.url ? 'Copied!' : 'Copy URL'}</span>
-                    </button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => copyToClipboard(item.url)}
+                        className="px-3 py-2 rounded-lg bg-[#3B82F6] text-white font-bold text-xs flex items-center gap-1.5 hover:bg-[#2563EB] transition-colors min-h-[44px]"
+                      >
+                        {copiedUrl === item.url ? <Check size={14} /> : <Copy size={14} />}
+                        <span>{copiedUrl === item.url ? 'Copied!' : 'Copy URL'}</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMedia(item.id, item.url)}
+                        className="p-2.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        title="Delete Image"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </Card>
                 ))}
               </div>
