@@ -178,6 +178,52 @@ export function updateSiteSettings(newSettings: SiteSettings): void {
   }
 }
 
+export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('*')
+      .eq('id', 'global')
+      .single();
+
+    if (!error && data) {
+      const settings: SiteSettings = {
+        id: data.id,
+        phone: data.phone || INITIAL_SITE_SETTINGS.phone,
+        whatsapp_number: data.whatsapp_number || INITIAL_SITE_SETTINGS.whatsapp_number,
+        email: data.email || INITIAL_SITE_SETTINGS.email,
+        address: data.address || INITIAL_SITE_SETTINGS.address,
+        linkedin_url: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedin_url,
+        twitter_url: data.twitter_url || INITIAL_SITE_SETTINGS.twitter_url,
+        instagram_url: data.instagram_url || INITIAL_SITE_SETTINGS.instagram_url,
+      };
+      updateSiteSettings(settings);
+      return settings;
+    }
+  } catch {}
+  return getSiteSettings();
+}
+
+export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Promise<void> {
+  updateSiteSettings(newSettings);
+  try {
+    const supabase = createClient();
+    await supabase.from('site_settings').upsert({
+      id: 'global',
+      phone: newSettings.phone,
+      whatsapp_number: newSettings.whatsapp_number,
+      email: newSettings.email,
+      address: newSettings.address,
+      linkedin_url: newSettings.linkedin_url,
+      twitter_url: newSettings.twitter_url,
+      instagram_url: newSettings.instagram_url,
+    });
+  } catch (err) {
+    console.error('Error saving site settings to Supabase:', err);
+  }
+}
+
 // Team Members Helpers
 export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return INITIAL_TEAM_MEMBERS;
@@ -194,6 +240,43 @@ export function saveTeamMembers(newTeam: TeamMember[]): void {
       localStorage.setItem('apexpulse_team_members', JSON.stringify(newTeam));
       window.dispatchEvent(new Event('apexpulse_team_updated'));
     } catch {}
+  }
+}
+
+export async function fetchTeamMembersFromSupabase(): Promise<TeamMember[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      saveTeamMembers(data as TeamMember[]);
+      return data as TeamMember[];
+    }
+  } catch {}
+  return getTeamMembers();
+}
+
+export async function saveTeamMembersToSupabase(newTeam: TeamMember[]): Promise<void> {
+  saveTeamMembers(newTeam);
+  try {
+    const supabase = createClient();
+    // Delete existing team members or upsert
+    for (const member of newTeam) {
+      await supabase.from('team_members').upsert({
+        id: member.id.length > 20 ? member.id : undefined, // uuid check
+        name: member.name,
+        role: member.role,
+        location: member.location,
+        badge: member.badge,
+        bio: member.bio,
+        profile_image_url: member.profile_image_url,
+      });
+    }
+  } catch (err) {
+    console.error('Error saving team members to Supabase:', err);
   }
 }
 

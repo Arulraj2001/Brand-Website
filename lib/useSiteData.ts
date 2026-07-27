@@ -7,18 +7,26 @@ import {
 } from '@/types';
 import {
   getSiteSettings,
-  updateSiteSettings,
+  fetchSiteSettingsFromSupabase,
+  saveSiteSettingsToSupabase,
   getTeamMembers,
-  saveTeamMembers,
+  fetchTeamMembersFromSupabase,
+  saveTeamMembersToSupabase,
   INITIAL_SITE_SETTINGS,
   INITIAL_TEAM_MEMBERS,
 } from '@/lib/supabase/data';
 
 export function useSiteSettings() {
-  const [settings, setSettings] = useState<SiteSettings>(INITIAL_SITE_SETTINGS);
+  const [settings, setSettings] = useState<SiteSettings>(getSiteSettings());
 
   useEffect(() => {
+    // 1. Initial load from local cache/defaults
     setSettings(getSiteSettings());
+
+    // 2. Fetch fresh settings from Supabase DB asynchronously
+    fetchSiteSettingsFromSupabase().then((fresh) => {
+      if (fresh) setSettings(fresh);
+    });
 
     const handleUpdate = () => {
       setSettings(getSiteSettings());
@@ -32,19 +40,25 @@ export function useSiteSettings() {
     };
   }, []);
 
-  const saveSettings = (newSettings: SiteSettings) => {
-    updateSiteSettings(newSettings);
+  const saveSettings = async (newSettings: SiteSettings) => {
     setSettings(newSettings);
+    await saveSiteSettingsToSupabase(newSettings);
   };
 
   return { settings, saveSettings };
 }
 
 export function useTeamMembers() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(INITIAL_TEAM_MEMBERS);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getTeamMembers());
 
   useEffect(() => {
     setTeamMembers(getTeamMembers());
+
+    fetchTeamMembersFromSupabase().then((freshTeam) => {
+      if (freshTeam && freshTeam.length > 0) {
+        setTeamMembers(freshTeam);
+      }
+    });
 
     const handleUpdate = () => {
       setTeamMembers(getTeamMembers());
@@ -58,9 +72,9 @@ export function useTeamMembers() {
     };
   }, []);
 
-  const saveTeam = (newTeam: TeamMember[]) => {
-    saveTeamMembers(newTeam);
+  const saveTeam = async (newTeam: TeamMember[]) => {
     setTeamMembers(newTeam);
+    await saveTeamMembersToSupabase(newTeam);
   };
 
   return { teamMembers, saveTeam };
