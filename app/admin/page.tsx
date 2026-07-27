@@ -189,6 +189,7 @@ export default function AdminDashboardPage() {
   const [blogTitleText, setBlogTitleText] = useState('');
   const [blogContentText, setBlogContentText] = useState('');
   const [blogKeywordText, setBlogKeywordText] = useState('');
+  const [blogSecondaryKeywordsText, setBlogSecondaryKeywordsText] = useState('');
   const [blogExcerptText, setBlogExcerptText] = useState('');
   const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
   const [blogAuthorVal, setBlogAuthorVal] = useState('ApexPulse Team');
@@ -505,6 +506,7 @@ export default function AdminDashboardPage() {
         .replace(/(^-|-$)+/g, '');
     const category = blogCategoryVal || (formData.get('category') as BlogCategory) || 'seo';
     const target_keyword = blogKeywordText || (formData.get('target_keyword') as string);
+    const secondary_keywords = blogSecondaryKeywordsText || (formData.get('secondary_keywords') as string);
     const city = (formData.get('city') as string) || 'Global';
     const author_name = blogAuthorVal || (formData.get('author_name') as string) || 'ApexPulse Team';
     const cover_image_url =
@@ -525,6 +527,7 @@ export default function AdminDashboardPage() {
                 slug,
                 category,
                 target_keyword,
+                secondary_keywords,
                 city,
                 author_name,
                 cover_image_url,
@@ -546,6 +549,7 @@ export default function AdminDashboardPage() {
         slug,
         category,
         target_keyword,
+        secondary_keywords,
         city,
         author_name,
         cover_image_url,
@@ -1634,7 +1638,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Primary Keyword</label>
                       <input
@@ -1646,6 +1650,19 @@ export default function AdminDashboardPage() {
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Secondary Keywords (Comma-separated)</label>
+                      <input
+                        name="secondary_keywords"
+                        value={blogSecondaryKeywordsText}
+                        onChange={(e) => setBlogSecondaryKeywordsText(e.target.value)}
+                        placeholder="e.g. Core Web Vitals, technical SEO audit, website speed"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Region</label>
                       <input

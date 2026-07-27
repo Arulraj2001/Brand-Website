@@ -80,12 +80,15 @@ create table if not exists blog_posts (
   cover_image_url text,
   category text check (category in ('seo', 'web_dev', 'app_dev', 'website_upgrade', 'local_business', 'meta_ads', 'ugc_ads', 'sales_growth', 'general')),
   target_keyword text,
+  secondary_keywords text,
   city text,
   author_name text default 'ApexPulse Team',
   is_published boolean default false,
   published_at timestamp with time zone,
   created_at timestamp with time zone default now()
 );
+
+alter table blog_posts add column if not exists secondary_keywords text;
 
 -- Insert Default Site Settings Row
 insert into site_settings (id, phone, whatsapp_number, email, address, linkedin_url, twitter_url, instagram_url)

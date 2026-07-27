@@ -28,6 +28,7 @@ export interface BlogPost {
   cover_image_url: string;
   category: BlogCategory;
   target_keyword?: string;
+  secondary_keywords?: string[] | string;
   city?: string;
   author_name: string;
   is_published: boolean;

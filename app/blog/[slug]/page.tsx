@@ -162,6 +162,23 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
                 #{post.target_keyword.replace(/\s+/g, '-')}
               </span>
             )}
+
+            {post.secondary_keywords &&
+              (Array.isArray(post.secondary_keywords)
+                ? post.secondary_keywords
+                : post.secondary_keywords.split(',')
+              ).map((kw, idx) => {
+                const cleanKw = kw.trim();
+                if (!cleanKw) return null;
+                return (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6B7280] bg-white px-2 py-0.5 rounded-[4px] border border-[#E5E7EB]"
+                  >
+                    #{cleanKw.replace(/\s+/g, '-')}
+                  </span>
+                );
+              })}
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
