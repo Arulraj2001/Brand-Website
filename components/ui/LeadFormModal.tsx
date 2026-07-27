@@ -9,6 +9,7 @@ import { X, CheckCircle2, Sparkles, Send, DollarSign, ShieldCheck, Clock } from 
 import Button from './Button';
 import WhatsAppIcon from './WhatsAppIcon';
 import { submitLead } from '@/lib/supabase/data';
+import { useSiteSettings } from '@/lib/useSiteData';
 
 const leadSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -34,10 +35,13 @@ export default function LeadFormModal({
   onClose,
   defaultService = 'Website Development',
 }: LeadFormModalProps) {
+  const { settings } = useSiteSettings();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [budgetSelection, setBudgetSelection] = useState<string>('$1,000–$3,000');
   const [customAmount, setCustomAmount] = useState<string>('');
+
+  const whatsappClean = settings.whatsapp_number.replace(/[^0-9]/g, '');
 
   const {
     register,
@@ -138,7 +142,7 @@ export default function LeadFormModal({
               </p>
               <div className="pt-4 flex flex-col gap-2">
                 <a
-                  href="https://wa.me/18005550199?text=Hi!%20I%20just%20submitted%20a%20project%20inquiry%20on%20your%20website."
+                  href={`https://wa.me/${whatsappClean}?text=Hi!%20I%20just%20submitted%20a%20project%20inquiry%20on%20your%20website.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-bold shadow-xs hover:bg-[#20bd5a] transition-colors min-h-[44px]"
@@ -257,7 +261,7 @@ export default function LeadFormModal({
                   <select
                     value={budgetSelection}
                     onChange={handleBudgetDropdownChange}
-                    className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats"
+                    className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats"
                   >
                     <option value="$500–$1,000">$500 – $1,000</option>
                     <option value="$1,000–$3,000">$1,000 – $3,000</option>

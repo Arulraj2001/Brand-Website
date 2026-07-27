@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Sparkles, PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
 import Button from './Button';
+import { useSiteSettings } from '@/lib/useSiteData';
 
 export default function Navbar() {
+  const { settings } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -31,6 +33,8 @@ export default function Navbar() {
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
   ];
+
+  const cleanPhoneTel = settings.phone.replace(/[^0-9+]/g, '');
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-[#E5E7EB] h-[56px] flex items-center">
@@ -76,11 +80,11 @@ export default function Navbar() {
         {/* CTA Right */}
         <div className="hidden md:flex items-center gap-4">
           <a
-            href="tel:+18005550199"
+            href={`tel:${cleanPhoneTel}`}
             className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"
           >
             <PhoneCall size={14} className="text-[#FF9D00]" />
-            +1 (800) 555-0199
+            {settings.phone}
           </a>
           <Button href="/contact" variant="primary" size="sm">
             <span>Book a Call</span>
@@ -119,11 +123,11 @@ export default function Navbar() {
           </nav>
           <div className="pt-2 border-t border-[#E5E7EB] flex flex-col gap-2">
             <a
-              href="tel:+18005550199"
+              href={`tel:${cleanPhoneTel}`}
               className="flex items-center justify-center gap-2 text-xs font-semibold text-[#1C1C1C] py-2 bg-[#F9FAFB] rounded-lg"
             >
               <PhoneCall size={14} className="text-[#FF9D00]" />
-              Call +1 (800) 555-0199
+              Call {settings.phone}
             </a>
             <Button href="/contact" variant="primary" size="sm" className="w-full">
               Book a Free Strategy Call
