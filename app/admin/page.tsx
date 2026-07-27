@@ -37,6 +37,10 @@ import {
   Tag,
   Eye,
   EyeOff,
+  UploadCloud,
+  Copy,
+  Check,
+  Image as ImageIcon,
 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
@@ -48,6 +52,13 @@ import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMem
 import { getPortfolioProjects, getTestimonials, getBlogPosts } from '@/lib/supabase/data';
 import { useSiteSettings, useTeamMembers } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
+
+interface MediaItem {
+  id: string;
+  url: string;
+  name: string;
+  created_at: string;
+}
 
 const INITIAL_LEADS: Lead[] = [
   {
@@ -101,7 +112,7 @@ const INITIAL_LEADS: Lead[] = [
 ];
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog' | 'media'>('overview');
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -109,6 +120,24 @@ export default function AdminDashboardPage() {
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [userEmail, setUserEmail] = useState<string>('admin@apexpulse.in');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Media Library State
+  const [mediaList, setMediaList] = useState<MediaItem[]>([
+    {
+      id: 'm1',
+      name: 'saas-portal-preview.jpg',
+      url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: 'm2',
+      name: 'seo-growth-analytics.jpg',
+      url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+      created_at: new Date().toISOString(),
+    },
+  ]);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   // Site Settings & Team Custom Hooks
   const { settings, saveSettings } = useSiteSettings();
@@ -147,6 +176,11 @@ export default function AdminDashboardPage() {
   const [blogModalOpen, setBlogModalOpen] = useState(false);
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [deleteConfirmBlogPost, setDeleteConfirmBlogPost] = useState<BlogPost | null>(null);
+
+  // Modal Image Inputs State
+  const [projectCoverUrl, setProjectCoverUrl] = useState('');
+  const [blogCoverUrl, setBlogCoverUrl] = useState('');
+  const [teamProfileUrl, setTeamProfileUrl] = useState('');
 
   const router = useRouter();
 
@@ -196,6 +230,65 @@ export default function AdminDashboardPage() {
     router.refresh();
   };
 
+  // Supabase Storage Image Upload Helper
+  const uploadImageFile = async (file: File): Promise<string> => {
+    setUploadingMedia(true);
+    try {
+      const supabase = createClient();
+      const fileExt = file.name.split('.').pop() || 'png';
+      const fileName = `${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('portfolio-images')
+        .upload(filePath, file, { upsert: true });
+
+      if (!error && data?.path) {
+        const { data: publicUrlData } = supabase.storage
+          .from('portfolio-images')
+          .getPublicUrl(filePath);
+
+        const publicUrl = publicUrlData.publicUrl;
+        const newItem: MediaItem = {
+          id: Math.random().toString(36).substring(2, 9),
+          name: file.name,
+          url: publicUrl,
+          created_at: new Date().toISOString(),
+        };
+        setMediaList((prev) => [newItem, ...prev]);
+        setUploadingMedia(false);
+        return publicUrl;
+      }
+    } catch (e) {
+      console.warn('Storage upload fallback');
+    }
+
+    // Fallback Data URL reader if Supabase keys not active
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        const newItem: MediaItem = {
+          id: Math.random().toString(36).substring(2, 9),
+          name: file.name,
+          url: dataUrl,
+          created_at: new Date().toISOString(),
+        };
+        setMediaList((prev) => [newItem, ...prev]);
+        setUploadingMedia(false);
+        resolve(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedUrl(url);
+    addToast('success', 'Image URL copied to clipboard!');
+    setTimeout(() => setCopiedUrl(null), 2500);
+  };
+
   // Portfolio Save Handler
   const handleSaveProject = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -207,7 +300,7 @@ export default function AdminDashboardPage() {
     const service_type = formData.get('service_type') as ServiceType;
     const short_description = formData.get('short_description') as string;
     const full_description = formData.get('full_description') as string;
-    const cover_image_url = formData.get('cover_image_url') as string || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+    const cover_image_url = projectCoverUrl || (formData.get('cover_image_url') as string) || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
     const results = formData.get('results') as string;
     const testimonial = formData.get('testimonial') as string;
     const live_url = formData.get('live_url') as string;
@@ -320,7 +413,7 @@ export default function AdminDashboardPage() {
     const location = formData.get('location') as string;
     const badge = formData.get('badge') as string;
     const bio = formData.get('bio') as string;
-    const profile_image_url = formData.get('profile_image_url') as string;
+    const profile_image_url = teamProfileUrl || (formData.get('profile_image_url') as string);
 
     if (editingTeamMember) {
       const updated = teamMembers.map((m) =>
@@ -379,6 +472,7 @@ export default function AdminDashboardPage() {
     const city = formData.get('city') as string;
     const author_name = (formData.get('author_name') as string) || 'ApexPulse Team';
     const cover_image_url =
+      blogCoverUrl ||
       (formData.get('cover_image_url') as string) ||
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
     const excerpt = formData.get('excerpt') as string;
@@ -514,6 +608,7 @@ export default function AdminDashboardPage() {
     { id: 'leads', label: 'Leads Queue', icon: Users },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
     { id: 'blog', label: 'Blog Posts', icon: FileText },
+    { id: 'media', label: 'Media & Upload', icon: UploadCloud },
     { id: 'team', label: 'Team Architects', icon: UserCheck },
     { id: 'settings', label: 'Site Settings', icon: SettingsIcon },
   ];
@@ -700,6 +795,83 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        {/* TAB: MEDIA UPLOADER & URL GENERATOR */}
+        {activeTab === 'media' && (
+          <div className="space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Media Uploader & URL Generator</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Upload local images to Supabase storage to generate permanent public CDN links
+                </p>
+              </div>
+            </div>
+
+            {/* Dropzone Upload Box */}
+            <Card className="p-8 border-2 border-dashed border-[#FFD21E] bg-[#FFF9E6] text-center space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#FF9D00] text-white flex items-center justify-center mx-auto shadow-xs">
+                <UploadCloud size={28} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-[#1C1C1C]">Upload Image File</h3>
+                <p className="text-xs text-[#6B7280]">
+                  Select PNG, JPG, WEBP, or SVG files from your device to generate a copyable URL
+                </p>
+              </div>
+
+              <div>
+                <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FF9D00] text-white font-bold text-xs shadow-xs hover:bg-[#e08b00] cursor-pointer transition-colors min-h-[44px]">
+                  <UploadCloud size={16} />
+                  <span>{uploadingMedia ? 'Uploading Image...' : 'Choose Image File'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploadingMedia}
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        const url = await uploadImageFile(file);
+                        copyToClipboard(url);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </Card>
+
+            {/* Generated URLs List */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-[#1C1C1C]">Uploaded Media Links</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mediaList.map((item) => (
+                  <Card key={item.id} className="p-4 flex items-center gap-4 bg-white border border-[#E5E7EB]">
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
+                      <Image src={item.url} alt={item.name} fill className="object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <p className="font-bold text-xs text-[#1C1C1C] truncate">{item.name}</p>
+                      <input
+                        type="text"
+                        readOnly
+                        value={item.url}
+                        className="w-full px-2 py-1 bg-[#F9FAFB] border border-[#E5E7EB] rounded text-[11px] font-mono text-[#6B7280] truncate"
+                      />
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(item.url)}
+                      className="px-3 py-2 rounded-lg bg-[#3B82F6] text-white font-bold text-xs flex items-center gap-1.5 hover:bg-[#2563EB] transition-colors shrink-0 min-h-[44px]"
+                    >
+                      {copiedUrl === item.url ? <Check size={14} /> : <Copy size={14} />}
+                      <span>{copiedUrl === item.url ? 'Copied!' : 'Copy URL'}</span>
+                    </button>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* TAB 2: PORTFOLIO MANAGER */}
         {activeTab === 'portfolio' && (
           <div className="space-y-4">
@@ -708,7 +880,7 @@ export default function AdminDashboardPage() {
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Portfolio Manager</h1>
                 <p className="text-xs text-[#6B7280]">Create, edit, or delete global case studies</p>
               </div>
-              <Button onClick={() => { setEditingProject(null); setProjectModalOpen(true); }} variant="primary" size="sm">
+              <Button onClick={() => { setEditingProject(null); setProjectCoverUrl(''); setProjectModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
                 <span>Add New Project</span>
               </Button>
@@ -785,7 +957,7 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="py-3 px-3 text-right space-x-2">
                           <button
-                            onClick={() => { setEditingProject(p); setProjectModalOpen(true); }}
+                            onClick={() => { setEditingProject(p); setProjectCoverUrl(p.cover_image_url); setProjectModalOpen(true); }}
                             className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C] transition-colors"
                           >
                             <Edit2 size={13} />
@@ -962,7 +1134,7 @@ export default function AdminDashboardPage() {
                   Create, edit, publish, or delete SEO articles targeting global buyer keywords
                 </p>
               </div>
-              <Button onClick={() => { setEditingBlogPost(null); setBlogModalOpen(true); }} variant="primary" size="sm">
+              <Button onClick={() => { setEditingBlogPost(null); setBlogCoverUrl(''); setBlogModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
                 <span>Add New Post</span>
               </Button>
@@ -1039,7 +1211,7 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-3 text-right space-x-2">
                         <button
-                          onClick={() => { setEditingBlogPost(post); setBlogModalOpen(true); }}
+                          onClick={() => { setEditingBlogPost(post); setBlogCoverUrl(post.cover_image_url); setBlogModalOpen(true); }}
                           className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C] transition-colors"
                         >
                           <Edit2 size={13} />
@@ -1069,7 +1241,7 @@ export default function AdminDashboardPage() {
                   Manage team profiles on the About page ("Meet the Growth Architects")
                 </p>
               </div>
-              <Button onClick={() => { setEditingTeamMember(null); setTeamModalOpen(true); }} variant="primary" size="sm">
+              <Button onClick={() => { setEditingTeamMember(null); setTeamProfileUrl(''); setTeamModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
                 <span>Add Team Member</span>
               </Button>
@@ -1107,7 +1279,7 @@ export default function AdminDashboardPage() {
 
                   <div className="flex justify-end gap-2 pt-1">
                     <button
-                      onClick={() => { setEditingTeamMember(m); setTeamModalOpen(true); }}
+                      onClick={() => { setEditingTeamMember(m); setTeamProfileUrl(m.profile_image_url || ''); setTeamModalOpen(true); }}
                       className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
                     >
                       <Edit2 size={13} />
@@ -1346,13 +1518,32 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL *</label>
-                <input
-                  name="cover_image_url"
-                  defaultValue={editingBlogPost?.cover_image_url || ''}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                />
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL / Upload File *</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    name="cover_image_url"
+                    value={blogCoverUrl || editingBlogPost?.cover_image_url || ''}
+                    onChange={(e) => setBlogCoverUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                  <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
+                    <UploadCloud size={14} className="text-[#FF9D00]" />
+                    <span>Upload File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const url = await uploadImageFile(e.target.files[0]);
+                          setBlogCoverUrl(url);
+                          addToast('success', 'File uploaded and URL inserted!');
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -1491,13 +1682,32 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Profile Image URL *</label>
-                <input
-                  name="profile_image_url"
-                  defaultValue={editingTeamMember?.profile_image_url || ''}
-                  placeholder="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400"
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                />
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Profile Image URL / Upload File *</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    name="profile_image_url"
+                    value={teamProfileUrl || editingTeamMember?.profile_image_url || ''}
+                    onChange={(e) => setTeamProfileUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                  <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
+                    <UploadCloud size={14} className="text-[#FF9D00]" />
+                    <span>Upload File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const url = await uploadImageFile(e.target.files[0]);
+                          setTeamProfileUrl(url);
+                          addToast('success', 'File uploaded and profile picture set!');
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -1630,13 +1840,32 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL *</label>
-                <input
-                  name="cover_image_url"
-                  defaultValue={editingProject?.cover_image_url || ''}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                />
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL / Upload File *</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    name="cover_image_url"
+                    value={projectCoverUrl || editingProject?.cover_image_url || ''}
+                    onChange={(e) => setProjectCoverUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                  <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
+                    <UploadCloud size={14} className="text-[#FF9D00]" />
+                    <span>Upload File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const url = await uploadImageFile(e.target.files[0]);
+                          setProjectCoverUrl(url);
+                          addToast('success', 'File uploaded and project cover set!');
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div>
