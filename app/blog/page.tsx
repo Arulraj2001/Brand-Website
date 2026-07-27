@@ -4,15 +4,18 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Calendar, Clock, BookOpen, MapPin } from 'lucide-react';
+import { ArrowUpRight, Calendar, Clock, BookOpen, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import { BlogPost } from '@/types';
 import { getBlogPosts } from '@/lib/supabase/data';
 
+const POSTS_PER_PAGE = 6;
+
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [filter, setFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,8 +27,23 @@ export default function BlogPage() {
     loadData();
   }, []);
 
+  const handleFilterChange = (cat: string) => {
+    setFilter(cat);
+    setCurrentPage(1);
+  };
+
   const filteredPosts =
     filter === 'all' ? posts : posts.filter((p) => p.category === filter);
+
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 280, behavior: 'smooth' });
+  };
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
@@ -58,7 +76,7 @@ export default function BlogPage() {
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setFilter(item.id)}
+              onClick={() => handleFilterChange(item.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
                 filter === item.id
                   ? 'bg-[#FF9D00] text-white shadow-xs'
@@ -76,115 +94,177 @@ export default function BlogPage() {
             Loading published articles...
           </div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
-            <AnimatePresence>
-              {filteredPosts.map((post) => {
-                const pubDate = post.published_at || post.created_at;
-                const formattedDate = pubDate
-                  ? new Date(pubDate).toLocaleDateString('en-US', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })
-                  : 'Recent';
+          <div className="space-y-10">
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+              <AnimatePresence mode="wait">
+                {paginatedPosts.map((post) => {
+                  const pubDate = post.published_at || post.created_at;
+                  const formattedDate = pubDate
+                    ? new Date(pubDate).toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })
+                    : 'Recent';
 
-                const wordCount = post.content ? post.content.split(/\s+/).length : 300;
-                const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
+                  const wordCount = post.content ? post.content.split(/\s+/).length : 300;
+                  const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
 
-                return (
-                  <motion.div
-                    layout
-                    key={post.id}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex col-span-1"
+                  return (
+                    <motion.div
+                      layout
+                      key={post.id}
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      transition={{ duration: 0.25 }}
+                      className="flex col-span-1"
+                    >
+                      <Card className="flex flex-col justify-between w-full p-0 overflow-hidden group">
+                        {/* Cover Image Container */}
+                        <div className="relative h-48 w-full overflow-hidden bg-[#F9FAFB]">
+                          <Image
+                            src={
+                              post.cover_image_url ||
+                              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                            }
+                            alt={post.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/60 via-transparent to-transparent opacity-80" />
+
+                          {/* Category Badge */}
+                          <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
+                              {post.category === 'web_dev'
+                                ? 'Web Dev'
+                                : post.category === 'website_upgrade'
+                                ? 'Speed Overhaul'
+                                : post.category === 'ugc_ads'
+                                ? 'UGC Ads'
+                                : post.category === 'seo'
+                                ? 'SEO'
+                                : post.category === 'local_business'
+                                ? 'Local SEO'
+                                : post.category === 'meta_ads'
+                                ? 'Meta Ads'
+                                : 'General'}
+                            </span>
+                          </div>
+
+                          {post.city && (
+                            <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
+                              <MapPin size={10} className="text-[#3B82F6]" />
+                              {post.city}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-2 text-[11px] text-[#6B7280] font-semibold">
+                              <span className="flex items-center gap-1">
+                                <Calendar size={11} /> {formattedDate}
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Clock size={11} /> {readTimeMinutes} min read
+                              </span>
+                            </div>
+
+                            <h2 className="font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-base line-clamp-2 leading-snug">
+                              {post.title}
+                            </h2>
+
+                            <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed">
+                              {post.excerpt}
+                            </p>
+                          </div>
+
+                          {/* Author & Read Link Bar */}
+                          <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-[#6B7280] truncate max-w-[120px]">
+                              By {post.author_name}
+                            </span>
+                            <Link
+                              href={`/blog/${post.slug}`}
+                              className="inline-flex items-center gap-1 text-xs font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors min-h-[44px]"
+                            >
+                              <span>Read Article</span>
+                              <ArrowUpRight size={13} />
+                            </Link>
+                          </div>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Pagination Controls Bar */}
+            {totalPages > 1 && (
+              <div className="pt-4 border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-xs text-[#6B7280] font-semibold">
+                  Showing <strong className="text-[#1C1C1C] font-bold">{startIndex + 1}</strong> to{' '}
+                  <strong className="text-[#1C1C1C] font-bold">
+                    {Math.min(startIndex + POSTS_PER_PAGE, filteredPosts.length)}
+                  </strong>{' '}
+                  of <strong className="text-[#1C1C1C] font-bold">{filteredPosts.length}</strong> articles
+                </p>
+
+                <div className="flex items-center gap-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+                      currentPage === 1
+                        ? 'opacity-40 cursor-not-allowed bg-white text-[#9CA3AF] border border-[#E5E7EB]'
+                        : 'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:border-[#FF9D00] hover:text-[#FF9D00]'
+                    }`}
                   >
-                    <Card className="flex flex-col justify-between w-full p-0 overflow-hidden group">
-                      {/* Cover Image Container */}
-                      <div className="relative h-48 w-full overflow-hidden bg-[#F9FAFB]">
-                        <Image
-                          src={
-                            post.cover_image_url ||
-                            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
-                          }
-                          alt={post.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/60 via-transparent to-transparent opacity-80" />
+                    <ChevronLeft size={16} />
+                    <span>Previous</span>
+                  </button>
 
-                        {/* Category Badge */}
-                        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                          <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
-                            {post.category === 'web_dev'
-                              ? 'Web Dev'
-                              : post.category === 'website_upgrade'
-                              ? 'Speed Overhaul'
-                              : post.category === 'ugc_ads'
-                              ? 'UGC Ads'
-                              : post.category === 'seo'
-                              ? 'SEO'
-                              : post.category === 'local_business'
-                              ? 'Local SEO'
-                              : post.category === 'meta_ads'
-                              ? 'Meta Ads'
-                              : 'General'}
-                          </span>
-                        </div>
+                  {/* Numbered Page Buttons */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-9 h-9 rounded-lg text-xs font-bold transition-all ${
+                          currentPage === pageNum
+                            ? 'bg-[#FF9D00] text-white shadow-xs'
+                            : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </div>
 
-                        {post.city && (
-                          <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
-                            <MapPin size={10} className="text-[#3B82F6]" />
-                            {post.city}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Content Body */}
-                      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-2 text-[11px] text-[#6B7280] font-semibold">
-                            <span className="flex items-center gap-1">
-                              <Calendar size={11} /> {formattedDate}
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <Clock size={11} /> {readTimeMinutes} min read
-                            </span>
-                          </div>
-
-                          <h2 className="font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-base line-clamp-2 leading-snug">
-                            {post.title}
-                          </h2>
-
-                          <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed">
-                            {post.excerpt}
-                          </p>
-                        </div>
-
-                        {/* Author & Read Link Bar */}
-                        <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between">
-                          <span className="text-[11px] font-semibold text-[#6B7280] truncate max-w-[120px]">
-                            By {post.author_name}
-                          </span>
-                          <Link
-                            href={`/blog/${post.slug}`}
-                            className="inline-flex items-center gap-1 text-xs font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors min-h-[44px]"
-                          >
-                            <span>Read Article</span>
-                            <ArrowUpRight size={13} />
-                          </Link>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </motion.div>
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+                      currentPage === totalPages
+                        ? 'opacity-40 cursor-not-allowed bg-white text-[#9CA3AF] border border-[#E5E7EB]'
+                        : 'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:border-[#FF9D00] hover:text-[#FF9D00]'
+                    }`}
+                  >
+                    <span>Next</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
