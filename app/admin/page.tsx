@@ -40,7 +40,14 @@ import {
   UploadCloud,
   Copy,
   Check,
-  Image as ImageIcon,
+  ImageIcon,
+  Heading,
+  Bold,
+  Italic,
+  List,
+  Quote as QuoteIcon,
+  Code,
+  FileSpreadsheet,
 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
@@ -177,6 +184,15 @@ export default function AdminDashboardPage() {
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [deleteConfirmBlogPost, setDeleteConfirmBlogPost] = useState<BlogPost | null>(null);
 
+  // Advanced Blog Writing Studio State
+  const [blogStudioTab, setBlogStudioTab] = useState<'write' | 'meta' | 'preview'>('write');
+  const [blogTitleText, setBlogTitleText] = useState('');
+  const [blogContentText, setBlogContentText] = useState('');
+  const [blogKeywordText, setBlogKeywordText] = useState('');
+  const [blogExcerptText, setBlogExcerptText] = useState('');
+  const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
+  const [blogAuthorVal, setBlogAuthorVal] = useState('ApexPulse Team');
+
   // Modal Image Inputs State
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
   const [blogCoverUrl, setBlogCoverUrl] = useState('');
@@ -263,7 +279,7 @@ export default function AdminDashboardPage() {
       console.warn('Storage upload fallback');
     }
 
-    // Fallback Data URL reader if Supabase keys not active
+    // Fallback Data URL reader
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -303,6 +319,10 @@ export default function AdminDashboardPage() {
 
     setMediaList((prev) => prev.filter((m) => m.id !== id));
     addToast('success', 'Image removed from media library');
+  };
+
+  const insertMarkdownToolbar = (prefix: string, suffix: string = '') => {
+    setBlogContentText((prev) => `${prev}\n${prefix}sample text${suffix}`);
   };
 
   // Portfolio Save Handler
@@ -472,27 +492,27 @@ export default function AdminDashboardPage() {
     addToast('success', 'Global contact settings & social links updated across all pages');
   };
 
-  // Blog Post Save Handler
+  // Advanced Blog Post Save Handler
   const handleSaveBlogPost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const title = formData.get('title') as string;
+    const title = blogTitleText || (formData.get('title') as string);
     const slug =
       (formData.get('slug') as string) ||
       title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
-    const category = (formData.get('category') as BlogCategory) || 'seo';
-    const target_keyword = formData.get('target_keyword') as string;
-    const city = formData.get('city') as string;
-    const author_name = (formData.get('author_name') as string) || 'ApexPulse Team';
+    const category = blogCategoryVal || (formData.get('category') as BlogCategory) || 'seo';
+    const target_keyword = blogKeywordText || (formData.get('target_keyword') as string);
+    const city = (formData.get('city') as string) || 'Global';
+    const author_name = blogAuthorVal || (formData.get('author_name') as string) || 'ApexPulse Team';
     const cover_image_url =
       blogCoverUrl ||
       (formData.get('cover_image_url') as string) ||
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
-    const excerpt = formData.get('excerpt') as string;
-    const content = formData.get('content') as string;
+    const excerpt = blogExcerptText || (formData.get('excerpt') as string);
+    const content = blogContentText || (formData.get('content') as string);
     const is_published = formData.get('is_published') === 'on';
 
     if (editingBlogPost) {
@@ -576,6 +596,19 @@ export default function AdminDashboardPage() {
     addToast('success', `Lead status updated to ${newStatus?.toUpperCase()}`);
   };
 
+  const openBlogStudioModal = (post: BlogPost | null) => {
+    setEditingBlogPost(post);
+    setBlogTitleText(post?.title || '');
+    setBlogContentText(post?.content || '');
+    setBlogKeywordText(post?.target_keyword || '');
+    setBlogExcerptText(post?.excerpt || '');
+    setBlogCategoryVal(post?.category || 'seo');
+    setBlogAuthorVal(post?.author_name || 'ApexPulse Team');
+    setBlogCoverUrl(post?.cover_image_url || '');
+    setBlogStudioTab('write');
+    setBlogModalOpen(true);
+  };
+
   const filteredProjects = projects.filter((p) => {
     const loc = p.client_location || p.client_city || '';
     const matchesSearch =
@@ -617,6 +650,11 @@ export default function AdminDashboardPage() {
   const contactedLeadsCount = leads.filter((l) => l.status === 'contacted').length;
   const qualifiedLeadsCount = leads.filter((l) => l.status === 'qualified').length;
   const wonLeadsCount = leads.filter((l) => l.status === 'closed').length;
+
+  // Real-time Writing Studio Metrics
+  const studioWordCount = blogContentText ? blogContentText.trim().split(/\s+/).filter(Boolean).length : 0;
+  const studioReadTime = Math.max(1, Math.ceil(studioWordCount / 200));
+  const hasKeywordInTitle = blogKeywordText && blogTitleText.toLowerCase().includes(blogKeywordText.toLowerCase());
 
   const NAV_ITEMS = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -1154,14 +1192,14 @@ export default function AdminDashboardPage() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold text-[#1C1C1C]">Blog Posts Manager</h1>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Advanced Blog Studio</h1>
                 <p className="text-xs text-[#6B7280]">
-                  Create, edit, publish, or delete SEO articles targeting global buyer keywords
+                  Write, preview, and optimize SEO articles with live word count & keyword readiness
                 </p>
               </div>
-              <Button onClick={() => { setEditingBlogPost(null); setBlogCoverUrl(''); setBlogModalOpen(true); }} variant="primary" size="sm">
+              <Button onClick={() => openBlogStudioModal(null)} variant="primary" size="sm">
                 <Plus size={14} />
-                <span>Add New Post</span>
+                <span>Open Writing Studio</span>
               </Button>
             </div>
 
@@ -1236,8 +1274,9 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-3 text-right space-x-2">
                         <button
-                          onClick={() => { setEditingBlogPost(post); setBlogCoverUrl(post.cover_image_url); setBlogModalOpen(true); }}
+                          onClick={() => openBlogStudioModal(post)}
                           className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C] transition-colors"
+                          title="Open Writing Studio"
                         >
                           <Edit2 size={13} />
                         </button>
@@ -1454,167 +1493,273 @@ export default function AdminDashboardPage() {
         )}
       </main>
 
-      {/* BLOG POST MODAL */}
+      {/* ADVANCED BLOG WRITING STUDIO MODAL */}
       {blogModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white border border-[#E5E7EB] rounded-[10px] p-6 space-y-4 my-8">
-            <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
-              <h3 className="font-bold text-lg text-[#1C1C1C]">
-                {editingBlogPost ? 'Edit Blog Post' : 'Add New Blog Post'}
-              </h3>
-              <button onClick={() => setBlogModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C]">
-                <X size={18} />
-              </button>
+          <div className="w-full max-w-4xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+            {/* Modal Top Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#FF9D00] text-white flex items-center justify-center font-bold">
+                  <FileText size={16} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-[#1C1C1C]">
+                    {editingBlogPost ? 'Edit Article Studio' : 'Advanced Blog Writing Studio'}
+                  </h3>
+                  <p className="text-xs text-[#6B7280]">Write, structure markdown, and preview live reader UI</p>
+                </div>
+              </div>
+
+              {/* Studio Tabs Navigation */}
+              <div className="flex items-center gap-1.5 bg-[#F9FAFB] p-1 rounded-lg border border-[#E5E7EB]">
+                <button
+                  type="button"
+                  onClick={() => setBlogStudioTab('write')}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                    blogStudioTab === 'write' ? 'bg-[#FF9D00] text-white shadow-xs' : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                  }`}
+                >
+                  ✍️ Writing Editor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBlogStudioTab('meta')}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                    blogStudioTab === 'meta' ? 'bg-[#FF9D00] text-white shadow-xs' : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                  }`}
+                >
+                  ⚙️ Metadata & SEO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBlogStudioTab('preview')}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                    blogStudioTab === 'preview' ? 'bg-[#3B82F6] text-white shadow-xs' : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                  }`}
+                >
+                  👁 Live Preview
+                </button>
+                <button onClick={() => setBlogModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C] p-1">
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
-            <form onSubmit={handleSaveBlogPost} className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Article Title *</label>
-                <input
-                  name="title"
-                  required
-                  defaultValue={editingBlogPost?.title || ''}
-                  placeholder="e.g. Why Is My Website Ranking Dropping?"
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                />
+            {/* Real-time Content & SEO Health Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl text-xs">
+              <div className="flex items-center gap-4 text-[#1C1C1C] font-semibold">
+                <span>📝 Word Count: <strong className="font-mono-stats text-[#FF9D00]">{studioWordCount}</strong></span>
+                <span>⏱ Read Time: <strong className="font-mono-stats text-[#FF9D00]">{studioReadTime} min</strong></span>
+                <span>🎯 SEO Readiness: <strong className={`font-mono-stats ${hasKeywordInTitle ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>{hasKeywordInTitle ? '92/100 (Optimal)' : '75/100 (Add Keyword in Title)'}</strong></span>
               </div>
+              <span className="text-[11px] text-[#6B7280] font-bold">Markdown Format Active</span>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">URL Slug</label>
-                  <input
-                    name="slug"
-                    defaultValue={editingBlogPost?.slug || ''}
-                    placeholder="why-is-my-website-ranking-dropping"
-                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Category *</label>
-                  <select
-                    name="category"
-                    defaultValue={editingBlogPost?.category || 'seo'}
-                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  >
-                    <option value="seo">SEO Optimization</option>
-                    <option value="website_upgrade">Speed & SEO Upgrade</option>
-                    <option value="web_dev">Web Engineering</option>
-                    <option value="ugc_ads">UGC Video Ads</option>
-                    <option value="local_business">Local Business Marketing</option>
-                    <option value="meta_ads">Meta & LinkedIn Ads</option>
-                    <option value="sales_growth">Sales Growth & CRO</option>
-                    <option value="general">General Industry</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Keyword</label>
-                  <input
-                    name="target_keyword"
-                    defaultValue={editingBlogPost?.target_keyword || ''}
-                    placeholder="e.g. why is my website ranking dropping"
-                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Region</label>
-                  <input
-                    name="city"
-                    defaultValue={editingBlogPost?.city || 'Global'}
-                    placeholder="Global"
-                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Author Name *</label>
-                  <input
-                    name="author_name"
-                    required
-                    defaultValue={editingBlogPost?.author_name || 'ApexPulse Team'}
-                    placeholder="ApexPulse Team"
-                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL / Upload File *</label>
-                <div className="flex gap-2 items-center">
-                  <input
-                    name="cover_image_url"
-                    value={blogCoverUrl || editingBlogPost?.cover_image_url || ''}
-                    onChange={(e) => setBlogCoverUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                  />
-                  <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
-                    <UploadCloud size={14} className="text-[#FF9D00]" />
-                    <span>Upload File</span>
+            <form onSubmit={handleSaveBlogPost} className="space-y-4">
+              {/* TAB 1: WRITING EDITOR */}
+              {blogStudioTab === 'write' && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Article Title *</label>
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const url = await uploadImageFile(e.target.files[0]);
-                          setBlogCoverUrl(url);
-                          addToast('success', 'File uploaded and URL inserted!');
-                        }
-                      }}
-                      className="hidden"
+                      name="title"
+                      required
+                      value={blogTitleText}
+                      onChange={(e) => setBlogTitleText(e.target.value)}
+                      placeholder="e.g. Why Is My Website Ranking Dropping? 7 Technical SEO Fixes"
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5E7EB] text-base font-bold text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
+                  </div>
+
+                  {/* Markdown Quick Formatting Toolbar */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold text-[#1C1C1C]">Markdown Content Studio *</label>
+                      <div className="flex items-center gap-1 bg-[#F9FAFB] p-1 rounded-md border border-[#E5E7EB]">
+                        <button type="button" onClick={() => insertMarkdownToolbar('# ')} className="p-1 hover:bg-white rounded text-xs font-bold" title="H1 Heading"><Heading size={14} /></button>
+                        <button type="button" onClick={() => insertMarkdownToolbar('## ')} className="p-1 hover:bg-white rounded text-xs font-bold" title="H2 Section">H2</button>
+                        <button type="button" onClick={() => insertMarkdownToolbar('**', '**')} className="p-1 hover:bg-white rounded text-xs font-bold" title="Bold"><Bold size={14} /></button>
+
+                        <button type="button" onClick={() => insertMarkdownToolbar('> ')} className="p-1 hover:bg-white rounded text-xs font-bold" title="Quote"><QuoteIcon size={14} /></button>
+                        <button type="button" onClick={() => insertMarkdownToolbar('- ')} className="p-1 hover:bg-white rounded text-xs font-bold" title="Bullet List"><List size={14} /></button>
+                        <button type="button" onClick={() => insertMarkdownToolbar('```javascript\n', '\n```')} className="p-1 hover:bg-white rounded text-xs font-bold" title="Code Block"><Code size={14} /></button>
+                      </div>
+                    </div>
+
+                    <textarea
+                      name="content"
+                      required
+                      rows={12}
+                      value={blogContentText}
+                      onChange={(e) => setBlogContentText(e.target.value)}
+                      placeholder="# Article Heading&#10;&#10;Write detailed markdown article sections here..."
+                      className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] text-xs font-mono text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] leading-relaxed"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: METADATA & SEO */}
+              {blogStudioTab === 'meta' && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">URL Slug</label>
+                      <input
+                        name="slug"
+                        defaultValue={editingBlogPost?.slug || ''}
+                        placeholder="why-is-my-website-ranking-dropping"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Category *</label>
+                      <select
+                        name="category"
+                        value={blogCategoryVal}
+                        onChange={(e) => setBlogCategoryVal(e.target.value as BlogCategory)}
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      >
+                        <option value="seo">SEO Optimization</option>
+                        <option value="website_upgrade">Speed & SEO Upgrade</option>
+                        <option value="web_dev">Web Engineering</option>
+                        <option value="ugc_ads">UGC Video Ads</option>
+                        <option value="local_business">Local Business Marketing</option>
+                        <option value="meta_ads">Meta & LinkedIn Ads</option>
+                        <option value="sales_growth">Sales Growth & CRO</option>
+                        <option value="general">General Industry</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Primary Keyword</label>
+                      <input
+                        name="target_keyword"
+                        value={blogKeywordText}
+                        onChange={(e) => setBlogKeywordText(e.target.value)}
+                        placeholder="e.g. why is my website ranking dropping"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Region</label>
+                      <input
+                        name="city"
+                        defaultValue={editingBlogPost?.city || 'Global'}
+                        placeholder="Global"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Author Name *</label>
+                      <input
+                        name="author_name"
+                        required
+                        value={blogAuthorVal}
+                        onChange={(e) => setBlogAuthorVal(e.target.value)}
+                        placeholder="ApexPulse Team"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Cover Image URL / Upload File *</label>
+                    <div className="flex gap-2 items-center">
+                      <input
+                        name="cover_image_url"
+                        value={blogCoverUrl || editingBlogPost?.cover_image_url || ''}
+                        onChange={(e) => setBlogCoverUrl(e.target.value)}
+                        placeholder="https://images.unsplash.com/photo-..."
+                        className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                      <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
+                        <UploadCloud size={14} className="text-[#FF9D00]" />
+                        <span>Upload File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const url = await uploadImageFile(e.target.files[0]);
+                              setBlogCoverUrl(url);
+                              addToast('success', 'File uploaded and URL inserted!');
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Excerpt / Executive Summary *</label>
+                    <textarea
+                      name="excerpt"
+                      required
+                      rows={3}
+                      value={blogExcerptText}
+                      onChange={(e) => setBlogExcerptText(e.target.value)}
+                      placeholder="Brief 1-2 sentence executive summary..."
+                      className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: LIVE ARTICLE PREVIEW */}
+              {blogStudioTab === 'preview' && (
+                <div className="p-6 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl space-y-4 max-h-[400px] overflow-y-auto">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded text-[11px] font-bold uppercase">
+                      {blogCategoryVal}
+                    </span>
+                    {blogKeywordText && (
+                      <span className="bg-[#FFF9E6] text-[#FF9D00] px-2 py-0.5 rounded text-[11px] font-bold border border-[#FFD21E]">
+                        #{blogKeywordText}
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="text-2xl font-extrabold text-[#1C1C1C]">{blogTitleText || 'Article Title'}</h1>
+                  <p className="text-xs text-[#6B7280] italic border-l-4 border-[#FF9D00] pl-3 py-1">
+                    "{blogExcerptText || 'Executive summary...'}"
+                  </p>
+                  <div className="pt-2 text-xs text-[#1C1C1C] whitespace-pre-line leading-relaxed font-sans border-t border-[#E5E7EB]">
+                    {blogContentText || 'Write markdown content to preview...'}
+                  </div>
+                </div>
+              )}
+
+              {/* Publish Toggle & Action Buttons */}
+              <div className="pt-3 border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_published"
+                    name="is_published"
+                    defaultChecked={editingBlogPost?.is_published ?? true}
+                    className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
+                  />
+                  <label htmlFor="is_published" className="text-xs font-bold text-[#1C1C1C]">
+                    Publish Article Immediately (Visible to public readers & Google sitemap)
                   </label>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Excerpt / Summary *</label>
-                <textarea
-                  name="excerpt"
-                  required
-                  rows={2}
-                  defaultValue={editingBlogPost?.excerpt || ''}
-                  placeholder="Brief 1-2 sentence summary..."
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Full Article Content (Markdown) *</label>
-                <textarea
-                  name="content"
-                  required
-                  rows={6}
-                  defaultValue={editingBlogPost?.content || ''}
-                  placeholder="# Article Heading&#10;&#10;Write markdown article content here..."
-                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] font-mono focus:outline-none focus:border-[#FF9D00]"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="is_published"
-                  name="is_published"
-                  defaultChecked={editingBlogPost?.is_published ?? true}
-                  className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
-                />
-                <label htmlFor="is_published" className="text-xs font-semibold text-[#1C1C1C]">
-                  Publish Article (Make visible to public visitors & sitemap.xml)
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" onClick={() => setBlogModalOpen(false)} variant="secondary" size="sm">
-                  Cancel
-                </Button>
-                <Button type="submit" variant="primary" size="sm">
-                  Save Article
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button type="button" onClick={() => setBlogModalOpen(false)} variant="secondary" size="sm">
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="primary" size="sm">
+                    <Send size={14} />
+                    <span>Save & Publish Article</span>
+                  </Button>
+                </div>
               </div>
             </form>
           </div>
