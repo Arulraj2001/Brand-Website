@@ -17,6 +17,7 @@ import {
 import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import RichArticleContent from '@/components/blog/RichArticleContent';
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
 
 interface BlogPostPageProps {
@@ -131,7 +132,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
-      <article className="max-w-4xl mx-auto px-4 space-y-8">
+      <article className="max-w-6xl mx-auto px-4 space-y-8">
         {/* Back Link */}
         <Link
           href="/blog"
@@ -142,26 +143,10 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
         </Link>
 
         {/* Hero Header */}
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-4xl">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-[4px] bg-[#3B82F6] text-white text-xs font-bold uppercase">
-              {post.category === 'web_dev'
-                ? 'Web Engineering'
-                : post.category === 'app_dev'
-                ? 'App Engineering'
-                : post.category === 'website_upgrade'
-                ? 'Speed & SEO Upgrade'
-                : post.category === 'ugc_ads'
-                ? 'UGC Ads'
-                : post.category === 'local_business'
-                ? 'Local SEO'
-                : post.category === 'meta_ads'
-                ? 'Meta Ads'
-                : post.category === 'seo'
-                ? 'SEO Optimization'
-                : post.category === 'sales_growth'
-                ? 'Sales Growth'
-                : 'General'}
+              {post.category.replace('_', ' ')}
             </span>
 
             {post.city && (
@@ -174,7 +159,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
             {post.target_keyword && (
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#FF9D00] bg-[#FFF9E6] px-2.5 py-0.5 rounded-[4px] border border-[#FFD21E]/60">
                 <Tag size={11} className="text-[#FF9D00]" />
-                {post.target_keyword}
+                #{post.target_keyword.replace(/\s+/g, '-')}
               </span>
             )}
           </div>
@@ -199,7 +184,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
         </div>
 
         {/* Hero Cover Image */}
-        <div className="relative h-64 sm:h-[400px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-xs bg-white">
+        <div className="relative h-64 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-white">
           <Image
             src={
               post.cover_image_url ||
@@ -208,24 +193,17 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
             alt={post.title}
             fill
             priority
-            sizes="(max-width: 768px) 100vw, 80vw"
+            sizes="(max-width: 768px) 100vw, 90vw"
             className="object-cover"
           />
         </div>
 
-        {/* Main Content Body */}
-        <Card className="p-6 sm:p-10 bg-white border border-[#E5E7EB] space-y-6 text-[#1C1C1C] leading-relaxed">
-          {post.excerpt && (
-            <p className="text-base sm:text-lg font-semibold text-[#6B7280] italic border-l-4 border-[#FF9D00] pl-4 py-1">
-              "{post.excerpt}"
-            </p>
-          )}
-
-          {/* Simple Structured Markdown / HTML Renderer */}
-          <div className="space-y-4 text-sm sm:text-base text-[#1C1C1C] whitespace-pre-line font-sans">
-            {post.content}
-          </div>
-        </Card>
+        {/* Rich Article Renderer with ToC Sidebar */}
+        <RichArticleContent
+          content={post.content}
+          excerpt={post.excerpt}
+          title={post.title}
+        />
 
         {/* Free Consultation CTA Block */}
         <Card className="p-6 sm:p-8 bg-white border-2 border-[#FFD21E] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
