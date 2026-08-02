@@ -81,7 +81,12 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const formatBudgetLabel = (usdRange: string): string => {
     if (currency === 'USD') return usdRange;
 
-    // Parse USD ranges like "$500–$1,000", "$1,000–$3,000", "$3,000–$5,000", "$5,000+"
+    // Parse USD ranges like "$50–$500", "$500–$1,000", "$1,000–$3,000", "$3,000–$5,000", "$5,000+"
+    if (usdRange.includes('$50') && usdRange.includes('$500')) {
+      const min = convertAmount(50).formatted;
+      const max = convertAmount(500).formatted;
+      return `$50 – $500 (≈ ${min} – ${max})`;
+    }
     if (usdRange.includes('$500') && usdRange.includes('$1,000')) {
       const min = convertAmount(500).formatted;
       const max = convertAmount(1000).formatted;

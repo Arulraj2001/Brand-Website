@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Globe, Info } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Globe, Info, DollarSign } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -30,11 +30,11 @@ type LeadFormData = z.infer<typeof leadSchema>;
 
 export default function ContactPage() {
   const { settings } = useSiteSettings();
-  const { formatBudgetLabel, isConverted } = useCurrency();
+  const { formatBudgetLabel, isConverted, convertAmount, currency } = useCurrency();
   const [mounted, setMounted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [budgetSelection, setBudgetSelection] = useState<string>('$1,000–$3,000');
+  const [budgetSelection, setBudgetSelection] = useState<string>('$50–$500');
   const [customAmount, setCustomAmount] = useState<string>('');
 
   React.useEffect(() => {
@@ -53,7 +53,7 @@ export default function ContactPage() {
   } = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
     defaultValues: {
-      budget_range: '$1,000–$3,000',
+      budget_range: '$50–$500',
       service_interested: 'Website Development',
     },
   });
@@ -98,7 +98,7 @@ export default function ContactPage() {
     if (result.success) {
       setSubmitted(true);
       reset();
-      setBudgetSelection('$1,000–$3,000');
+      setBudgetSelection('$50–$500');
       setCustomAmount('');
     }
   };
@@ -273,56 +273,76 @@ export default function ContactPage() {
                       </select>
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-[#1C1C1C]">
-                          Budget Range (USD $) *
+                    {/* Enhanced Budget Range UI */}
+                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border border-[#FFD21E] shadow-xs space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-extrabold text-[#1C1C1C] flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-md bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            <DollarSign size={13} className="stroke-[2.5]" />
+                          </div>
+                          <span>Budget Range (USD $) *</span>
                         </label>
                         <CurrencySelector />
                       </div>
-                      <select
-                        value={budgetSelection}
-                        onChange={handleBudgetDropdownChange}
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm font-semibold text-[#FF9D00] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors font-mono-stats"
-                      >
-                        <option value="$500–$1,000">{formatBudgetLabel('$500–$1,000')}</option>
-                        <option value="$1,000–$3,000">{formatBudgetLabel('$1,000–$3,000')}</option>
-                        <option value="$3,000–$5,000">{formatBudgetLabel('$3,000–$5,000')}</option>
-                        <option value="$5,000+">{formatBudgetLabel('$5,000+')}</option>
-                        <option value="custom">✏️ Custom Amount (Enter exact USD $)...</option>
-                      </select>
+
+                      <div className="relative">
+                        <select
+                          value={budgetSelection}
+                          onChange={handleBudgetDropdownChange}
+                          className="w-full pl-3.5 pr-8 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] focus:border-[#FF9D00] shadow-2xs transition-all font-mono-stats cursor-pointer"
+                        >
+                          <option value="$50–$500">🌱 {formatBudgetLabel('$50–$500')} (Starter)</option>
+                          <option value="$500–$1,000">💼 {formatBudgetLabel('$500–$1,000')}</option>
+                          <option value="$1,000–$3,000">🚀 {formatBudgetLabel('$1,000–$3,000')} (Popular)</option>
+                          <option value="$3,000–$5,000">⭐ {formatBudgetLabel('$3,000–$5,000')} (Enterprise)</option>
+                          <option value="$5,000+">👑 {formatBudgetLabel('$5,000+')} (Custom Scale)</option>
+                          <option value="custom">✏️ Enter Custom Amount (USD $)...</option>
+                        </select>
+                      </div>
 
                       {isConverted && (
-                        <p className="text-[11px] font-semibold text-[#6B7280] mt-1 flex items-center gap-1">
-                          <Info size={12} className="text-[#FF9D00] shrink-0" />
-                          <span>Approximate — final pricing and invoices are in USD ($).</span>
+                        <p className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 pt-0.5">
+                          <Info size={13} className="text-[#FF9D00] shrink-0" />
+                          <span>Currency converted live — invoices & billing are in USD ($).</span>
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Custom Budget Text Input */}
+                  {/* Custom Budget Text Input & Live Converted Output */}
                   {budgetSelection === 'custom' && (
                     <motion.div
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="relative"
+                      className="relative mt-2 space-y-1.5"
                     >
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
                         Custom Budget Amount (USD $) *
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-sm font-bold text-[#FF9D00]">
-                          $
-                        </span>
+                        <div className="absolute left-3 top-2.5 text-xs font-extrabold text-[#FF9D00] flex items-center gap-1">
+                          <DollarSign size={13} />
+                          <span>USD</span>
+                        </div>
                         <input
                           type="text"
                           value={customAmount}
                           onChange={handleCustomAmountChange}
-                          placeholder="Enter custom budget (e.g. 2,500 or 7,500)"
-                          className="w-full pl-8 pr-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] font-mono-stats"
+                          placeholder="e.g. 250 or 1,500"
+                          className="w-full pl-14 pr-3.5 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] font-mono-stats"
                         />
                       </div>
+
+                      {/* Live Conversion Output for Custom Amount */}
+                      {isConverted && customAmount && !isNaN(Number(customAmount.replace(/[^0-9.]/g, ''))) && (
+                        <div className="text-[11px] font-bold text-[#047857] bg-[#ECFDF5] px-3 py-1.5 rounded-lg flex items-center justify-between border border-[#10B981]/30">
+                          <span>Live Converted Amount ({currency}):</span>
+                          <span className="font-mono-stats text-xs font-extrabold text-[#065F46]">
+                            {convertAmount(Number(customAmount.replace(/[^0-9.]/g, ''))).formatted} {currency}
+                          </span>
+                        </div>
+                      )}
+
                       {errors.budget_range && (
                         <p className="text-xs text-[#EF4444] font-semibold mt-1">
                           {errors.budget_range.message}

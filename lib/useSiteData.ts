@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import {
   SiteSettings,
   TeamMember,
+  StudentFeedbackVideo,
+  StudentProject,
 } from '@/types';
 import {
   getSiteSettings,
@@ -12,12 +14,22 @@ import {
   getTeamMembers,
   fetchTeamMembersFromSupabase,
   saveTeamMembersToSupabase,
+  getStudentFeedbackVideos,
+  fetchStudentFeedbackFromSupabase,
+  saveStudentFeedbackToSupabase,
+  deleteStudentFeedbackFromSupabase,
+  getStudentProjects,
+  fetchStudentProjectsFromSupabase,
+  saveStudentProjectToSupabase,
+  deleteStudentProjectFromSupabase,
   INITIAL_SITE_SETTINGS,
   INITIAL_TEAM_MEMBERS,
+  INITIAL_STUDENT_FEEDBACK_VIDEOS,
+  INITIAL_STUDENT_PROJECTS,
 } from '@/lib/supabase/data';
 
 export function useSiteSettings() {
-  const [settings, setSettings] = useState<SiteSettings>(getSiteSettings());
+  const [settings, setSettings] = useState<SiteSettings>(INITIAL_SITE_SETTINGS);
 
   useEffect(() => {
     // 1. Initial load from local cache/defaults
@@ -79,3 +91,65 @@ export function useTeamMembers() {
 
   return { teamMembers, saveTeam };
 }
+
+export function useStudentData() {
+  const [feedbackVideos, setFeedbackVideos] = useState<StudentFeedbackVideo[]>(INITIAL_STUDENT_FEEDBACK_VIDEOS);
+  const [projects, setProjects] = useState<StudentProject[]>(INITIAL_STUDENT_PROJECTS);
+
+  useEffect(() => {
+    setFeedbackVideos(getStudentFeedbackVideos());
+    setProjects(getStudentProjects());
+
+    fetchStudentFeedbackFromSupabase().then((fresh) => {
+      if (fresh && fresh.length > 0) setFeedbackVideos(fresh);
+    });
+
+    fetchStudentProjectsFromSupabase().then((freshProj) => {
+      if (freshProj && freshProj.length > 0) setProjects(freshProj);
+    });
+
+    const handleUpdate = () => {
+      setFeedbackVideos(getStudentFeedbackVideos());
+      setProjects(getStudentProjects());
+    };
+
+    window.addEventListener('apexpulse_student_data_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('apexpulse_student_data_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const saveFeedbackVideo = async (item: StudentFeedbackVideo) => {
+    const updated = await saveStudentFeedbackToSupabase(item);
+    setFeedbackVideos(getStudentFeedbackVideos());
+    return updated;
+  };
+
+  const deleteFeedbackVideo = async (id: string) => {
+    await deleteStudentFeedbackFromSupabase(id);
+    setFeedbackVideos(getStudentFeedbackVideos());
+  };
+
+  const saveStudentProject = async (item: StudentProject) => {
+    const updated = await saveStudentProjectToSupabase(item);
+    setProjects(getStudentProjects());
+    return updated;
+  };
+
+  const deleteStudentProject = async (id: string) => {
+    await deleteStudentProjectFromSupabase(id);
+    setProjects(getStudentProjects());
+  };
+
+  return {
+    feedbackVideos,
+    projects,
+    saveFeedbackVideo,
+    deleteFeedbackVideo,
+    saveStudentProject,
+    deleteStudentProject,
+  };
+}
+

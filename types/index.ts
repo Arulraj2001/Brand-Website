@@ -63,7 +63,7 @@ export interface Lead {
   country: string; // Renamed from city for international reach
   city?: string; // Legacy fallback
   service_interested: string;
-  budget_range: string; // USD ranges e.g. "$1,000–$3,000"
+  budget_range?: string; // USD ranges e.g. "$1,000–$3,000"
   message: string;
   status?: 'new' | 'contacted' | 'qualified' | 'closed';
   created_at?: string;
@@ -111,3 +111,41 @@ export interface ServiceDetail {
   metrics: { label: string; value: string }[];
   icon: string;
 }
+
+export type StudentProjectCategory =
+  | 'web_dev'
+  | 'machine_learning'
+  | 'deep_learning'
+  | 'custom_domain'
+  | 'full_stack';
+
+export interface StudentFeedbackVideo {
+  id: string;
+  student_name: string;
+  degree_branch: string; // e.g. "MCA", "BCA", "B.Sc CS", "M.Sc CS", "B.Tech CS"
+  project_title: string;
+  project_category: StudentProjectCategory;
+  video_url: string; // YouTube video, YouTube Shorts, MP4 URL, or Vimeo
+  thumbnail_url?: string;
+  rating: number; // e.g. 5
+  quote: string;
+  is_featured: boolean;
+  created_at?: string;
+}
+
+export interface StudentProject {
+  id: string;
+  title: string;
+  category: StudentProjectCategory;
+  degree: string; // e.g. "BCA / MCA"
+  description: string;
+  tech_stack: string[];
+  has_documentation: boolean;
+  has_presentation: boolean;
+  has_certificate: boolean;
+  has_custom_domain: boolean;
+  demo_url?: string;
+  image_url: string;
+  created_at?: string;
+}
+

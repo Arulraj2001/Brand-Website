@@ -1,14 +1,14 @@
-import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost } from '@/types';
+import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
 import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
   phone: '+1 (800) 555-0199',
   whatsapp_number: '18005550199',
-  email: 'hello@apexpulse.in',
+  email: 'hello@arusythapex.netlify.app',
   address: 'Global Remote HQ • Austin, TX & International Hubs',
-  linkedin_url: 'https://linkedin.com/company/apexpulse-india',
-  twitter_url: 'https://twitter.com/apexpulse_in',
-  instagram_url: 'https://instagram.com/apexpulse.in',
+  linkedin_url: 'https://linkedin.com/company/arusyth-apex',
+  twitter_url: 'https://twitter.com/arusyth_apex',
+  instagram_url: 'https://instagram.com/arusyth_apex',
 };
 
 export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
@@ -642,3 +642,332 @@ export async function deleteTeamMemberFromSupabase(id: string): Promise<void> {
     console.error('Error deleting team member from Supabase:', err);
   }
 }
+
+// ----------------------------------------------------
+// STUDENT PROJECTS & VIDEO FEEDBACK (MSME Learnithm)
+// ----------------------------------------------------
+
+export const INITIAL_STUDENT_FEEDBACK_VIDEOS: StudentFeedbackVideo[] = [
+  {
+    id: 'sv-1',
+    student_name: 'Ananya Sharma',
+    degree_branch: 'MCA Final Year',
+    project_title: 'AI Based Health Diagnostic System using Deep Learning',
+    project_category: 'deep_learning',
+    video_url: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+    thumbnail_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    quote: 'Learnithm made my final year MCA project effortless! The Deep Learning CNN model accuracy was 98.4%, and the MSME certificate + IEEE report documentation helped me clear my viva with top grades!',
+    is_featured: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sv-2',
+    student_name: 'Rahul Verma',
+    degree_branch: 'BCA Final Year',
+    project_title: 'Smart E-Commerce Portal with Custom Domain Hosting',
+    project_category: 'web_dev',
+    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnail_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    quote: 'Got complete source code, PPT presentation, and custom domain deployment from Learnithm. Over 80+ of my college seniors recommended them, and now I see why!',
+    is_featured: true,
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'sv-3',
+    student_name: 'Priya Patel',
+    degree_branch: 'B.Sc CS',
+    project_title: 'Predictive Stock & Crypto Analytics using Machine Learning',
+    project_category: 'machine_learning',
+    video_url: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+    thumbnail_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    quote: 'Awesome guidance for Machine Learning algorithms! The project report followed my university format perfectly and the MSME registered Learnithm certificate gave a huge boost to my resume.',
+    is_featured: true,
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+  {
+    id: 'sv-4',
+    student_name: 'Vikram Singh',
+    degree_branch: 'M.Sc CS',
+    project_title: 'Real-Time Facial Recognition & Security System',
+    project_category: 'deep_learning',
+    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    thumbnail_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    quote: 'The viva preparation sessions and detailed documentation were top-notch. Learnithm provided custom domain hosting and full source code walk-throughs!',
+    is_featured: true,
+    created_at: new Date(Date.now() - 259200000).toISOString(),
+  },
+];
+
+export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
+  {
+    id: 'sp-1',
+    title: 'AI Medical Diagnosis & X-Ray Analysis System',
+    category: 'deep_learning',
+    degree: 'MCA / M.Sc CS',
+    description: 'Deep Learning Convolutional Neural Network (CNN) trained on PyTorch/TensorFlow for classifying lung pathologies with 98% accuracy. Includes Flask API & React dashboard.',
+    tech_stack: ['Python', 'TensorFlow', 'PyTorch', 'Flask', 'React'],
+    has_documentation: true,
+    has_presentation: true,
+    has_certificate: true,
+    has_custom_domain: true,
+    demo_url: 'https://med-ai-demo.learnithm.in',
+    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sp-2',
+    title: 'Full-Stack Smart Learning Management System',
+    category: 'web_dev',
+    degree: 'BCA / B.Tech CS',
+    description: 'Next.js & Tailwind CSS responsive LMS portal with student dashboards, video streaming, quizzes, PDF certificate generator, and Razorpay/Stripe integration.',
+    tech_stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Node.js'],
+    has_documentation: true,
+    has_presentation: true,
+    has_certificate: true,
+    has_custom_domain: true,
+    demo_url: 'https://lms-portal.learnithm.in',
+    image_url: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=800&q=80',
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'sp-3',
+    title: 'Customer Churn & Sales Revenue Prediction ML Model',
+    category: 'machine_learning',
+    degree: 'B.Sc CS / MCA',
+    description: 'Scikit-Learn Random Forest and XGBoost regression pipeline predicting customer churn with interactive Streamlit web dashboard and real-time visualization.',
+    tech_stack: ['Python', 'Scikit-Learn', 'XGBoost', 'Pandas', 'Streamlit'],
+    has_documentation: true,
+    has_presentation: true,
+    has_certificate: true,
+    has_custom_domain: true,
+    demo_url: 'https://churn-ml.learnithm.in',
+    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+  {
+    id: 'sp-4',
+    title: 'Autonomous Vehicle Obstacle Detection System',
+    category: 'deep_learning',
+    degree: 'M.Sc CS / B.Tech CS',
+    description: 'YOLOv8 Computer Vision model for real-time traffic obstacle and pedestrian detection, featuring OpenCV processing and live web feed controls.',
+    tech_stack: ['Python', 'YOLOv8', 'OpenCV', 'PyTorch', 'FastAPI'],
+    has_documentation: true,
+    has_presentation: true,
+    has_certificate: true,
+    has_custom_domain: true,
+    demo_url: 'https://yolo-vision.learnithm.in',
+    image_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80',
+    created_at: new Date(Date.now() - 259200000).toISOString(),
+  },
+];
+
+export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
+  if (typeof window === 'undefined') return INITIAL_STUDENT_FEEDBACK_VIDEOS;
+  try {
+    const cached = localStorage.getItem('apexpulse_student_feedback');
+    if (cached) return JSON.parse(cached);
+  } catch (err) {
+    console.error('Error reading student feedback from localStorage:', err);
+  }
+  return INITIAL_STUDENT_FEEDBACK_VIDEOS;
+}
+
+export function saveStudentFeedbackLocal(videos: StudentFeedbackVideo[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('apexpulse_student_feedback', JSON.stringify(videos));
+    window.dispatchEvent(new Event('apexpulse_student_data_updated'));
+  } catch (err) {
+    console.error('Error saving student feedback to localStorage:', err);
+  }
+}
+
+export async function fetchStudentFeedbackFromSupabase(): Promise<StudentFeedbackVideo[] | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('student_feedback_videos')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      saveStudentFeedbackLocal(data as StudentFeedbackVideo[]);
+      return data as StudentFeedbackVideo[];
+    }
+  } catch (err) {
+    console.error('Error fetching student feedback from Supabase:', err);
+  }
+  return null;
+}
+
+export async function saveStudentFeedbackToSupabase(item: StudentFeedbackVideo): Promise<StudentFeedbackVideo> {
+  // 1. Update local cache
+  const current = getStudentFeedbackVideos();
+  const existingIdx = current.findIndex((v) => v.id === item.id);
+  let updatedList: StudentFeedbackVideo[];
+  if (existingIdx >= 0) {
+    updatedList = [...current];
+    updatedList[existingIdx] = item;
+  } else {
+    updatedList = [item, ...current];
+  }
+  saveStudentFeedbackLocal(updatedList);
+
+  // 2. Sync to Supabase if configured
+  if (!isSupabaseConfigured()) return item;
+  try {
+    const supabase = createClient();
+    const payload: Partial<StudentFeedbackVideo> = {
+      student_name: item.student_name,
+      degree_branch: item.degree_branch,
+      project_title: item.project_title,
+      project_category: item.project_category,
+      video_url: item.video_url,
+      thumbnail_url: item.thumbnail_url,
+      rating: item.rating,
+      quote: item.quote,
+      is_featured: item.is_featured,
+    };
+    if (isUUID(item.id)) {
+      payload.id = item.id;
+    }
+
+    const { data, error } = await supabase
+      .from('student_feedback_videos')
+      .upsert(payload)
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as StudentFeedbackVideo;
+    }
+  } catch (err) {
+    console.error('Error saving student feedback to Supabase:', err);
+  }
+  return item;
+}
+
+export async function deleteStudentFeedbackFromSupabase(id: string): Promise<void> {
+  const current = getStudentFeedbackVideos();
+  const filtered = current.filter((v) => v.id !== id);
+  saveStudentFeedbackLocal(filtered);
+
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('student_feedback_videos').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error deleting student feedback from Supabase:', err);
+  }
+}
+
+export function getStudentProjects(): StudentProject[] {
+  if (typeof window === 'undefined') return INITIAL_STUDENT_PROJECTS;
+  try {
+    const cached = localStorage.getItem('apexpulse_student_projects');
+    if (cached) return JSON.parse(cached);
+  } catch (err) {
+    console.error('Error reading student projects from localStorage:', err);
+  }
+  return INITIAL_STUDENT_PROJECTS;
+}
+
+export function saveStudentProjectsLocal(projects: StudentProject[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('apexpulse_student_projects', JSON.stringify(projects));
+    window.dispatchEvent(new Event('apexpulse_student_data_updated'));
+  } catch (err) {
+    console.error('Error saving student projects to localStorage:', err);
+  }
+}
+
+export async function fetchStudentProjectsFromSupabase(): Promise<StudentProject[] | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('student_projects')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      saveStudentProjectsLocal(data as StudentProject[]);
+      return data as StudentProject[];
+    }
+  } catch (err) {
+    console.error('Error fetching student projects from Supabase:', err);
+  }
+  return null;
+}
+
+export async function saveStudentProjectToSupabase(item: StudentProject): Promise<StudentProject> {
+  const current = getStudentProjects();
+  const existingIdx = current.findIndex((p) => p.id === item.id);
+  let updatedList: StudentProject[];
+  if (existingIdx >= 0) {
+    updatedList = [...current];
+    updatedList[existingIdx] = item;
+  } else {
+    updatedList = [item, ...current];
+  }
+  saveStudentProjectsLocal(updatedList);
+
+  if (!isSupabaseConfigured()) return item;
+  try {
+    const supabase = createClient();
+    const payload: Partial<StudentProject> = {
+      title: item.title,
+      category: item.category,
+      degree: item.degree,
+      description: item.description,
+      tech_stack: item.tech_stack,
+      has_documentation: item.has_documentation,
+      has_presentation: item.has_presentation,
+      has_certificate: item.has_certificate,
+      has_custom_domain: item.has_custom_domain,
+      demo_url: item.demo_url,
+      image_url: item.image_url,
+    };
+    if (isUUID(item.id)) {
+      payload.id = item.id;
+    }
+
+    const { data, error } = await supabase
+      .from('student_projects')
+      .upsert(payload)
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as StudentProject;
+    }
+  } catch (err) {
+    console.error('Error saving student project to Supabase:', err);
+  }
+  return item;
+}
+
+export async function deleteStudentProjectFromSupabase(id: string): Promise<void> {
+  const current = getStudentProjects();
+  const filtered = current.filter((p) => p.id !== id);
+  saveStudentProjectsLocal(filtered);
+
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = createClient();
+    if (isUUID(id)) {
+      await supabase.from('student_projects').delete().eq('id', id);
+    }
+  } catch (err) {
+    console.error('Error deleting student project from Supabase:', err);
+  }
+}
+

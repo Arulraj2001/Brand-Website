@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Sparkles, PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
 import Button from './Button';
-import CurrencySelector from './CurrencySelector';
+import ArusythApexLogo from './ArusythApexLogo';
 import { useSiteSettings } from '@/lib/useSiteData';
 import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
@@ -33,6 +34,7 @@ export default function Navbar() {
     { name: 'Home', href: '/' },
     { name: 'Services', href: '/services' },
     { name: 'Portfolio', href: '/portfolio' },
+    { name: 'Student Projects', href: '/student-projects' },
     { name: 'About', href: '/about' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
@@ -45,13 +47,11 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-[#E5E7EB] h-[56px] flex items-center">
       <div className="max-w-[1200px] w-full mx-auto px-4 flex items-center justify-between">
         {/* Logo Left */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-[#FFD21E] flex items-center justify-center text-[#1C1C1C] font-bold border border-[#E5E7EB] shadow-xs group-hover:scale-105 transition-transform">
-            <Sparkles size={16} />
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <ArusythApexLogo size={32} className="group-hover:scale-105 transition-transform" />
           <div className="flex items-center gap-1">
             <span className="font-extrabold text-lg text-[#1C1C1C] tracking-tight">
-              Apex<span className="text-[#FF9D00]">Pulse</span>
+              Arusyth<span className="text-[#FF9D00]">Apex</span>
             </span>
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
               <Globe size={10} /> Global
@@ -84,7 +84,6 @@ export default function Navbar() {
 
         {/* CTA Right */}
         <div className="hidden md:flex items-center gap-3">
-          <CurrencySelector />
           <a
             href={`tel:${cleanPhoneTel}`}
             className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"

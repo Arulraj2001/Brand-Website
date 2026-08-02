@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
+import { CurrencyProvider } from '@/components/ui/CurrencyContext';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -19,58 +20,68 @@ const sourceCode = Source_Code_Pro({
   weight: ['400', '600', '700'],
 });
 
+const baseUrl = 'https://arusythapex.netlify.app';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://apexpulse.in'),
+  metadataBase: new URL(baseUrl),
   title: {
-    default: 'ApexPulse | Affordable Web Development, SEO & Performance Growth Agency',
-    template: '%s | ApexPulse Digital',
+    default: 'Arusyth Apex | Affordable Web Development, SEO & Growth Agency',
+    template: '%s | Arusyth Apex Technologies',
   },
   description:
-    'High-impact web engineering, old website speed upgrades, technical SEO, and high-ROAS UGC video ads for ambitious brands in the US, UK, India, Canada, Australia, and Europe.',
+    'High-impact web engineering, old website speed upgrades, technical SEO, and final year student IEEE projects under MSME registered Learnithm for clients worldwide.',
   keywords: [
+    'Arusyth Apex',
+    'Arusyth Apex Technologies',
+    'Arusyth Apex Netlify',
+    'Arusyth Apex Web Development',
     'Web Development Agency',
-    'affordable web development agency for Indian businesses',
-    'SEO agency for Indian startups',
-    'website development company serving India and international clients',
-    'digital marketing agency for small businesses in India',
-    'app development company India',
-    'Technical SEO Agency US UK India',
+    'Affordable Web Development Company',
+    'Technical SEO Agency',
     'Old Website Speed Overhaul',
     'Custom React Next.js Development',
-    'UGC Video Ads Meta',
+    'BCA MCA Final Year Student Projects Learnithm',
+    'IEEE Project Documentation and Reports',
+    'MSME Registered Project Certification',
   ],
-  authors: [{ name: 'ApexPulse Growth Team' }],
-  creator: 'ApexPulse Growth Team',
-  publisher: 'ApexPulse Growth Team',
+  authors: [{ name: 'Arusyth Apex Growth Team' }],
+  creator: 'Arusyth Apex Growth Team',
+  publisher: 'Arusyth Apex Technologies',
+  verification: {
+    google: 's2W-AWEAXVsjx5SQMYZwRd33ZraT1c0qUbM4DGmpeW4',
+  },
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/apple-icon.png',
+  },
   alternates: {
-    canonical: './',
+    canonical: baseUrl,
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://apexpulse.in',
-    title: 'ApexPulse | Affordable Web Development, SEO & Growth Agency',
+    url: baseUrl,
+    title: 'Arusyth Apex | Affordable Web Development, SEO & Performance Agency',
     description:
-      'Engineered web portals, sub-second speed upgrades, and top 3 SEO rankings for businesses in US, UK, India, Canada, Australia & Europe.',
-    siteName: 'ApexPulse',
+      'Engineered web portals, sub-second speed upgrades, top 3 SEO rankings, and MSME Learnithm student final year project guidance worldwide.',
+    siteName: 'Arusyth Apex',
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+        url: `${baseUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'ApexPulse Digital Agency India',
+        alt: 'Arusyth Apex Digital Agency & Student Projects Portal',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ApexPulse Digital | Web & App Engineering & ROI Growth Agency India',
+    title: 'Arusyth Apex Technologies | Web Development & SEO Growth Agency',
     description:
-      'Engineered web & software portals, top 3 SEO rankings, and verified INR revenue growth for ambitious companies across India.',
-    creator: '@apexpulse_in',
-    images: [
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-    ],
+      'Sub-second web engineering, technical SEO, and verified student project certifications under MSME registered Learnithm.',
+    creator: '@arusyth_apex',
+    images: [`${baseUrl}/og-image.png`],
   },
   robots: {
     index: true,
@@ -85,15 +96,54 @@ export const metadata: Metadata = {
   },
 };
 
-import { CurrencyProvider } from '@/components/ui/CurrencyContext';
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLdOrg = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Arusyth Apex Technologies',
+    url: baseUrl,
+    logo: `${baseUrl}/logo.png`,
+    sameAs: [
+      'https://learnithm.vercel.app/',
+      'https://linkedin.com/company/arusyth-apex',
+    ],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+1-800-555-0199',
+      contactType: 'customer service',
+      availableLanguage: ['English', 'Hindi'],
+    },
+  };
+
+  const jsonLdWebSite = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Arusyth Apex',
+    url: baseUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${baseUrl}/portfolio?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="en" className={`${sourceSans.variable} ${sourceCode.variable} h-full antialiased`}>
+      <head>
+        <meta name="google-site-verification" content="s2W-AWEAXVsjx5SQMYZwRd33ZraT1c0qUbM4DGmpeW4" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans bg-white text-[#1C1C1C] selection:bg-[#FFD21E] selection:text-[#1C1C1C]">
         <CurrencyProvider>
           <Navbar />

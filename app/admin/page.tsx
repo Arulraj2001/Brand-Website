@@ -48,6 +48,9 @@ import {
   Quote as QuoteIcon,
   Code,
   FileSpreadsheet,
+  GraduationCap,
+  Video,
+  Play,
 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
@@ -55,7 +58,7 @@ import Button from '@/components/ui/Button';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import ToastContainer, { ToastMessage } from '@/components/admin/Toast';
 import { TableSkeleton, Skeleton } from '@/components/admin/Skeleton';
-import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory } from '@/types';
+import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory, StudentFeedbackVideo, StudentProject, StudentProjectCategory } from '@/types';
 import {
   getPortfolioProjects,
   saveProjectToSupabase,
@@ -71,7 +74,7 @@ import {
   deleteLeadFromSupabase,
   deleteTeamMemberFromSupabase,
 } from '@/lib/supabase/data';
-import { useSiteSettings, useTeamMembers } from '@/lib/useSiteData';
+import { useSiteSettings, useTeamMembers, useStudentData } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
 
 interface MediaItem {
@@ -133,7 +136,7 @@ const INITIAL_LEADS: Lead[] = [
 ];
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog' | 'media'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog' | 'media' | 'student_projects'>('overview');
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -141,6 +144,24 @@ export default function AdminDashboardPage() {
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [userEmail, setUserEmail] = useState<string>('admin@apexpulse.in');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Student Projects & Video Feedback State
+  const {
+    feedbackVideos,
+    projects: studentProjects,
+    saveFeedbackVideo,
+    deleteFeedbackVideo,
+    saveStudentProject,
+    deleteStudentProject,
+  } = useStudentData();
+
+  const [studentVideoModalOpen, setStudentVideoModalOpen] = useState(false);
+  const [editingStudentVideo, setEditingStudentVideo] = useState<StudentFeedbackVideo | null>(null);
+  const [deleteConfirmStudentVideo, setDeleteConfirmStudentVideo] = useState<StudentFeedbackVideo | null>(null);
+
+  const [studentProjModalOpen, setStudentProjModalOpen] = useState(false);
+  const [editingStudentProj, setEditingStudentProj] = useState<StudentProject | null>(null);
+  const [deleteConfirmStudentProj, setDeleteConfirmStudentProj] = useState<StudentProject | null>(null);
 
   // Media Library State
   const [mediaList, setMediaList] = useState<MediaItem[]>([
@@ -612,6 +633,127 @@ export default function AdminDashboardPage() {
     addToast('success', `Post "${target.title}" ${nextPublished ? 'published' : 'unpublished'}`);
   };
 
+  // Student Video Feedback Handlers
+  const handleSaveStudentVideo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const student_name = formData.get('student_name') as string;
+    const degree_branch = formData.get('degree_branch') as string;
+    const project_title = formData.get('project_title') as string;
+    const project_category = (formData.get('project_category') as StudentProjectCategory) || 'web_dev';
+    const video_url = formData.get('video_url') as string;
+    const thumbnail_url = formData.get('thumbnail_url') as string;
+    const quote = formData.get('quote') as string;
+    const rating = parseInt(formData.get('rating') as string) || 5;
+    const is_featured = formData.get('is_featured') === 'on';
+
+    if (editingStudentVideo) {
+      const updated: StudentFeedbackVideo = {
+        ...editingStudentVideo,
+        student_name,
+        degree_branch,
+        project_title,
+        project_category,
+        video_url,
+        thumbnail_url,
+        quote,
+        rating,
+        is_featured,
+      };
+      await saveFeedbackVideo(updated);
+      addToast('success', `Student video review by "${student_name}" updated`);
+    } else {
+      const newVideo: StudentFeedbackVideo = {
+        id: 'sv-' + Math.random().toString(36).substring(2, 9),
+        student_name,
+        degree_branch,
+        project_title,
+        project_category,
+        video_url,
+        thumbnail_url,
+        quote,
+        rating,
+        is_featured,
+        created_at: new Date().toISOString(),
+      };
+      await saveFeedbackVideo(newVideo);
+      addToast('success', `Student video review by "${student_name}" added`);
+    }
+
+    setStudentVideoModalOpen(false);
+    setEditingStudentVideo(null);
+  };
+
+  const handleDeleteStudentVideo = async (id: string) => {
+    await deleteFeedbackVideo(id);
+    addToast('success', 'Student video feedback deleted');
+    setDeleteConfirmStudentVideo(null);
+  };
+
+  // Student Project Handlers
+  const handleSaveStudentProject = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get('title') as string;
+    const category = (formData.get('category') as StudentProjectCategory) || 'web_dev';
+    const degree = formData.get('degree') as string;
+    const description = formData.get('description') as string;
+    const techStackStr = formData.get('tech_stack') as string;
+    const tech_stack = techStackStr ? techStackStr.split(',').map((s) => s.trim()).filter(Boolean) : ['Python', 'React'];
+    const has_documentation = formData.get('has_documentation') === 'on';
+    const has_presentation = formData.get('has_presentation') === 'on';
+    const has_certificate = formData.get('has_certificate') === 'on';
+    const has_custom_domain = formData.get('has_custom_domain') === 'on';
+    const demo_url = formData.get('demo_url') as string;
+    const image_url = (formData.get('image_url') as string) || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+
+    if (editingStudentProj) {
+      const updated: StudentProject = {
+        ...editingStudentProj,
+        title,
+        category,
+        degree,
+        description,
+        tech_stack,
+        has_documentation,
+        has_presentation,
+        has_certificate,
+        has_custom_domain,
+        demo_url,
+        image_url,
+      };
+      await saveStudentProject(updated);
+      addToast('success', `Student project "${title}" updated`);
+    } else {
+      const newProj: StudentProject = {
+        id: 'sp-' + Math.random().toString(36).substring(2, 9),
+        title,
+        category,
+        degree,
+        description,
+        tech_stack,
+        has_documentation,
+        has_presentation,
+        has_certificate,
+        has_custom_domain,
+        demo_url,
+        image_url,
+        created_at: new Date().toISOString(),
+      };
+      await saveStudentProject(newProj);
+      addToast('success', `Student project "${title}" created`);
+    }
+
+    setStudentProjModalOpen(false);
+    setEditingStudentProj(null);
+  };
+
+  const handleDeleteStudentProject = async (id: string) => {
+    await deleteStudentProject(id);
+    addToast('success', 'Student project deleted');
+    setDeleteConfirmStudentProj(null);
+  };
+
   const handleLeadStatusChange = async (id: string, newStatus: Lead['status']) => {
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l)));
     await updateLeadStatusInSupabase(id, newStatus);
@@ -683,6 +825,7 @@ export default function AdminDashboardPage() {
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
     { id: 'leads', label: 'Leads Queue', icon: Users },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
+    { id: 'student_projects', label: 'Student Projects', icon: GraduationCap },
     { id: 'blog', label: 'Blog Posts', icon: FileText },
     { id: 'media', label: 'Media & Upload', icon: UploadCloud },
     { id: 'team', label: 'Team Architects', icon: UserCheck },
@@ -1513,6 +1656,183 @@ export default function AdminDashboardPage() {
             </Card>
           </div>
         )}
+
+        {/* TAB 8: STUDENT PROJECTS & VIDEO FEEDBACK MANAGER (MSME Learnithm) */}
+        {activeTab === 'student_projects' && (
+          <div className="space-y-8">
+            {/* Header & Overview */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD21E]/20 text-[#1C1C1C] font-bold text-xs mb-2">
+                  <ShieldCheck size={14} className="text-[#FF9D00]" />
+                  <span>MSME Registered &ldquo;Learnithm&rdquo;</span>
+                </div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Student Projects & Video Reviews Manager</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Manage video feedback (YouTube, Shorts, MP4) and CS final-year sample projects (Web Dev, Machine Learning, Deep Learning, Custom Domain)
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => { setEditingStudentVideo(null); setStudentVideoModalOpen(true); }}
+                  variant="secondary"
+                  size="sm"
+                >
+                  <Video size={14} />
+                  <span>+ Add Video Review</span>
+                </Button>
+                <Button
+                  onClick={() => { setEditingStudentProj(null); setStudentProjModalOpen(true); }}
+                  variant="primary"
+                  size="sm"
+                >
+                  <Plus size={14} />
+                  <span>+ Add Student Project</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* SECTION 1: STUDENT VIDEO REVIEWS */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-[#1C1C1C] flex items-center gap-2">
+                  <Video size={18} className="text-[#FF9D00]" />
+                  <span>Student Video Feedback & Testimonials ({feedbackVideos.length})</span>
+                </h2>
+              </div>
+
+              <div className="bg-white border border-[#E5E7EB] rounded-xl overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-[#6B7280] font-bold uppercase tracking-wider">
+                      <tr>
+                        <th className="p-3">Student & Branch</th>
+                        <th className="p-3">Project Title & Category</th>
+                        <th className="p-3">Video Link</th>
+                        <th className="p-3">Rating</th>
+                        <th className="p-3">Quote</th>
+                        <th className="p-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E5E7EB]">
+                      {feedbackVideos.map((video) => (
+                        <tr key={video.id} className="hover:bg-[#F9FAFB] transition-colors">
+                          <td className="p-3 font-semibold text-[#1C1C1C]">
+                            <div className="font-bold">{video.student_name}</div>
+                            <span className="px-2 py-0.5 rounded-md bg-[#FFD21E]/20 text-[#854D0E] text-[10px] font-bold inline-block mt-0.5">
+                              {video.degree_branch}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="font-medium text-[#1C1C1C] max-w-xs truncate">{video.project_title}</div>
+                            <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">{video.project_category}</span>
+                          </td>
+                          <td className="p-3">
+                            <a
+                              href={video.video_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#3B82F6] hover:underline flex items-center gap-1 font-semibold"
+                            >
+                              <Play size={12} className="fill-[#3B82F6]" />
+                              <span>View Video</span>
+                              <ExternalLink size={10} />
+                            </a>
+                          </td>
+                          <td className="p-3 font-bold text-[#FF9D00]">
+                            {video.rating} / 5 ⭐
+                          </td>
+                          <td className="p-3 text-[#6B7280] max-w-xs truncate italic">
+                            &ldquo;{video.quote}&rdquo;
+                          </td>
+                          <td className="p-3 text-right space-x-2">
+                            <button
+                              onClick={() => { setEditingStudentVideo(video); setStudentVideoModalOpen(true); }}
+                              className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
+                            >
+                              <Edit2 size={13} />
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirmStudentVideo(video)}
+                              className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444]"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 2: STUDENT PROJECTS SHOWCASE */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-[#1C1C1C] flex items-center gap-2">
+                  <Code size={18} className="text-[#3B82F6]" />
+                  <span>Student Projects Showcase ({studentProjects.length})</span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {studentProjects.map((proj) => (
+                  <Card key={proj.id} className="p-4 space-y-3 border border-[#E5E7EB] relative">
+                    <div className="flex items-start gap-3">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
+                        <Image
+                          src={proj.image_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80'}
+                          alt={proj.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <h3 className="font-bold text-sm text-[#1C1C1C] truncate">{proj.title}</h3>
+                          <span className="px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-[#3B82F6]/10 text-[#1D4ED8]">
+                            {proj.degree}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6B7280] line-clamp-2 mt-1">{proj.description}</p>
+                      </div>
+                    </div>
+
+                    {/* Deliverable Checkbox Pills */}
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#E5E7EB] text-[10px] font-semibold">
+                      {proj.has_documentation && <span className="bg-[#10B981]/10 text-[#047857] px-2 py-0.5 rounded-md">IEEE Doc</span>}
+                      {proj.has_presentation && <span className="bg-[#3B82F6]/10 text-[#1D4ED8] px-2 py-0.5 rounded-md">PPT Slides</span>}
+                      {proj.has_certificate && <span className="bg-[#FFD21E]/30 text-[#854D0E] px-2 py-0.5 rounded-md">MSME Cert</span>}
+                      {proj.has_custom_domain && <span className="bg-[#8B5CF6]/10 text-[#6D28D9] px-2 py-0.5 rounded-md">Custom Domain</span>}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E5E7EB]">
+                      <div className="text-[11px] text-[#6B7280]">
+                        Category: <strong className="text-[#1C1C1C] uppercase">{proj.category}</strong>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => { setEditingStudentProj(proj); setStudentProjModalOpen(true); }}
+                          className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirmStudentProj(proj)}
+                          className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444]"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* ADVANCED BLOG WRITING STUDIO MODAL */}
@@ -2243,20 +2563,355 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* TESTIMONIAL DELETE CONFIRM */}
-      {deleteConfirmTestimonial && (
+      {/* STUDENT VIDEO REVIEW FORM MODAL */}
+      {studentVideoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center gap-2">
+                <Video className="text-[#FF9D00]" size={20} />
+                <h3 className="font-bold text-lg text-[#1C1C1C]">
+                  {editingStudentVideo ? 'Edit Student Video Review' : 'Add Student Video Review'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setStudentVideoModalOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStudentVideo} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Student Full Name *</label>
+                  <input
+                    name="student_name"
+                    required
+                    defaultValue={editingStudentVideo?.student_name || ''}
+                    placeholder="e.g. Ananya Sharma"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Degree / Branch *</label>
+                  <input
+                    name="degree_branch"
+                    required
+                    defaultValue={editingStudentVideo?.degree_branch || 'MCA Final Year'}
+                    placeholder="e.g. MCA, BCA, B.Sc CS, M.Sc CS"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Project Title *</label>
+                <input
+                  name="project_title"
+                  required
+                  defaultValue={editingStudentVideo?.project_title || ''}
+                  placeholder="e.g. AI Health Diagnostic System using Deep Learning"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Project Category *</label>
+                  <select
+                    name="project_category"
+                    defaultValue={editingStudentVideo?.project_category || 'web_dev'}
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  >
+                    <option value="web_dev">Web & Web Apps</option>
+                    <option value="machine_learning">Machine Learning (ML)</option>
+                    <option value="deep_learning">Deep Learning (DL)</option>
+                    <option value="custom_domain">Custom Domain Setup</option>
+                    <option value="full_stack">Full-Stack System</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Rating (1 to 5) *</label>
+                  <input
+                    name="rating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    required
+                    defaultValue={editingStudentVideo?.rating || 5}
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
+                  Video Link (YouTube, Shorts, MP4, Vimeo) *
+                </label>
+                <input
+                  name="video_url"
+                  type="url"
+                  required
+                  defaultValue={editingStudentVideo?.video_url || ''}
+                  placeholder="https://www.youtube.com/shorts/VIDEO_ID or https://www.youtube.com/watch?v=VIDEO_ID"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Thumbnail Cover Image URL (Optional)</label>
+                <input
+                  name="thumbnail_url"
+                  type="url"
+                  defaultValue={editingStudentVideo?.thumbnail_url || ''}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Student Quote / Video Review Summary *</label>
+                <textarea
+                  name="quote"
+                  required
+                  rows={3}
+                  defaultValue={editingStudentVideo?.quote || ''}
+                  placeholder="Write the student feedback quote..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="sv_featured"
+                  name="is_featured"
+                  defaultChecked={editingStudentVideo?.is_featured ?? true}
+                  className="rounded border-[#E5E7EB] text-[#FF9D00] focus:ring-[#FF9D00]"
+                />
+                <label htmlFor="sv_featured" className="text-xs font-bold text-[#1C1C1C]">
+                  Feature on Student Reviews Header
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3">
+                <Button type="button" onClick={() => setStudentVideoModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Video Review
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* STUDENT VIDEO DELETE CONFIRM */}
+      {deleteConfirmStudentVideo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
-            <h3 className="font-bold text-lg text-[#1C1C1C]">Confirm Delete</h3>
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Delete Student Video Review</h3>
             <p className="text-xs text-[#6B7280]">
-              Delete testimonial from <strong className="text-[#1C1C1C]">{deleteConfirmTestimonial.client_name}</strong>?
+              Delete review video for student <strong className="text-[#1C1C1C]">{deleteConfirmStudentVideo.student_name}</strong>?
             </p>
             <div className="flex justify-end gap-2">
-              <Button onClick={() => setDeleteConfirmTestimonial(null)} variant="secondary" size="sm">
+              <Button onClick={() => setDeleteConfirmStudentVideo(null)} variant="secondary" size="sm">
                 Cancel
               </Button>
               <Button
-                onClick={() => handleDeleteTestimonial(deleteConfirmTestimonial.id)}
+                onClick={() => handleDeleteStudentVideo(deleteConfirmStudentVideo.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STUDENT PROJECT SHOWCASE MODAL */}
+      {studentProjModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center gap-2">
+                <Code className="text-[#3B82F6]" size={20} />
+                <h3 className="font-bold text-lg text-[#1C1C1C]">
+                  {editingStudentProj ? 'Edit Student Sample Project' : 'Add Student Sample Project'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setStudentProjModalOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStudentProject} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Project Title *</label>
+                <input
+                  name="title"
+                  required
+                  defaultValue={editingStudentProj?.title || ''}
+                  placeholder="e.g. AI Medical Diagnosis & X-Ray Analysis System"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Domain Category *</label>
+                  <select
+                    name="category"
+                    defaultValue={editingStudentProj?.category || 'web_dev'}
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  >
+                    <option value="web_dev">Web & Web Apps</option>
+                    <option value="machine_learning">Machine Learning (ML)</option>
+                    <option value="deep_learning">Deep Learning (DL)</option>
+                    <option value="custom_domain">Custom Domain Setup</option>
+                    <option value="full_stack">Full-Stack System</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Applicable Degree *</label>
+                  <input
+                    name="degree"
+                    required
+                    defaultValue={editingStudentProj?.degree || 'MCA / BCA'}
+                    placeholder="e.g. BCA / MCA / B.Sc CS"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Project Description *</label>
+                <textarea
+                  name="description"
+                  required
+                  rows={3}
+                  defaultValue={editingStudentProj?.description || ''}
+                  placeholder="Summarize project technical architecture, model accuracy, and features..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Tech Stack (Comma Separated) *</label>
+                <input
+                  name="tech_stack"
+                  required
+                  defaultValue={editingStudentProj?.tech_stack.join(', ') || 'Python, PyTorch, React, Flask'}
+                  placeholder="e.g. Python, TensorFlow, PyTorch, React, Flask"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              {/* Package Checkboxes */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#F9FAFB] p-3 rounded-xl border border-[#E5E7EB]">
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="has_documentation"
+                    defaultChecked={editingStudentProj?.has_documentation ?? true}
+                    className="rounded text-[#10B981]"
+                  />
+                  <span>IEEE Report</span>
+                </label>
+
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="has_presentation"
+                    defaultChecked={editingStudentProj?.has_presentation ?? true}
+                    className="rounded text-[#3B82F6]"
+                  />
+                  <span>PPT Slides</span>
+                </label>
+
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="has_certificate"
+                    defaultChecked={editingStudentProj?.has_certificate ?? true}
+                    className="rounded text-[#FF9D00]"
+                  />
+                  <span>MSME Cert</span>
+                </label>
+
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1C1C] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="has_custom_domain"
+                    defaultChecked={editingStudentProj?.has_custom_domain ?? true}
+                    className="rounded text-[#8B5CF6]"
+                  />
+                  <span>Custom Domain</span>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Demo Website Link</label>
+                  <input
+                    name="demo_url"
+                    type="url"
+                    defaultValue={editingStudentProj?.demo_url || ''}
+                    placeholder="https://med-ai-demo.learnithm.in"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Cover Image URL</label>
+                  <input
+                    name="image_url"
+                    type="url"
+                    defaultValue={editingStudentProj?.image_url || ''}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3">
+                <Button type="button" onClick={() => setStudentProjModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Student Project
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* STUDENT PROJECT DELETE CONFIRM */}
+      {deleteConfirmStudentProj && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Delete Student Project</h3>
+            <p className="text-xs text-[#6B7280]">
+              Delete student project <strong className="text-[#1C1C1C]">{deleteConfirmStudentProj.title}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmStudentProj(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteStudentProject(deleteConfirmStudentProj.id)}
                 variant="primary"
                 size="sm"
                 className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"

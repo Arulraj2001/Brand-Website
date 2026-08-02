@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, Sparkles, Send, DollarSign, ShieldCheck, Clock } from 'lucide-react';
+import { X, CheckCircle2, Sparkles, Send, DollarSign, ShieldCheck, Clock, Info } from 'lucide-react';
 import Button from './Button';
 import WhatsAppIcon from './WhatsAppIcon';
 import { submitLead } from '@/lib/supabase/data';
@@ -17,7 +17,7 @@ const leadSchema = z.object({
   phone: z.string().min(6, 'Please enter a valid contact phone number'),
   country: z.string().min(2, 'Please enter your country/location'),
   service_interested: z.string().min(1, 'Please select a service'),
-  budget_range: z.string().min(1, 'Please select or enter your budget in USD ($)'),
+  budget_range: z.string().optional(),
   custom_budget: z.string().optional(),
   message: z.string().optional(),
 });
@@ -28,22 +28,25 @@ interface LeadFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultService?: string;
+  hideBudget?: boolean;
+  isStudentModal?: boolean;
 }
 
 import CurrencySelector from './CurrencySelector';
 import { useCurrency } from './CurrencyContext';
-import { Info } from 'lucide-react';
 
 export default function LeadFormModal({
   isOpen,
   onClose,
   defaultService = 'Website Development',
+  hideBudget = false,
+  isStudentModal = false,
 }: LeadFormModalProps) {
   const { settings } = useSiteSettings();
-  const { formatBudgetLabel, isConverted } = useCurrency();
+  const { formatBudgetLabel, isConverted, convertAmount, currency } = useCurrency();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [budgetSelection, setBudgetSelection] = useState<string>('$1,000–$3,000');
+  const [budgetSelection, setBudgetSelection] = useState<string>('$50–$500');
   const [customAmount, setCustomAmount] = useState<string>('');
 
   const whatsappClean = settings.whatsapp_number.replace(/[^0-9]/g, '');
@@ -58,7 +61,7 @@ export default function LeadFormModal({
     resolver: zodResolver(leadSchema),
     defaultValues: {
       service_interested: defaultService,
-      budget_range: '$1,000–$3,000',
+      budget_range: '$50–$500',
     },
   });
 
@@ -82,12 +85,13 @@ export default function LeadFormModal({
   const onSubmit = async (data: LeadFormData) => {
     setSubmitting(true);
 
-    const finalBudget =
-      budgetSelection === 'custom'
-        ? customAmount.trim().startsWith('$')
-          ? customAmount.trim()
-          : `$${customAmount.trim()}`
-        : data.budget_range;
+    const finalBudget = hideBudget
+      ? 'Academic Guidance'
+      : budgetSelection === 'custom'
+      ? customAmount.trim().startsWith('$')
+        ? customAmount.trim()
+        : `$${customAmount.trim()}`
+      : data.budget_range || '$50–$500';
 
     await submitLead({
       name: data.name,
@@ -104,7 +108,7 @@ export default function LeadFormModal({
 
   const handleClose = () => {
     setSubmitted(false);
-    setBudgetSelection('$1,000–$3,000');
+    setBudgetSelection('$50–$500');
     setCustomAmount('');
     reset();
     onClose();
@@ -257,71 +261,108 @@ export default function LeadFormModal({
                       {...register('service_interested')}
                       className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors"
                     >
-                      <option value="Old Website Upgrade">Old Website Upgrade (Speed & SEO)</option>
-                      <option value="UGC Ads">UGC Video Ads (E-Commerce)</option>
-                      <option value="Website Development">Website Development</option>
-                      <option value="App Development">App Development (Web & Mobile)</option>
-                      <option value="SEO Optimization">SEO Optimization</option>
-                      <option value="Local Business Marketing">Local Business Marketing</option>
-                      <option value="Meta Ads">Meta & LinkedIn Ads</option>
-                      <option value="Sales Growth">Sales Growth & Lead Gen</option>
+                      {isStudentModal ? (
+                        <>
+                          <option value="Student Project - Web Development">🎓 Website Engineering & Web App Project</option>
+                          <option value="Student Project - Machine Learning">🧠 Machine Learning (ML) Final Year Project</option>
+                          <option value="Student Project - Deep Learning">👁️ Deep Learning (DL) & Computer Vision Project</option>
+                          <option value="Student Project - Custom Domain">🌐 Custom Domain & Cloud Deployment</option>
+                          <option value="Student Project - IEEE Documentation">📑 IEEE Report, Synopsis & Documentation</option>
+                          <option value="Student Project - Viva PPT Deck">📊 Viva PPT Presentation & Slide Deck</option>
+                          <option value="Student Project - MSME Certificate">🏆 MSME Registered Learnithm Certificate</option>
+                          <option value="Student Project - 1-on-1 Viva Prep">💬 1-on-1 Viva Code Explanation & Defense Prep</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="Old Website Upgrade">Old Website Upgrade (Speed & SEO)</option>
+                          <option value="UGC Ads">UGC Video Ads (E-Commerce)</option>
+                          <option value="Website Development">Website Development</option>
+                          <option value="App Development">App Development (Web & Mobile)</option>
+                          <option value="SEO Optimization">SEO Optimization</option>
+                          <option value="Local Business Marketing">Local Business Marketing</option>
+                          <option value="Meta Ads">Meta & LinkedIn Ads</option>
+                          <option value="Sales Growth">Sales Growth & Lead Gen</option>
+                        </>
+                      )}
                     </select>
                   </div>
                 </div>
 
-                {/* Budget Range (USD) with Custom Entry Support */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-semibold text-[#1C1C1C]">
-                      Project Budget (USD $) *
-                    </label>
-                    <CurrencySelector />
+                {/* Budget Range (USD) with Enhanced UI & Currency Selector */}
+                {!hideBudget && (
+                  <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border border-[#FFD21E] shadow-xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-extrabold text-[#1C1C1C] flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <DollarSign size={13} className="stroke-[2.5]" />
+                        </div>
+                        <span>Budget Range (USD $) *</span>
+                      </label>
+                      <CurrencySelector />
+                    </div>
+
+                    <div className="relative">
+                      <select
+                        value={budgetSelection}
+                        onChange={handleBudgetDropdownChange}
+                        className="w-full pl-3.5 pr-8 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] focus:border-[#FF9D00] shadow-2xs transition-all font-mono-stats cursor-pointer"
+                      >
+                        <option value="$50–$500">🌱 {formatBudgetLabel('$50–$500')} (Starter)</option>
+                        <option value="$500–$1,000">💼 {formatBudgetLabel('$500–$1,000')}</option>
+                        <option value="$1,000–$3,000">🚀 {formatBudgetLabel('$1,000–$3,000')} (Popular)</option>
+                        <option value="$3,000–$5,000">⭐ {formatBudgetLabel('$3,000–$5,000')} (Enterprise)</option>
+                        <option value="$5,000+">👑 {formatBudgetLabel('$5,000+')} (Custom Scale)</option>
+                        <option value="custom">✏️ Enter Custom Amount (USD $)...</option>
+                      </select>
+                    </div>
+
+                    {isConverted && (
+                      <p className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 pt-0.5">
+                        <Info size={13} className="text-[#FF9D00] shrink-0" />
+                        <span>Currency converted live — invoices & billing are in USD ($).</span>
+                      </p>
+                    )}
+
+                    {/* Custom Budget Text Input & Live Converted Display */}
+                    {budgetSelection === 'custom' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2 space-y-1.5"
+                      >
+                        <div className="relative">
+                          <div className="absolute left-3 top-2.5 text-xs font-extrabold text-[#FF9D00] flex items-center gap-1">
+                            <DollarSign size={13} />
+                            <span>USD</span>
+                          </div>
+                          <input
+                            type="text"
+                            value={customAmount}
+                            onChange={handleCustomAmountChange}
+                            placeholder="e.g. 250 or 1,500"
+                            className="w-full pl-14 pr-3.5 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] font-mono-stats"
+                          />
+                        </div>
+
+                        {/* Live Conversion Output for Custom Amount */}
+                        {isConverted && customAmount && !isNaN(Number(customAmount.replace(/[^0-9.]/g, ''))) && (
+                          <div className="text-[11px] font-bold text-[#047857] bg-[#ECFDF5] px-3 py-1.5 rounded-lg flex items-center justify-between border border-[#10B981]/30">
+                            <span>Live Converted Amount ({currency}):</span>
+                            <span className="font-mono-stats text-xs font-extrabold text-[#065F46]">
+                              {convertAmount(Number(customAmount.replace(/[^0-9.]/g, ''))).formatted} {currency}
+                            </span>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+
+                    {errors.budget_range && (
+                      <p className="text-xs font-semibold text-[#EF4444] mt-1">
+                        {errors.budget_range.message}
+                      </p>
+                    )}
                   </div>
-                  <select
-                    value={budgetSelection}
-                    onChange={handleBudgetDropdownChange}
-                    className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats"
-                  >
-                    <option value="$500–$1,000">{formatBudgetLabel('$500–$1,000')}</option>
-                    <option value="$1,000–$3,000">{formatBudgetLabel('$1,000–$3,000')}</option>
-                    <option value="$3,000–$5,000">{formatBudgetLabel('$3,000–$5,000')}</option>
-                    <option value="$5,000+">{formatBudgetLabel('$5,000+')}</option>
-                    <option value="custom">✏️ Custom Amount (Enter exact USD $)...</option>
-                  </select>
-
-                  {isConverted && (
-                    <p className="text-[11px] font-semibold text-[#6B7280] mt-1 flex items-center gap-1">
-                      <Info size={12} className="text-[#FF9D00] shrink-0" />
-                      <span>Approximate — final pricing and invoices are in USD ($).</span>
-                    </p>
-                  )}
-
-                  {/* Custom Budget Text Input */}
-                  {budgetSelection === 'custom' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-2 relative"
-                    >
-                      <div className="absolute left-3 top-2.5 text-sm font-bold text-[#FF9D00] flex items-center">
-                        $
-                      </div>
-                      <input
-                        type="text"
-                        value={customAmount}
-                        onChange={handleCustomAmountChange}
-                        placeholder="Enter custom amount (e.g. 2,500 or 7,500)"
-                        className="w-full pl-8 pr-3.5 py-[9px] text-sm text-[#1C1C1C] bg-[#FFF9E6] border border-[#FFD21E] rounded-lg focus:outline-none focus:border-[#FF9D00] font-mono-stats"
-                      />
-                    </motion.div>
-                  )}
-
-                  {errors.budget_range && (
-                    <p className="text-xs font-semibold text-[#EF4444] mt-1">
-                      {errors.budget_range.message}
-                    </p>
-                  )}
-                </div>
+                )}
 
                 {/* Message */}
                 <div>
