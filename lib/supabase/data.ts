@@ -58,7 +58,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
     ],
     results: '+340% Qualified Leads | 0.8s Average Page Load | $520K Monthly Transactions',
-    testimonial: 'ApexPulse transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
+    testimonial: 'Arusyth Apex transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
     live_url: 'https://zetapay.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -78,7 +78,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80'
     ],
     results: '4.8x Organic Traffic Surge | Page Speed 99/100 | +220% Organic E-Commerce Sales',
-    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. ApexPulse delivered affordable premium engineering.',
+    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. Arusyth Apex delivered affordable premium engineering.',
     live_url: 'https://nutrapure.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -138,7 +138,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
     ],
     results: '0.7s Average Page Speed | +280% Global Client Conversions | $450K Annual SaaS Revenue',
-    testimonial: 'ApexPulse delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
+    testimonial: 'Arusyth Apex delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
     live_url: 'https://nexusflow.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -152,7 +152,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     client_company: 'Founder & CEO, ZetaPay USA',
     client_location: 'Austin, TX (USA)',
     client_city: 'Austin, USA',
-    quote: 'ApexPulse delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
+    quote: 'Arusyth Apex delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -181,7 +181,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     client_company: 'Co-Founder, NexusFlow Tech',
     client_location: 'Bangalore, India',
     client_city: 'Bangalore, India',
-    quote: 'Paying in USD for ApexPulse engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
+    quote: 'Paying in USD for Arusyth Apex engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -193,7 +193,7 @@ export const INITIAL_BLOG_POSTS: BlogPost[] = [];
 export function getSiteSettings(): SiteSettings {
   if (typeof window === 'undefined') return INITIAL_SITE_SETTINGS;
   try {
-    const cached = localStorage.getItem('apexpulse_site_settings');
+    const cached = localStorage.getItem('arusyth_apex_site_settings');
     if (cached) return JSON.parse(cached);
   } catch {}
   return INITIAL_SITE_SETTINGS;
@@ -202,8 +202,8 @@ export function getSiteSettings(): SiteSettings {
 export function updateSiteSettings(newSettings: SiteSettings): void {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('apexpulse_site_settings', JSON.stringify(newSettings));
-      window.dispatchEvent(new Event('apexpulse_settings_updated'));
+      localStorage.setItem('arusyth_apex_site_settings', JSON.stringify(newSettings));
+      window.dispatchEvent(new Event('arusyth_apex_settings_updated'));
     } catch {}
   }
 }
@@ -260,7 +260,7 @@ export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Pro
 export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return INITIAL_TEAM_MEMBERS;
   try {
-    const cached = localStorage.getItem('apexpulse_team_members');
+    const cached = localStorage.getItem('arusyth_apex_team_members');
     if (cached) return JSON.parse(cached);
   } catch {}
   return INITIAL_TEAM_MEMBERS;
@@ -269,8 +269,8 @@ export function getTeamMembers(): TeamMember[] {
 export function saveTeamMembers(newTeam: TeamMember[]): void {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('apexpulse_team_members', JSON.stringify(newTeam));
-      window.dispatchEvent(new Event('apexpulse_team_updated'));
+      localStorage.setItem('arusyth_apex_team_members', JSON.stringify(newTeam));
+      window.dispatchEvent(new Event('arusyth_apex_team_updated'));
     } catch {}
   }
 }
@@ -473,7 +473,7 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
         ? post.secondary_keywords.join(', ')
         : post.secondary_keywords,
       city: post.city || 'Global',
-      author_name: post.author_name || 'ApexPulse Team',
+      author_name: post.author_name || 'Arusyth Apex Team',
       is_published: post.is_published,
       published_at: post.published_at || (post.is_published ? new Date().toISOString() : null),
     };
@@ -768,7 +768,7 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
 export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
   if (typeof window === 'undefined') return INITIAL_STUDENT_FEEDBACK_VIDEOS;
   try {
-    const cached = localStorage.getItem('apexpulse_student_feedback');
+    const cached = localStorage.getItem('arusyth_apex_student_feedback');
     if (cached) return JSON.parse(cached);
   } catch (err) {
     console.error('Error reading student feedback from localStorage:', err);
@@ -779,8 +779,8 @@ export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
 export function saveStudentFeedbackLocal(videos: StudentFeedbackVideo[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem('apexpulse_student_feedback', JSON.stringify(videos));
-    window.dispatchEvent(new Event('apexpulse_student_data_updated'));
+    localStorage.setItem('arusyth_apex_student_feedback', JSON.stringify(videos));
+    window.dispatchEvent(new Event('arusyth_apex_student_data_updated'));
   } catch (err) {
     console.error('Error saving student feedback to localStorage:', err);
   }
@@ -871,7 +871,7 @@ export async function deleteStudentFeedbackFromSupabase(id: string): Promise<voi
 export function getStudentProjects(): StudentProject[] {
   if (typeof window === 'undefined') return INITIAL_STUDENT_PROJECTS;
   try {
-    const cached = localStorage.getItem('apexpulse_student_projects');
+    const cached = localStorage.getItem('arusyth_apex_student_projects');
     if (cached) return JSON.parse(cached);
   } catch (err) {
     console.error('Error reading student projects from localStorage:', err);
@@ -882,8 +882,8 @@ export function getStudentProjects(): StudentProject[] {
 export function saveStudentProjectsLocal(projects: StudentProject[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem('apexpulse_student_projects', JSON.stringify(projects));
-    window.dispatchEvent(new Event('apexpulse_student_data_updated'));
+    localStorage.setItem('arusyth_apex_student_projects', JSON.stringify(projects));
+    window.dispatchEvent(new Event('arusyth_apex_student_data_updated'));
   } catch (err) {
     console.error('Error saving student projects to localStorage:', err);
   }

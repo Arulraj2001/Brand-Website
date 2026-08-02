@@ -1,4 +1,4 @@
--- Schema for ApexPulse Digital Agency Platform
+-- Schema for Arusyth Apex Technologies Platform
 -- Database: Supabase PostgreSQL (Phase 12 International-First Shift)
 
 -- 1. Portfolio Projects Table
@@ -50,11 +50,11 @@ create table if not exists site_settings (
   id text primary key default 'global',
   phone text not null default '+1 (800) 555-0199',
   whatsapp_number text not null default '18005550199',
-  email text not null default 'hello@apexpulse.in',
+  email text not null default 'hello@arusythapex.netlify.app',
   address text not null default 'Global Remote HQ • Austin, TX & International Hubs',
-  linkedin_url text default 'https://linkedin.com/company/apexpulse-india',
-  twitter_url text default 'https://twitter.com/apexpulse_in',
-  instagram_url text default 'https://instagram.com/apexpulse.in',
+  linkedin_url text default 'https://linkedin.com/company/arusyth-apex',
+  twitter_url text default 'https://twitter.com/arusyth_apex',
+  instagram_url text default 'https://instagram.com/arusyth_apex',
   created_at timestamp with time zone default now()
 );
 
@@ -82,7 +82,7 @@ create table if not exists blog_posts (
   target_keyword text,
   secondary_keywords text,
   city text,
-  author_name text default 'ApexPulse Team',
+  author_name text default 'Arusyth Apex Team',
   is_published boolean default false,
   published_at timestamp with time zone,
   created_at timestamp with time zone default now()
@@ -96,11 +96,11 @@ values (
   'global',
   '+1 (800) 555-0199',
   '18005550199',
-  'hello@apexpulse.in',
+  'hello@arusythapex.netlify.app',
   'Global Remote HQ • Austin, TX & International Hubs',
-  'https://linkedin.com/company/apexpulse-india',
-  'https://twitter.com/apexpulse_in',
-  'https://instagram.com/apexpulse.in'
+  'https://linkedin.com/company/arusyth-apex',
+  'https://twitter.com/arusyth_apex',
+  'https://instagram.com/arusyth_apex'
 )
 on conflict (id) do nothing;
 

@@ -20,7 +20,7 @@ export default function HeroMockup() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#FFD21E]" />
             <div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
             <span className="ml-2 text-xs font-semibold text-[#6B7280]">
-              apexpulse.in/growth-dashboard
+              arusythapex.netlify.app/growth-dashboard
             </span>
           </div>
           <span className="px-2 py-0.5 rounded-[4px] bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] text-xs font-bold flex items-center gap-1">

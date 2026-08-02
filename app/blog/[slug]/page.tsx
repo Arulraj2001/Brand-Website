@@ -39,12 +39,12 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     };
   }
 
-  const siteUrl = 'https://apexpulse.in';
+  const siteUrl = 'https://arusythapex.netlify.app';
   const postUrl = `${siteUrl}/blog/${post.slug}`;
 
   return {
-    title: `${post.title} | ApexPulse Growth Hub`,
-    description: post.excerpt || `Read ${post.title} on ApexPulse India.`,
+    title: `${post.title} | Arusyth Apex Growth Hub`,
+    description: post.excerpt || `Read ${post.title} on Arusyth Apex.`,
     alternates: {
       canonical: postUrl,
     },
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
       url: postUrl,
       type: 'article',
       publishedTime: post.published_at || post.created_at,
-      authors: [post.author_name || 'ApexPulse Team'],
+      authors: [post.author_name || 'Arusyth Apex Team'],
       images: [
         {
           url: post.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
@@ -113,14 +113,14 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
     datePublished: post.published_at || post.created_at,
     author: {
       '@type': 'Person',
-      name: post.author_name || 'ApexPulse Team',
+      name: post.author_name || 'Arusyth Apex Team',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'ApexPulse Digital Agency India',
+      name: 'Arusyth Apex Technologies',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://apexpulse.in/logo.png',
+        url: 'https://arusythapex.netlify.app/logo.png',
       },
     },
   };

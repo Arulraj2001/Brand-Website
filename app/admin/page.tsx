@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import ArusythApexLogo from '@/components/ui/ArusythApexLogo';
 import {
   LayoutDashboard,
   Briefcase,
@@ -142,7 +143,7 @@ export default function AdminDashboardPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
-  const [userEmail, setUserEmail] = useState<string>('admin@apexpulse.in');
+  const [userEmail, setUserEmail] = useState<string>('admin@arusythapex.netlify.app');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Student Projects & Video Feedback State
@@ -227,7 +228,7 @@ export default function AdminDashboardPage() {
   const [blogSecondaryKeywordsText, setBlogSecondaryKeywordsText] = useState('');
   const [blogExcerptText, setBlogExcerptText] = useState('');
   const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
-  const [blogAuthorVal, setBlogAuthorVal] = useState('ApexPulse Team');
+  const [blogAuthorVal, setBlogAuthorVal] = useState('Arusyth Apex Team');
 
   // Modal Image Inputs State
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
@@ -551,7 +552,7 @@ export default function AdminDashboardPage() {
     const target_keyword = blogKeywordText || (formData.get('target_keyword') as string);
     const secondary_keywords = blogSecondaryKeywordsText || (formData.get('secondary_keywords') as string);
     const city = (formData.get('city') as string) || 'Global';
-    const author_name = blogAuthorVal || (formData.get('author_name') as string) || 'ApexPulse Team';
+    const author_name = blogAuthorVal || (formData.get('author_name') as string) || 'Arusyth Apex Team';
     const cover_image_url =
       blogCoverUrl ||
       (formData.get('cover_image_url') as string) ||
@@ -767,7 +768,7 @@ export default function AdminDashboardPage() {
     setBlogKeywordText(post?.target_keyword || '');
     setBlogExcerptText(post?.excerpt || '');
     setBlogCategoryVal(post?.category || 'seo');
-    setBlogAuthorVal(post?.author_name || 'ApexPulse Team');
+    setBlogAuthorVal(post?.author_name || 'Arusyth Apex Team');
     setBlogCoverUrl(post?.cover_image_url || '');
     setBlogStudioTab('write');
     setBlogModalOpen(true);
@@ -843,13 +844,11 @@ export default function AdminDashboardPage() {
       {/* 220px LIGHT SURFACE SIDEBAR */}
       <aside className="w-full md:w-[220px] bg-[#F9FAFB] border-r border-[#E5E7EB] p-4 flex flex-col justify-between shrink-0">
         <div className="space-y-6">
-          <div className="flex items-center gap-2 px-1 py-1">
-            <div className="w-8 h-8 rounded-lg bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold border border-[#E5E7EB]">
-              <Sparkles size={16} />
-            </div>
+          <div className="flex items-center gap-2.5 px-1 py-1">
+            <ArusythApexLogo size={32} />
             <div>
               <span className="font-extrabold text-base text-[#1C1C1C] tracking-tight block">
-                Apex<span className="text-[#FF9D00]">Pulse</span>
+                Arusyth<span className="text-[#FF9D00]">Apex</span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
                 Admin Console
@@ -1583,7 +1582,7 @@ export default function AdminDashboardPage() {
                       required
                       value={settingsForm.email}
                       onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                      placeholder="hello@apexpulse.in"
+                      placeholder="hello@arusythapex.netlify.app"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1614,7 +1613,7 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.linkedin_url}
                       onChange={(e) => setSettingsForm({ ...settingsForm, linkedin_url: e.target.value })}
-                      placeholder="https://linkedin.com/company/apexpulse-india"
+                      placeholder="https://linkedin.com/company/arusyth-apex"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1628,7 +1627,7 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.twitter_url}
                       onChange={(e) => setSettingsForm({ ...settingsForm, twitter_url: e.target.value })}
-                      placeholder="https://twitter.com/apexpulse_in"
+                      placeholder="https://twitter.com/arusyth_apex"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1642,7 +1641,7 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.instagram_url || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, instagram_url: e.target.value })}
-                      placeholder="https://instagram.com/apexpulse.in"
+                      placeholder="https://instagram.com/arusyth_apex"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -2018,7 +2017,7 @@ export default function AdminDashboardPage() {
                         required
                         value={blogAuthorVal}
                         onChange={(e) => setBlogAuthorVal(e.target.value)}
-                        placeholder="ApexPulse Team"
+                        placeholder="Arusyth Apex Team"
                         className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
                     </div>

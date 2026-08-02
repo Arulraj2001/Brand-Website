@@ -44,10 +44,10 @@ export function useSiteSettings() {
       setSettings(getSiteSettings());
     };
 
-    window.addEventListener('apexpulse_settings_updated', handleUpdate);
+    window.addEventListener('arusyth_apex_settings_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('apexpulse_settings_updated', handleUpdate);
+      window.removeEventListener('arusyth_apex_settings_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
@@ -76,10 +76,10 @@ export function useTeamMembers() {
       setTeamMembers(getTeamMembers());
     };
 
-    window.addEventListener('apexpulse_team_updated', handleUpdate);
+    window.addEventListener('arusyth_apex_team_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('apexpulse_team_updated', handleUpdate);
+      window.removeEventListener('arusyth_apex_team_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
@@ -113,10 +113,10 @@ export function useStudentData() {
       setProjects(getStudentProjects());
     };
 
-    window.addEventListener('apexpulse_student_data_updated', handleUpdate);
+    window.addEventListener('arusyth_apex_student_data_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('apexpulse_student_data_updated', handleUpdate);
+      window.removeEventListener('arusyth_apex_student_data_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);

@@ -6,6 +6,7 @@ import { Sparkles, Lock, Mail, AlertCircle } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import ArusythApexLogo from '@/components/ui/ArusythApexLogo';
 import { createClient } from '@/lib/supabase/client';
 
 export default function AdminLoginPage() {
@@ -61,11 +62,11 @@ export default function AdminLoginPage() {
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen flex items-center justify-center px-4 bg-line-pattern">
       <Card className="w-full max-w-md bg-white border border-[#E5E7EB] p-6 sm:p-8 space-y-5">
         <div className="text-center space-y-2">
-          <div className="w-10 h-10 rounded-lg bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center mx-auto border border-[#E5E7EB]">
-            <Sparkles size={20} />
+          <div className="flex justify-center">
+            <ArusythApexLogo size={40} />
           </div>
           <h1 className="text-2xl font-bold text-[#1C1C1C]">
-            ApexPulse <GradientText>Admin Portal</GradientText>
+            Arusyth Apex <GradientText>Admin Portal</GradientText>
           </h1>
           <p className="text-xs text-[#6B7280]">
             Sign in with your admin credentials
@@ -91,7 +92,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@apexpulse.in"
+                placeholder="admin@arusythapex.netlify.app"
                 className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
               />
             </div>

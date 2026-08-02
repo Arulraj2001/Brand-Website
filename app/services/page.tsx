@@ -21,7 +21,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 
 export const metadata = {
-  title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | ApexPulse',
+  title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Arusyth Apex',
   description: 'Full-service digital agency for international clients across US, UK, Canada & Australia. High quality, 60% lower rates, sub-second web speed, UGC video ads, and SEO dominance.',
 };
 

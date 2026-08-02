@@ -110,17 +110,17 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-lg bg-white border border-[#E5E7EB] hover:border-[#FF9D00] hover:text-[#FF9D00] text-[#1C1C1C] flex items-center justify-center transition-colors"
-                  aria-label="ApexPulse Instagram"
+                  aria-label="Arusyth Apex Instagram"
                 >
                   <Globe size={16} />
                 </a>
               )}
               <a
-                href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('Hi ApexPulse! I want to book a strategy call.')}`}
+                href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('Hi Arusyth Apex! I want to book a strategy call.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                aria-label="ApexPulse WhatsApp"
+                aria-label="Arusyth Apex WhatsApp"
               >
                 <WhatsAppIcon size={16} fill="white" />
               </a>

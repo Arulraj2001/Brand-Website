@@ -17,7 +17,7 @@ export default function WhatsAppFloatingButton() {
   const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
   const phoneNumber = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');
   const message = encodeURIComponent(
-    'Hi ApexPulse Team! I would like to book a strategy call for my project.'
+    'Hi Arusyth Apex Team! I would like to book a strategy call for my project.'
   );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

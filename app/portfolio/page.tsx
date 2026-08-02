@@ -37,13 +37,13 @@ export default function PortfolioPage() {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://apexpulse.in',
+        item: 'https://arusythapex.netlify.app',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Portfolio',
-        item: 'https://apexpulse.in/portfolio',
+        item: 'https://arusythapex.netlify.app/portfolio',
       },
     ],
   };
@@ -66,7 +66,7 @@ export default function PortfolioPage() {
             Case Studies & <GradientText>Verified Client Results</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Discover how ApexPulse engineered sub-second web platforms, speed overhauls, and high-ROAS ad campaigns for clients across US, UK, Canada & Australia.
+            Discover how Arusyth Apex engineered sub-second web platforms, speed overhauls, and high-ROAS ad campaigns for clients across US, UK, Canada & Australia.
           </p>
         </div>
 
