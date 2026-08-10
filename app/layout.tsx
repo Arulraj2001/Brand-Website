@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
+import AutoLeadModal from '@/components/ui/AutoLeadModal';
 import { CurrencyProvider } from '@/components/ui/CurrencyContext';
 
 const sourceSans = Source_Sans_3({
@@ -137,6 +138,7 @@ export default function RootLayout({
           <main className="flex-1 overflow-x-hidden">{children}</main>
           <Footer />
           <WhatsAppFloatingButton />
+          <AutoLeadModal />
         </CurrencyProvider>
       </body>
     </html>
