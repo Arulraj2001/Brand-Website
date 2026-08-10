@@ -103,12 +103,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3 shrink-0">
           <a
             href={`tel:${cleanPhoneTel}`}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"
+            className="flex items-center gap-2 text-xs font-bold text-[#1C1C1C] hover:text-[#10B981] transition-colors group"
           >
-            <div className="w-6 h-6 rounded-full bg-[#FFF9E6] border border-[#FFD21E] flex items-center justify-center text-[#FF9D00]">
-              <PhoneCall size={12} />
+            <div className="relative w-7 h-7 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/40 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xs">
+              <span className="absolute inset-0 rounded-full bg-[#10B981]/20 animate-ping opacity-60" />
+              <PhoneCall size={13} className="animate-phone-ring relative z-10 text-[#10B981]" />
             </div>
-            <span>{activeSettings.phone}</span>
+            <span className="font-mono-stats">{activeSettings.phone}</span>
           </a>
           <Button href="/contact" variant="primary" size="sm">
             <span>Book a Call</span>
@@ -148,10 +149,10 @@ export default function Navbar() {
           <div className="pt-2 border-t border-[#E5E7EB] flex flex-col gap-2">
             <a
               href={`tel:${cleanPhoneTel}`}
-              className="flex items-center justify-center gap-2 text-xs font-semibold text-[#1C1C1C] py-2 bg-[#F9FAFB] rounded-lg"
+              className="flex items-center justify-center gap-2 text-xs font-bold text-[#1C1C1C] py-2.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl hover:border-[#10B981] transition-colors"
             >
-              <PhoneCall size={14} className="text-[#FF9D00]" />
-              Call {settings.phone}
+              <PhoneCall size={15} className="text-[#10B981] animate-phone-ring" />
+              <span>Call {settings.phone}</span>
             </a>
             <Button href="/contact" variant="primary" size="sm" className="w-full">
               Book a Free Strategy Call

@@ -196,4 +196,34 @@ h1, h2, h3, h4, h5, h6 {
   animation: border-dash-run 7s linear infinite;
 }
 
+/* Phone Ring & Vibrate Animation */
+@keyframes phone-ring-vibrate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  8% {
+    transform: rotate(-18deg) scale(1.15);
+  }
+  16% {
+    transform: rotate(18deg) scale(1.15);
+  }
+  24% {
+    transform: rotate(-18deg) scale(1.15);
+  }
+  32% {
+    transform: rotate(18deg) scale(1.15);
+  }
+  40% {
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-phone-ring {
+  display: inline-block;
+  animation: phone-ring-vibrate 2.4s ease-in-out infinite;
+}
+
 
