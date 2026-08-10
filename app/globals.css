@@ -70,14 +70,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hf-card-featured {
-  background: linear-gradient(180deg, #FFFDF5 0%, #FFF9E6 100%);
-  border: 1.5px solid #FFD21E;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 14px rgba(255, 210, 30, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+}
+
+.hf-card-featured:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 157, 0, 0.6);
+  box-shadow: 0 12px 28px -6px rgba(255, 157, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .hf-card-featured::before {

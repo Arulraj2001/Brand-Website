@@ -56,20 +56,20 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
                 className="flex"
               >
                 <Card isFeatured={isFeatured} className="flex flex-col justify-between w-full p-0 overflow-hidden group">
-                  {/* Compact Cover Image Container (h-44) */}
-                  <div className="relative h-44 w-full overflow-hidden bg-[#F9FAFB]">
+                  {/* Cover Image Container with Top-Aligned Preview (h-52) */}
+                  <div className="relative h-52 w-full overflow-hidden bg-[#F9FAFB]">
                     <Image
                       src={project.cover_image_url}
                       alt={`${project.title} - ${project.client_name}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/60 via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/50 via-transparent to-transparent opacity-60 pointer-events-none" />
 
-                    {/* Service Badge (Blue #3B82F6) */}
+                    {/* Service Badge */}
                     <div className="absolute top-2.5 left-2.5">
-                      <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
+                      <span className="bg-[#3B82F6] text-white px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase shadow-2xs">
                         {project.service_type === 'web_dev'
                           ? 'Web Dev'
                           : project.service_type === 'app_dev'
@@ -88,19 +88,19 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
                       </span>
                     </div>
 
-                    <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
+                    <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-xs shadow-2xs">
                       <MapPin size={10} className="text-[#3B82F6]" />
                       {location}
                     </div>
                   </div>
 
-                  {/* Body Content with Tight Padding */}
+                  {/* Body Content with Balanced Compact Spacing */}
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">
+                      <p className="text-[10px] font-extrabold text-[#6B7280] uppercase tracking-wider">
                         {project.client_name}
                       </p>
-                      <h3 className="font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-sm sm:text-base line-clamp-1">
+                      <h3 className="font-extrabold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-sm sm:text-base line-clamp-1">
                         {project.title}
                       </h3>
                       <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed">
@@ -108,17 +108,19 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
                       </p>
                     </div>
 
-                    {/* Key Result Stat */}
-                    <div className="p-2 rounded-md bg-[#FFF9E6] border border-[#FFD21E]/70 text-xs font-bold text-[#FF9D00] flex items-center gap-1.5">
-                      <Sparkles size={13} className="shrink-0 text-[#FF9D00]" />
-                      <span className="truncate font-mono-stats text-[11px]">{project.results}</span>
+                    {/* Clean Tech Result Pill (No Yellowish Fill) */}
+                    <div className="px-3 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-extrabold text-[#1C1C1C] flex items-center justify-between shadow-2xs">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <Sparkles size={13} className="shrink-0 text-[#FF9D00]" />
+                        <span className="truncate font-mono-stats text-[11px] text-[#FF9D00]">{project.results}</span>
+                      </div>
                     </div>
 
-                    {/* Action Links Bar: Read Case Study & Visit Live Work */}
+                    {/* Action Buttons Bar: Read Case Study & Visit Live Work */}
                     <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between gap-2">
                       <Link
                         href={`/portfolio/${project.slug}`}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#1C1C1C] hover:text-[#FF9D00] transition-colors min-h-[44px]"
+                        className="inline-flex items-center gap-1 text-xs font-extrabold text-white bg-[#1C1C1C] hover:bg-[#FF9D00] transition-all px-3 py-1.5 rounded-lg shadow-2xs active:scale-95"
                       >
                         <span>Read Case Study</span>
                         <ArrowUpRight size={13} />
@@ -129,7 +131,7 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
                           href={project.live_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-bold text-[#3B82F6] hover:underline min-h-[44px]"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-[#3B82F6] hover:text-[#FF9D00] bg-[#F9FAFB] hover:bg-[#FFF9E6] border border-[#E5E7EB] hover:border-[#FFD21E] transition-all px-3 py-1.5 rounded-lg shadow-2xs"
                         >
                           <span>Visit Live Work</span>
                           <ExternalLink size={12} />

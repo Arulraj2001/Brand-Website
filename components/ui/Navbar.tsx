@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Sparkles, PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
+import { PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
 import Button from './Button';
 import ArusythApexLogo from './ArusythApexLogo';
 import { useSiteSettings } from '@/lib/useSiteData';
@@ -51,56 +50,69 @@ export default function Navbar() {
   const cleanPhoneTel = activeSettings.phone.replace(/[^0-9+]/g, '');
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-[#E5E7EB] h-[56px] flex items-center">
-      <div className="max-w-[1200px] w-full mx-auto px-4 flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        scrolled ? 'py-2 px-2 sm:px-4' : 'py-0'
+      }`}
+    >
+      <div
+        className={`max-w-[1200px] w-full mx-auto px-4 flex items-center justify-between transition-all duration-300 ${
+          scrolled
+            ? 'bg-white/95 backdrop-blur-md border border-[#E5E7EB] rounded-2xl shadow-md h-[52px]'
+            : 'bg-white border-b border-[#E5E7EB] h-[56px]'
+        }`}
+      >
         {/* Logo Left */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <ArusythApexLogo size={32} className="group-hover:scale-105 transition-transform" />
-          <div className="flex items-center gap-1">
-            <span className="font-extrabold text-lg text-[#1C1C1C] tracking-tight">
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <ArusythApexLogo size={30} className="group-hover:scale-105 transition-transform" />
+          <div className="flex items-center gap-1.5">
+            <span className="font-extrabold text-base sm:text-lg text-[#1C1C1C] tracking-tight">
               {activeSettings.brand_name || 'Ostrune'}
             </span>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
-              <Globe size={10} /> Global
+            <span className="text-[10px] font-mono-stats font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 px-2 py-0.5 rounded-full hidden sm:flex items-center gap-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
+              </span>
+              <span>12h SLA</span>
             </span>
           </div>
         </Link>
 
         {/* Desktop Links Center */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-[15px] font-semibold transition-colors relative py-1 ${
+                className={`transition-all duration-200 ${
                   isActive
-                    ? 'text-[#FF9D00]'
-                    : 'text-[#1C1C1C] hover:text-[#FF9D00]'
+                    ? 'bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]/80 px-3.5 py-1 rounded-full text-[14px] font-extrabold shadow-2xs'
+                    : 'text-[#1C1C1C] hover:text-[#FF9D00] hover:bg-[#F9FAFB] px-3 py-1 rounded-lg text-[14px] font-bold'
                 }`}
               >
                 {link.name}
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF9D00] rounded-full" />
-                )}
               </Link>
             );
           })}
         </nav>
 
         {/* CTA Right */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 shrink-0">
           <a
             href={`tel:${cleanPhoneTel}`}
             className="flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#FF9D00] transition-colors"
           >
-            <PhoneCall size={14} className="text-[#FF9D00]" />
-            {activeSettings.phone}
+            <div className="w-6 h-6 rounded-full bg-[#FFF9E6] border border-[#FFD21E] flex items-center justify-center text-[#FF9D00]">
+              <PhoneCall size={12} />
+            </div>
+            <span>{activeSettings.phone}</span>
           </a>
           <Button href="/contact" variant="primary" size="sm">
             <span>Book a Call</span>
-            <ArrowRight size={14} />
+            <ArrowRight size={13} />
           </Button>
         </div>
 
@@ -116,16 +128,16 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="absolute top-[56px] left-0 right-0 md:hidden bg-white border-b border-[#E5E7EB] px-4 pt-3 pb-5 shadow-lg space-y-3">
-          <nav className="flex flex-col space-y-2">
+        <div className="absolute top-[56px] left-2 right-2 md:hidden bg-white border border-[#E5E7EB] rounded-2xl px-4 pt-3 pb-5 shadow-xl space-y-3 mt-1 z-50">
+          <nav className="flex flex-col space-y-1.5">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`text-sm font-semibold py-2 px-3 rounded-lg ${
+                className={`text-xs font-bold py-2.5 px-3.5 rounded-xl transition-colors ${
                   pathname === link.href
-                    ? 'bg-[#FFF9E6] text-[#FF9D00]'
+                    ? 'bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]'
                     : 'text-[#1C1C1C] hover:bg-[#F9FAFB]'
                 }`}
               >
@@ -149,7 +161,7 @@ export default function Navbar() {
       )}
 
       {/* Left to Right Scroll Progress Indicator Line */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E5E7EB]/50 pointer-events-none overflow-hidden z-50">
+      <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E5E7EB]/40 pointer-events-none overflow-hidden z-50">
         <div
           className="h-full bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#10B981] transition-all duration-150 ease-out shadow-[0_0_8px_rgba(255,157,0,0.8)]"
           style={{ width: `${scrollProgress}%` }}
