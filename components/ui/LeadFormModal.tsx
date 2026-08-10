@@ -118,13 +118,13 @@ export default function LeadFormModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-lg bg-white border border-[#E5E7EB] rounded-[10px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] p-6 sm:p-8 space-y-6 my-8"
+          className="relative w-full max-w-lg max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] p-5 sm:p-7 space-y-5 my-auto"
         >
           {/* Close Button */}
           <button

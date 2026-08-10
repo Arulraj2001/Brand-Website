@@ -1959,8 +1959,8 @@ export default function AdminDashboardPage() {
 
       {/* ADVANCED BLOG WRITING STUDIO MODAL */}
       {blogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-4xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-4xl max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-4 sm:p-6 space-y-4 my-auto shadow-2xl">
             {/* Modal Top Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
@@ -2295,8 +2295,8 @@ export default function AdminDashboardPage() {
 
       {/* TEAM MEMBER MODAL */}
       {teamModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-lg bg-white border border-[#E5E7EB] rounded-[10px] p-6 space-y-4 my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-5 sm:p-6 space-y-4 my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
               <h3 className="font-bold text-lg text-[#1C1C1C]">
                 {editingTeamMember ? 'Edit Team Architect' : 'Add Team Architect'}
@@ -2434,8 +2434,8 @@ export default function AdminDashboardPage() {
 
       {/* PORTFOLIO MODAL */}
       {projectModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-lg bg-white border border-[#E5E7EB] rounded-[10px] p-6 space-y-4 my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-2xl max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-5 sm:p-7 space-y-4 my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
               <h3 className="font-bold text-lg text-[#1C1C1C]">
                 {editingProject ? 'Edit Project' : 'Add New Project'}
@@ -2704,8 +2704,8 @@ export default function AdminDashboardPage() {
 
       {/* TESTIMONIAL MODAL */}
       {testimonialModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-[10px] p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-5 sm:p-6 space-y-4 my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
               <h3 className="font-bold text-lg text-[#1C1C1C]">
                 {editingTestimonial ? 'Edit Testimonial' : 'Add Testimonial'}
@@ -2789,8 +2789,8 @@ export default function AdminDashboardPage() {
 
       {/* STUDENT VIDEO REVIEW FORM MODAL */}
       {studentVideoModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-xl max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-5 sm:p-6 space-y-4 my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
                 <Video className="text-[#FF9D00]" size={20} />
@@ -2962,8 +2962,8 @@ export default function AdminDashboardPage() {
 
       {/* STUDENT PROJECT SHOWCASE MODAL */}
       {studentProjModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 my-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
+          <div className="w-full max-w-2xl max-h-[88vh] overflow-y-auto bg-white border border-[#E5E7EB] rounded-2xl p-5 sm:p-6 space-y-4 my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
                 <Code className="text-[#3B82F6]" size={20} />
