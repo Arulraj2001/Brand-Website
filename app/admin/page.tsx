@@ -387,6 +387,20 @@ export default function AdminDashboardPage() {
     const live_url = formData.get('live_url') as string;
     const is_featured = formData.get('is_featured') === 'on';
 
+    const tech_stack = ((formData.get('tech_stack') as string) || '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+    const before_metric = (formData.get('before_metric') as string) || '';
+    const after_metric = (formData.get('after_metric') as string) || '';
+    const deliverables = ((formData.get('deliverables') as string) || '')
+      .split('\n')
+      .map((d) => d.trim())
+      .filter(Boolean);
+    const project_duration = (formData.get('project_duration') as string) || '';
+    const challenge_description = (formData.get('challenge_description') as string) || '';
+    const solution_description = (formData.get('solution_description') as string) || '';
+
     if (editingProject) {
       const updatedItem: PortfolioProject = {
         ...editingProject,
@@ -402,6 +416,13 @@ export default function AdminDashboardPage() {
         testimonial,
         live_url,
         is_featured,
+        tech_stack,
+        before_metric,
+        after_metric,
+        deliverables,
+        project_duration,
+        challenge_description,
+        solution_description,
       };
       setProjects((prev) => prev.map((p) => (p.id === editingProject.id ? updatedItem : p)));
       await saveProjectToSupabase(updatedItem);
@@ -422,6 +443,13 @@ export default function AdminDashboardPage() {
         testimonial,
         live_url,
         is_featured,
+        tech_stack,
+        before_metric,
+        after_metric,
+        deliverables,
+        project_duration,
+        challenge_description,
+        solution_description,
         created_at: new Date().toISOString(),
       };
       setProjects((prev) => [newProj, ...prev]);
@@ -2523,6 +2551,50 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Tech Stack (comma separated)</label>
+                  <input
+                    name="tech_stack"
+                    defaultValue={editingProject?.tech_stack?.join(', ') || ''}
+                    placeholder="Next.js, TypeScript, Supabase, Tailwind CSS"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Project Duration</label>
+                  <input
+                    name="project_duration"
+                    defaultValue={editingProject?.project_duration || ''}
+                    placeholder="e.g. 14 Days"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Before Optimization Metric</label>
+                  <input
+                    name="before_metric"
+                    defaultValue={editingProject?.before_metric || ''}
+                    placeholder="5.2s Load Speed • 38 PageSpeed"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">After Optimization Metric</label>
+                  <input
+                    name="after_metric"
+                    defaultValue={editingProject?.after_metric || ''}
+                    placeholder="0.8s Load Speed • 99 PageSpeed"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Short Description *</label>
                 <textarea
@@ -2531,6 +2603,39 @@ export default function AdminDashboardPage() {
                   rows={2}
                   defaultValue={editingProject?.short_description || ''}
                   placeholder="Brief 1-2 sentence summary..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">The Challenge (Problem Description)</label>
+                <textarea
+                  name="challenge_description"
+                  rows={2}
+                  defaultValue={editingProject?.challenge_description || editingProject?.full_description || ''}
+                  placeholder="Describe the client's problem, slow speed, high CPA, or low rank..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Engineering Fix (Solution Description)</label>
+                <textarea
+                  name="solution_description"
+                  rows={2}
+                  defaultValue={editingProject?.solution_description || ''}
+                  placeholder="Describe how Ostrune engineered the solution..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Key Deliverables (one per line)</label>
+                <textarea
+                  name="deliverables"
+                  rows={3}
+                  defaultValue={editingProject?.deliverables?.join('\n') || ''}
+                  placeholder={'Sub-Second Web Engine\nStripe Payment Integration\nFull Technical SEO'}
                   className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                 />
               </div>

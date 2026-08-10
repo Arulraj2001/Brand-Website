@@ -58,6 +58,19 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     service_type: 'web_dev',
     short_description: 'Engineered a web application with 99.9% uptime, sub-second latency, and integrated Stripe/PayPal payment flows.',
     full_description: 'ZetaPay needed a complete rebuild of their client acquisition platform. We redesigned the UX from the ground up using modern Tailwind CSS micro-animations, fast server-side rendering, and responsive UI components.',
+    challenge_description: 'ZetaPay was losing 42% of mobile visitors due to a sluggish 5.2s initial load time and legacy PHP architecture. Their acquisition funnels suffered from low conversion rates and unoptimized payment checkouts.',
+    solution_description: 'Re-architected the portal into Next.js React with server-side rendering, sub-second edge distribution, real-time database queries, and integrated Stripe/PayPal checkout APIs.',
+    before_metric: '5.2s Load Speed • 38/100 Core Web Vitals • 42% Drop-off Rate',
+    after_metric: '0.8s Load Speed • 99/100 Core Web Vitals • +340% Conversion Surge',
+    project_duration: '14 Days',
+    tech_stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Stripe API', 'Supabase', 'Framer Motion'],
+    deliverables: [
+      'Sub-Second Next.js Web Application Engine',
+      'Stripe & PayPal One-Click International Checkout',
+      'Real-Time User Auth & Account Dashboard',
+      'Responsive Mobile-First UI Micro-Animations',
+      'Full Technical SEO & JSON-LD Breadcrumb Schema',
+    ],
     cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
@@ -79,6 +92,19 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     service_type: 'website_upgrade',
     short_description: 'Overhauled a slow legacy e-commerce site to achieve 100/100 Core Web Vitals and top 3 Google rankings across high-intent keywords.',
     full_description: 'We performed deep technical SEO fixes, structured data integration (JSON-LD), Core Web Vitals page speed optimization, and mobile rendering fixes.',
+    challenge_description: 'NutraPure was burdened with 28 bloated WordPress plugins, uncompressed images, and broken canonical SEO links that pushed high-margin products to Page 4 of Google results.',
+    solution_description: 'Cleaned legacy database bloat, compiled static asset pipelines, generated Organization & Product JSON-LD schemas, and deployed a sub-second headless storefront.',
+    before_metric: '4.8s Mobile Speed • 32/100 PageSpeed • Page 4 Google Rank',
+    after_metric: '0.9s Mobile Speed • 99/100 PageSpeed • Top 3 Organic Rank',
+    project_duration: '10 Days',
+    tech_stack: ['Next.js', 'Technical SEO', 'JSON-LD Schema', 'Tailwind CSS', 'Vercel CDN'],
+    deliverables: [
+      '100/100 Mobile & Desktop Core Web Vitals Optimization',
+      'JSON-LD Product & Organization Schema Wiring',
+      'Unused CSS & JS Script Purging',
+      'WebP & AVIF Automated Asset Compression',
+      'Top 3 Ranking Push for 140+ High-Intent Keywords',
+    ],
     cover_image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80'
@@ -99,6 +125,18 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     service_type: 'ugc_ads',
     short_description: 'Produced scroll-stopping UGC video ad creatives and automated funnel landing pages for corporate client acquisition.',
     full_description: 'Produced 12 A/B UGC creator hooks, high-converting visual ad sequences, and retargeting campaigns across Meta & LinkedIn.',
+    challenge_description: 'High cost-per-acquisition ($84 CPA) on traditional static image ads and rapid creative fatigue on Meta & Instagram.',
+    solution_description: 'Scripted 12 native creator video hooks, built A/B split testing funnels, and installed Server-Side Conversion API (CAPI) pixel tracking.',
+    before_metric: '$84 Cost Per Acquisition • 1.2x Ad ROAS • 5-Day Creative Fatigue',
+    after_metric: '$24 Cost Per Acquisition • 5.2x Verified ROAS • 30-Day Scale Lifespan',
+    project_duration: '2 Weeks',
+    tech_stack: ['UGC Ad Production', 'Meta CAPI Pixel', 'LinkedIn Ads', 'Figma', 'Framer Motion'],
+    deliverables: [
+      '12 Native A/B UGC Video Ad Creator Hooks',
+      'Server-Side Meta CAPI Pixel Installation',
+      'High-Converting Mobile Funnel Landing Page',
+      'Retargeting Campaign Automation Sequences',
+    ],
     cover_image_url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'
@@ -119,6 +157,18 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     service_type: 'local_business',
     short_description: 'Dominated local search maps and built automated consultation booking funnels for luxury property listings.',
     full_description: 'Built a local SEO strategy, Google Business Profile optimization, and automated booking funnel.',
+    challenge_description: 'Skyline Real Estate was invisible on Google Map searches and lost potential buyers due to manual phone booking workflows.',
+    solution_description: 'Optimized local Google Business Profiles, established local citation maps, and built an automated online consultation booking system.',
+    before_metric: '#14 Map Search Rank • Manual Phone Bookings • Low Conversions',
+    after_metric: '#1 Local Map Rank • 850+ Monthly Consultations • 68% Online Booking Rate',
+    project_duration: '12 Days',
+    tech_stack: ['Google Map Packs', 'Local SEO', 'CRM Automation', 'React', 'Tailwind CSS'],
+    deliverables: [
+      '#1 Local Google Map Pack Ranking Strategy',
+      'Automated Online Consultation Booking Workflow',
+      'Local Citation & Business Directory Distribution',
+      'Automated Review Generation Email/SMS Sequence',
+    ],
     cover_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
@@ -139,6 +189,18 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     service_type: 'web_dev',
     short_description: 'Re-architected legacy enterprise dashboard into a sub-second Next.js web portal with automated customer onboarding.',
     full_description: 'NexusFlow needed an international-standard web platform to serve global enterprise clients. We engineered a custom Next.js portal with server-side rendering, sub-second latency, and integrated Stripe/PayPal payment flows.',
+    challenge_description: 'Outdated monolith dashboard caused slow customer onboarding times and high churn rates among enterprise clients.',
+    solution_description: 'Engineered a modern sub-second Next.js web portal, implemented automated user authentication, and optimized API data streaming.',
+    before_metric: '6.4s Onboarding Time • High Customer Churn • Clunky Monolith',
+    after_metric: '0.7s Onboarding Speed • +280% Conversions • $450K Annual SaaS Revenue',
+    project_duration: '3 Weeks',
+    tech_stack: ['Next.js', 'TypeScript', 'Supabase DB', 'Tailwind CSS', 'Stripe Billing'],
+    deliverables: [
+      'Sub-Second Next.js Enterprise Web Portal',
+      'Automated User Onboarding & Auth Flow',
+      'Real-Time Analytics & User Role Dashboard',
+      'Stripe Billing & Subscription Integration',
+    ],
     cover_image_url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
@@ -1596,6 +1658,13 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
       testimonial: project.testimonial,
       live_url: project.live_url,
       is_featured: project.is_featured,
+      tech_stack: project.tech_stack || [],
+      before_metric: project.before_metric || '',
+      after_metric: project.after_metric || '',
+      deliverables: project.deliverables || [],
+      project_duration: project.project_duration || '',
+      challenge_description: project.challenge_description || '',
+      solution_description: project.solution_description || '',
     };
 
     if (isUUID(project.id)) {

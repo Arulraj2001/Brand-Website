@@ -52,6 +52,13 @@ export interface PortfolioProject {
   testimonial?: string;
   live_url?: string;
   is_featured: boolean;
+  tech_stack?: string[];
+  before_metric?: string;
+  after_metric?: string;
+  deliverables?: string[];
+  project_duration?: string;
+  challenge_description?: string;
+  solution_description?: string;
   created_at: string;
 }
 

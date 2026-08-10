@@ -17,8 +17,25 @@ create table if not exists portfolio_projects (
   testimonial text,
   live_url text,
   is_featured boolean default false,
+  tech_stack text[],
+  before_metric text,
+  after_metric text,
+  deliverables text[],
+  project_duration text,
+  challenge_description text,
+  solution_description text,
   created_at timestamp with time zone default now()
 );
+
+-- Migration columns for existing portfolio_projects table
+alter table if exists portfolio_projects
+  add column if not exists tech_stack text[],
+  add column if not exists before_metric text,
+  add column if not exists after_metric text,
+  add column if not exists deliverables text[],
+  add column if not exists project_duration text,
+  add column if not exists challenge_description text,
+  add column if not exists solution_description text;
 
 -- 2. Leads Table
 create table if not exists leads (
