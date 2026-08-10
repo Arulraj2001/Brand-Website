@@ -23,7 +23,7 @@ export default function AboutPage() {
           Affordable Engineering & Performance Growth <GradientText>For Global & Indian Brands</GradientText>
         </h1>
         <p className="text-base text-[#6B7280] leading-relaxed">
-          Arusyth Apex delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises across the US, UK, India, Canada, Australia, and Europe at affordable USD rates.
+          Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises across the US, UK, India, Canada, Australia, and Europe at affordable USD rates.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
               </h2>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">
-                Western agencies often charge $10,000+ for slow WordPress templates and bloated project management layers. Arusyth Apex brings together senior software architects and performance growth leads to deliver custom engineering at affordable rates.
+                Western agencies often charge $10,000+ for slow WordPress templates and bloated project management layers. Ostrune brings together senior software architects and performance growth leads to deliver custom engineering at affordable rates.
               </p>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">

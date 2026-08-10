@@ -148,10 +148,19 @@ insert into storage.buckets (id, name, public)
 values ('portfolio-images', 'portfolio-images', true)
 on conflict (id) do nothing;
 
+-- Public read access (anyone can view images)
 create policy "Public read access on portfolio-images"
   on storage.objects for select
   using (bucket_id = 'portfolio-images');
 
+-- Upload access: authenticated admin users
+-- NOTE: If using the /api/upload route with service_role key, this policy is bypassed.
 create policy "Admin upload access on portfolio-images"
   on storage.objects for insert
   with check (bucket_id = 'portfolio-images' and auth.role() = 'authenticated');
+
+-- Delete access: authenticated admin users only
+create policy "Admin delete access on portfolio-images"
+  on storage.objects for delete
+  using (bucket_id = 'portfolio-images' and auth.role() = 'authenticated');
+

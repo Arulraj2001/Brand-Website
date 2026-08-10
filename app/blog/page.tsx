@@ -64,7 +64,7 @@ export default function BlogPage() {
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
             <Sparkles size={14} className="text-[#1C1C1C]" />
-            Arusyth Apex Engineering & Growth Knowledge Hub
+            Ostrune Engineering & Growth Knowledge Hub
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
             Technical Insights & <GradientText>Search Dominance Guides</GradientText>

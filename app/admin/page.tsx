@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
-  const [userEmail, setUserEmail] = useState<string>('admin@arusythapex.netlify.app');
+  const [userEmail, setUserEmail] = useState<string>('admin@ostrune.dev');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Student Projects & Video Feedback State
@@ -228,7 +228,7 @@ export default function AdminDashboardPage() {
   const [blogSecondaryKeywordsText, setBlogSecondaryKeywordsText] = useState('');
   const [blogExcerptText, setBlogExcerptText] = useState('');
   const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
-  const [blogAuthorVal, setBlogAuthorVal] = useState('Arusyth Apex Team');
+  const [blogAuthorVal, setBlogAuthorVal] = useState('');
 
   // Modal Image Inputs State
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
@@ -287,57 +287,60 @@ export default function AdminDashboardPage() {
     router.refresh();
   };
 
-  // Supabase Storage Image Upload Helper
+  // Supabase Storage Image Upload Helper — via server-side API route (bypasses RLS)
   const uploadImageFile = async (file: File): Promise<string> => {
     setUploadingMedia(true);
     try {
-      const supabase = createClient();
-      const fileExt = file.name.split('.').pop() || 'png';
-      const fileName = `${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      const form = new FormData();
+      form.append('file', file);
 
-      const { data, error } = await supabase.storage
-        .from('portfolio-images')
-        .upload(filePath, file, { upsert: true });
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: form,
+      });
 
-      if (!error && data?.path) {
-        const { data: publicUrlData } = supabase.storage
-          .from('portfolio-images')
-          .getPublicUrl(filePath);
+      const json = await res.json();
 
-        const publicUrl = publicUrlData.publicUrl;
-        const newItem: MediaItem = {
-          id: Math.random().toString(36).substring(2, 9),
-          name: file.name,
-          url: publicUrl,
-          created_at: new Date().toISOString(),
-        };
-        setMediaList((prev) => [newItem, ...prev]);
-        setUploadingMedia(false);
-        return publicUrl;
+      if (!res.ok || json.error) {
+        throw new Error(json.error || `Upload failed (${res.status})`);
       }
-    } catch (e) {
-      console.warn('Storage upload fallback');
-    }
 
-    // Fallback Data URL reader
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        const newItem: MediaItem = {
-          id: Math.random().toString(36).substring(2, 9),
-          name: file.name,
-          url: dataUrl,
-          created_at: new Date().toISOString(),
-        };
-        setMediaList((prev) => [newItem, ...prev]);
-        setUploadingMedia(false);
-        resolve(dataUrl);
+      const publicUrl: string = json.url;
+      const newItem: MediaItem = {
+        id: Math.random().toString(36).substring(2, 9),
+        name: file.name,
+        url: publicUrl,
+        created_at: new Date().toISOString(),
       };
-      reader.readAsDataURL(file);
-    });
+      setMediaList((prev) => [newItem, ...prev]);
+      setUploadingMedia(false);
+      return publicUrl;
+    } catch (e: any) {
+      setUploadingMedia(false);
+      const msg: string = e?.message || 'Upload failed';
+      addToast('error', msg.includes('service role key')
+        ? '⚠️ Add SUPABASE_SERVICE_ROLE_KEY to .env.local to enable uploads.'
+        : `Upload failed: ${msg}`);
+      // Fallback: local data URL (not persistent — for preview only)
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result as string;
+          const newItem: MediaItem = {
+            id: Math.random().toString(36).substring(2, 9),
+            name: `[preview only] ${file.name}`,
+            url: dataUrl,
+            created_at: new Date().toISOString(),
+          };
+          setMediaList((prev) => [newItem, ...prev]);
+          resolve(dataUrl);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
   };
+
+
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -552,7 +555,7 @@ export default function AdminDashboardPage() {
     const target_keyword = blogKeywordText || (formData.get('target_keyword') as string);
     const secondary_keywords = blogSecondaryKeywordsText || (formData.get('secondary_keywords') as string);
     const city = (formData.get('city') as string) || 'Global';
-    const author_name = blogAuthorVal || (formData.get('author_name') as string) || 'Arusyth Apex Team';
+    const author_name = blogAuthorVal || (formData.get('author_name') as string) || `${settings.brand_name || 'Ostrune'} Team`;
     const cover_image_url =
       blogCoverUrl ||
       (formData.get('cover_image_url') as string) ||
@@ -768,7 +771,7 @@ export default function AdminDashboardPage() {
     setBlogKeywordText(post?.target_keyword || '');
     setBlogExcerptText(post?.excerpt || '');
     setBlogCategoryVal(post?.category || 'seo');
-    setBlogAuthorVal(post?.author_name || 'Arusyth Apex Team');
+    setBlogAuthorVal(post?.author_name || `${settings.brand_name || 'Ostrune'} Team`);
     setBlogCoverUrl(post?.cover_image_url || '');
     setBlogStudioTab('write');
     setBlogModalOpen(true);
@@ -848,7 +851,7 @@ export default function AdminDashboardPage() {
             <ArusythApexLogo size={32} />
             <div>
               <span className="font-extrabold text-base text-[#1C1C1C] tracking-tight block">
-                Arusyth<span className="text-[#FF9D00]">Apex</span>
+                {settings.brand_name || 'Ostrune'}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
                 Admin Console
@@ -1065,7 +1068,8 @@ export default function AdminDashboardPage() {
                 {mediaList.map((item) => (
                   <Card key={item.id} className="p-4 flex items-center gap-4 bg-white border border-[#E5E7EB]">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
-                      <Image src={item.url} alt={item.name} fill className="object-cover" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.url} alt={item.name} className="object-cover w-full h-full" />
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
                       <p className="font-bold text-xs text-[#1C1C1C] truncate">{item.name}</p>
@@ -1582,7 +1586,7 @@ export default function AdminDashboardPage() {
                       required
                       value={settingsForm.email}
                       onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                      placeholder="hello@arusythapex.netlify.app"
+                      placeholder={`hello@${(settings.brand_name || 'Ostrune').toLowerCase()}.com`}
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1613,7 +1617,7 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.linkedin_url}
                       onChange={(e) => setSettingsForm({ ...settingsForm, linkedin_url: e.target.value })}
-                      placeholder="https://linkedin.com/company/arusyth-apex"
+                      placeholder={`https://linkedin.com/company/${(settings.brand_name || 'Ostrune').toLowerCase()}`}
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1627,7 +1631,7 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.twitter_url}
                       onChange={(e) => setSettingsForm({ ...settingsForm, twitter_url: e.target.value })}
-                      placeholder="https://twitter.com/arusyth_apex"
+                      placeholder={`https://twitter.com/${(settings.brand_name || 'ostrune').toLowerCase()}`}
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1641,9 +1645,83 @@ export default function AdminDashboardPage() {
                       type="url"
                       value={settingsForm.instagram_url || ''}
                       onChange={(e) => setSettingsForm({ ...settingsForm, instagram_url: e.target.value })}
-                      placeholder="https://instagram.com/arusyth_apex"
+                      placeholder={`https://instagram.com/${(settings.brand_name || 'ostrune').toLowerCase()}`}
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 pt-2 border-t border-[#E5E7EB]">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
+                      <Sparkles size={14} className="text-[#FF9D00]" />
+                      <span>Brand Name</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={settingsForm.brand_name || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, brand_name: e.target.value })}
+                      placeholder="Ostrune"
+                      className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
+                      <ShieldCheck size={14} className="text-[#10B981]" />
+                      <span>Trusted By Logos (one per line: Name|Category)</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={settingsForm.trust_logos_text || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, trust_logos_text: e.target.value })}
+                      placeholder="Client One|Fintech\nClient Two|Health"
+                      className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
+                      <TrendingUp size={14} className="text-[#3B82F6]" />
+                      <span>Stat Counters (Label|Value|Suffix)</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={settingsForm.stat_counters_text || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, stat_counters_text: e.target.value })}
+                      placeholder="Global Projects Delivered|80|+\nClient Retention Rate|96|%"
+                      className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
+                      <Globe size={14} className="text-[#FF9D00]" />
+                      <span>Hero Feed Title / Subtitle / Badge</span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <input
+                        type="text"
+                        value={settingsForm.hero_feed_title || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, hero_feed_title: e.target.value })}
+                        placeholder="Qualified Inquiry Stream"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                      <input
+                        type="text"
+                        value={settingsForm.hero_feed_subtitle || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, hero_feed_subtitle: e.target.value })}
+                        placeholder="Austin, TX • Budget: $3,000–$5,000"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                      <input
+                        type="text"
+                        value={settingsForm.hero_feed_badge || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, hero_feed_badge: e.target.value })}
+                        placeholder="Just Now"
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -2017,7 +2095,7 @@ export default function AdminDashboardPage() {
                         required
                         value={blogAuthorVal}
                         onChange={(e) => setBlogAuthorVal(e.target.value)}
-                        placeholder="Arusyth Apex Team"
+                        placeholder={`${settings.brand_name || 'Ostrune'} Team`}
                         className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
                     </div>

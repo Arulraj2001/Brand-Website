@@ -51,7 +51,7 @@ export default function Navbar() {
           <ArusythApexLogo size={32} className="group-hover:scale-105 transition-transform" />
           <div className="flex items-center gap-1">
             <span className="font-extrabold text-lg text-[#1C1C1C] tracking-tight">
-              Arusyth<span className="text-[#FF9D00]">Apex</span>
+              {activeSettings.brand_name || 'Ostrune'}
             </span>
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
               <Globe size={10} /> Global

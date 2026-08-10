@@ -3,8 +3,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, CheckCircle2, Sparkles, Globe } from 'lucide-react';
+import { useSiteSettings } from '@/lib/useSiteData';
+import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function HeroMockup() {
+  const { settings } = useSiteSettings();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const feedTitle = activeSettings.hero_feed_title || 'Qualified Inquiry Stream (US / UK / CA / AU)';
+  const feedSubtitle = activeSettings.hero_feed_subtitle || 'Austin, TX (USA) • Budget: $3,000–$5,000 • Web & Speed Overhaul';
+  const feedBadge = activeSettings.hero_feed_badge || 'Just Now';
   return (
     <motion.div
       animate={{ y: [-4, 4, -4] }}
@@ -20,7 +33,7 @@ export default function HeroMockup() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#FFD21E]" />
             <div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
             <span className="ml-2 text-xs font-semibold text-[#6B7280]">
-              arusythapex.netlify.app/growth-dashboard
+              {activeSettings.brand_name ? `${activeSettings.brand_name.toLowerCase()}.netlify.app/growth-dashboard` : 'ostrune.netlify.app/growth-dashboard'}
             </span>
           </div>
           <span className="px-2 py-0.5 rounded-[4px] bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] text-xs font-bold flex items-center gap-1">
@@ -59,7 +72,7 @@ export default function HeroMockup() {
         {/* SVG Wave Graph */}
         <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-4 rounded-lg space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-[#1C1C1C]">Qualified Inquiry Stream (US / UK / CA / AU)</span>
+            <span className="font-bold text-[#1C1C1C]">{feedTitle}</span>
             <span className="text-[#3B82F6] font-bold flex items-center gap-1">
               <Globe size={11} /> Live Stream
             </span>
@@ -95,12 +108,12 @@ export default function HeroMockup() {
               <CheckCircle2 size={16} />
             </div>
             <div>
-              <p className="text-xs font-bold text-[#1C1C1C]">New Verified Client Strategy Call</p>
-              <p className="text-[10px] text-[#6B7280]">Austin, TX (USA) • Budget: $3,000–$5,000 • Web & Speed Overhaul</p>
+              <p className="text-xs font-bold text-[#1C1C1C]">{activeSettings.hero_feed_title || 'New Verified Client Strategy Call'}</p>
+              <p className="text-[10px] text-[#6B7280]">{feedSubtitle}</p>
             </div>
           </div>
           <span className="text-[10px] font-bold text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-0.5 rounded-[4px]">
-            Just Now
+            {feedBadge}
           </span>
         </div>
       </div>

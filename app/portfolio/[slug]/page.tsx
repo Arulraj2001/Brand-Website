@@ -59,19 +59,19 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://arusythapex.netlify.app',
+        item: 'https://ostrune.netlify.app',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Portfolio',
-        item: 'https://arusythapex.netlify.app/portfolio',
+        item: 'https://ostrune.netlify.app/portfolio',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: project.title,
-        item: `https://arusythapex.netlify.app/portfolio/${project.slug}`,
+        item: `https://ostrune.netlify.app/portfolio/${project.slug}`,
       },
     ],
   };

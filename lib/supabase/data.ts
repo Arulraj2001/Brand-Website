@@ -1,14 +1,20 @@
-import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
+﻿import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
 import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
   phone: '+1 (800) 555-0199',
   whatsapp_number: '18005550199',
-  email: 'hello@arusythapex.netlify.app',
+  email: 'hello@ostrune.netlify.app',
   address: 'Global Remote HQ • Austin, TX & International Hubs',
   linkedin_url: 'https://linkedin.com/company/arusyth-apex',
   twitter_url: 'https://twitter.com/arusyth_apex',
   instagram_url: 'https://instagram.com/arusyth_apex',
+  brand_name: 'Ostrune',
+  trust_logos_text: '',
+  stat_counters_text: '',
+  hero_feed_title: '',
+  hero_feed_subtitle: '',
+  hero_feed_badge: '',
 };
 
 export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
@@ -58,7 +64,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
     ],
     results: '+340% Qualified Leads | 0.8s Average Page Load | $520K Monthly Transactions',
-    testimonial: 'Arusyth Apex transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
+    testimonial: 'Ostrune transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
     live_url: 'https://zetapay.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -78,7 +84,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80'
     ],
     results: '4.8x Organic Traffic Surge | Page Speed 99/100 | +220% Organic E-Commerce Sales',
-    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. Arusyth Apex delivered affordable premium engineering.',
+    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. Ostrune delivered affordable premium engineering.',
     live_url: 'https://nutrapure.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -138,7 +144,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
     ],
     results: '0.7s Average Page Speed | +280% Global Client Conversions | $450K Annual SaaS Revenue',
-    testimonial: 'Arusyth Apex delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
+    testimonial: 'Ostrune delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
     live_url: 'https://nexusflow.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -152,7 +158,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     client_company: 'Founder & CEO, ZetaPay USA',
     client_location: 'Austin, TX (USA)',
     client_city: 'Austin, USA',
-    quote: 'Arusyth Apex delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
+    quote: 'Ostrune delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -181,7 +187,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     client_company: 'Co-Founder, NexusFlow Tech',
     client_location: 'Bangalore, India',
     client_city: 'Bangalore, India',
-    quote: 'Paying in USD for Arusyth Apex engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
+    quote: 'Paying in USD for Ostrune engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -372,7 +378,7 @@ If this seems overwhelming, that's normal. Most business owners shouldn't spend 
     target_keyword: 'fix slow wordpress website',
     secondary_keywords: 'wordpress speed optimization, core web vitals wordpress, slow website fix, pagespeed optimization',
     city: 'Global',
-    author_name: 'Arusyth Apex Team',
+    author_name: 'Ostrune Team',
     is_published: true,
     published_at: new Date(Date.now() - 86400000).toISOString(),
     created_at: new Date(Date.now() - 86400000).toISOString(),
@@ -555,7 +561,7 @@ Don't run one UGC video and call it a day. Here's the scaling framework:
     target_keyword: 'ugc video ads vs studio ads ecommerce',
     secondary_keywords: 'ugc ads for ecommerce, user generated content ads, ugc video ad examples, tiktok ugc ads',
     city: 'Global',
-    author_name: 'Arusyth Apex Team',
+    author_name: 'Ostrune Team',
     is_published: true,
     published_at: new Date(Date.now() - 172800000).toISOString(),
     created_at: new Date(Date.now() - 172800000).toISOString(),
@@ -794,7 +800,7 @@ Check out our student project showcase at /student-projects for live demos and s
     target_keyword: 'bca mca final year project ideas 2025',
     secondary_keywords: 'final year project ideas computer science, bca project topics, mca final year project, ieee project ideas 2025',
     city: 'Global',
-    author_name: 'Arusyth Apex Team',
+    author_name: 'Ostrune Team',
     is_published: true,
     published_at: new Date(Date.now() - 259200000).toISOString(),
     created_at: new Date(Date.now() - 259200000).toISOString(),
@@ -1025,7 +1031,7 @@ If your site fails Core Web Vitals and you need a fast fix, our speed optimizati
     target_keyword: 'core web vitals optimization checklist',
     secondary_keywords: 'core web vitals 2025, lcp optimization, inp optimization, cls fix, google page experience',
     city: 'Global',
-    author_name: 'Arusyth Apex Team',
+    author_name: 'Ostrune Team',
     is_published: true,
     published_at: new Date(Date.now() - 345600000).toISOString(),
     created_at: new Date(Date.now() - 345600000).toISOString(),
@@ -1212,7 +1218,7 @@ We regularly rebuild websites for clients who initially hired the cheapest devel
 
 ## Our Pricing Model
 
-At Arusyth Apex, we operate as an offshore agency with US-standard quality. Our rates are 60% lower than US/UK agencies because our engineering team operates from international hubs with lower overhead costs — not because we cut corners.
+At Ostrune, we operate as an offshore agency with US-standard quality. Our rates are 60% lower than US/UK agencies because our engineering team operates from international hubs with lower overhead costs — not because we cut corners.
 
 - **Landing Page Package:** Starting at $500
 - **Business Website:** Starting at $1,500
@@ -1227,7 +1233,7 @@ Get a detailed quote for your project at /contact — we'll reply with a proposa
     target_keyword: 'website development cost 2025',
     secondary_keywords: 'how much does a website cost, website development pricing, web development agency cost, custom website price',
     city: 'Global',
-    author_name: 'Arusyth Apex Team',
+    author_name: 'Ostrune Team',
     is_published: true,
     published_at: new Date(Date.now() - 432000000).toISOString(),
     created_at: new Date(Date.now() - 432000000).toISOString(),
@@ -1238,7 +1244,7 @@ Get a detailed quote for your project at /contact — we'll reply with a proposa
 export function getSiteSettings(): SiteSettings {
   if (typeof window === 'undefined') return INITIAL_SITE_SETTINGS;
   try {
-    const cached = localStorage.getItem('arusyth_apex_site_settings');
+    const cached = localStorage.getItem('ostrune_site_settings');
     if (cached) return JSON.parse(cached);
   } catch {}
   return INITIAL_SITE_SETTINGS;
@@ -1247,8 +1253,8 @@ export function getSiteSettings(): SiteSettings {
 export function updateSiteSettings(newSettings: SiteSettings): void {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('arusyth_apex_site_settings', JSON.stringify(newSettings));
-      window.dispatchEvent(new Event('arusyth_apex_settings_updated'));
+      localStorage.setItem('ostrune_site_settings', JSON.stringify(newSettings));
+      window.dispatchEvent(new Event('ostrune_settings_updated'));
     } catch {}
   }
 }
@@ -1265,6 +1271,7 @@ export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
 
     if (!error && data) {
       const settings: SiteSettings = {
+        ...INITIAL_SITE_SETTINGS,
         id: data.id,
         phone: data.phone || INITIAL_SITE_SETTINGS.phone,
         whatsapp_number: data.whatsapp_number || INITIAL_SITE_SETTINGS.whatsapp_number,
@@ -1273,6 +1280,12 @@ export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
         linkedin_url: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedin_url,
         twitter_url: data.twitter_url || INITIAL_SITE_SETTINGS.twitter_url,
         instagram_url: data.instagram_url || INITIAL_SITE_SETTINGS.instagram_url,
+        brand_name: data.brand_name || INITIAL_SITE_SETTINGS.brand_name,
+        trust_logos_text: data.trust_logos_text || INITIAL_SITE_SETTINGS.trust_logos_text,
+        stat_counters_text: data.stat_counters_text || INITIAL_SITE_SETTINGS.stat_counters_text,
+        hero_feed_title: data.hero_feed_title || INITIAL_SITE_SETTINGS.hero_feed_title,
+        hero_feed_subtitle: data.hero_feed_subtitle || INITIAL_SITE_SETTINGS.hero_feed_subtitle,
+        hero_feed_badge: data.hero_feed_badge || INITIAL_SITE_SETTINGS.hero_feed_badge,
       };
       updateSiteSettings(settings);
       return settings;
@@ -1295,6 +1308,12 @@ export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Pro
       linkedin_url: newSettings.linkedin_url,
       twitter_url: newSettings.twitter_url,
       instagram_url: newSettings.instagram_url,
+      brand_name: newSettings.brand_name,
+      trust_logos_text: newSettings.trust_logos_text,
+      stat_counters_text: newSettings.stat_counters_text,
+      hero_feed_title: newSettings.hero_feed_title,
+      hero_feed_subtitle: newSettings.hero_feed_subtitle,
+      hero_feed_badge: newSettings.hero_feed_badge,
     });
   } catch (err) {
     console.error('Error saving site settings to Supabase:', err);
@@ -1305,7 +1324,7 @@ export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Pro
 export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return INITIAL_TEAM_MEMBERS;
   try {
-    const cached = localStorage.getItem('arusyth_apex_team_members');
+    const cached = localStorage.getItem('ostrune_team_members');
     if (cached) return JSON.parse(cached);
   } catch {}
   return INITIAL_TEAM_MEMBERS;
@@ -1314,8 +1333,8 @@ export function getTeamMembers(): TeamMember[] {
 export function saveTeamMembers(newTeam: TeamMember[]): void {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('arusyth_apex_team_members', JSON.stringify(newTeam));
-      window.dispatchEvent(new Event('arusyth_apex_team_updated'));
+      localStorage.setItem('ostrune_team_members', JSON.stringify(newTeam));
+      window.dispatchEvent(new Event('ostrune_team_updated'));
     } catch {}
   }
 }
@@ -1518,7 +1537,7 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
         ? post.secondary_keywords.join(', ')
         : post.secondary_keywords,
       city: post.city || 'Global',
-      author_name: post.author_name || 'Arusyth Apex Team',
+      author_name: post.author_name || 'Ostrune Team',
       is_published: post.is_published,
       published_at: post.published_at || (post.is_published ? new Date().toISOString() : null),
     };
@@ -1813,7 +1832,7 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
 export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
   if (typeof window === 'undefined') return INITIAL_STUDENT_FEEDBACK_VIDEOS;
   try {
-    const cached = localStorage.getItem('arusyth_apex_student_feedback');
+    const cached = localStorage.getItem('ostrune_student_feedback');
     if (cached) return JSON.parse(cached);
   } catch (err) {
     console.error('Error reading student feedback from localStorage:', err);
@@ -1824,8 +1843,8 @@ export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
 export function saveStudentFeedbackLocal(videos: StudentFeedbackVideo[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem('arusyth_apex_student_feedback', JSON.stringify(videos));
-    window.dispatchEvent(new Event('arusyth_apex_student_data_updated'));
+    localStorage.setItem('ostrune_student_feedback', JSON.stringify(videos));
+    window.dispatchEvent(new Event('ostrune_student_data_updated'));
   } catch (err) {
     console.error('Error saving student feedback to localStorage:', err);
   }
@@ -1916,7 +1935,7 @@ export async function deleteStudentFeedbackFromSupabase(id: string): Promise<voi
 export function getStudentProjects(): StudentProject[] {
   if (typeof window === 'undefined') return INITIAL_STUDENT_PROJECTS;
   try {
-    const cached = localStorage.getItem('arusyth_apex_student_projects');
+    const cached = localStorage.getItem('ostrune_student_projects');
     if (cached) return JSON.parse(cached);
   } catch (err) {
     console.error('Error reading student projects from localStorage:', err);
@@ -1927,8 +1946,8 @@ export function getStudentProjects(): StudentProject[] {
 export function saveStudentProjectsLocal(projects: StudentProject[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem('arusyth_apex_student_projects', JSON.stringify(projects));
-    window.dispatchEvent(new Event('arusyth_apex_student_data_updated'));
+    localStorage.setItem('ostrune_student_projects', JSON.stringify(projects));
+    window.dispatchEvent(new Event('ostrune_student_data_updated'));
   } catch (err) {
     console.error('Error saving student projects to localStorage:', err);
   }

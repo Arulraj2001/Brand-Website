@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getPortfolioProjects, getBlogPosts } from '@/lib/supabase/data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://arusythapex.netlify.app';
+  const baseUrl = 'https://ostrune.netlify.app';
 
   // Fetch dynamic portfolio slugs and published blog post slugs
   const [projects, posts] = await Promise.all([

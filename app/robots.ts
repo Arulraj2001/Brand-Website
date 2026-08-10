@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://arusythapex.netlify.app';
+  const baseUrl = 'https://ostrune.netlify.app';
 
   return {
     rules: {

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import {
@@ -44,10 +44,10 @@ export function useSiteSettings() {
       setSettings(getSiteSettings());
     };
 
-    window.addEventListener('arusyth_apex_settings_updated', handleUpdate);
+    window.addEventListener('ostrune_settings_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('arusyth_apex_settings_updated', handleUpdate);
+      window.removeEventListener('ostrune_settings_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
@@ -76,10 +76,10 @@ export function useTeamMembers() {
       setTeamMembers(getTeamMembers());
     };
 
-    window.addEventListener('arusyth_apex_team_updated', handleUpdate);
+    window.addEventListener('ostrune_team_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('arusyth_apex_team_updated', handleUpdate);
+      window.removeEventListener('ostrune_team_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
@@ -113,10 +113,10 @@ export function useStudentData() {
       setProjects(getStudentProjects());
     };
 
-    window.addEventListener('arusyth_apex_student_data_updated', handleUpdate);
+    window.addEventListener('ostrune_student_data_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
-      window.removeEventListener('arusyth_apex_student_data_updated', handleUpdate);
+      window.removeEventListener('ostrune_student_data_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);

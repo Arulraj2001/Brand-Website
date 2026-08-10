@@ -20,33 +20,19 @@ const sourceCode = Source_Code_Pro({
   weight: ['400', '600', '700'],
 });
 
-const baseUrl = 'https://arusythapex.netlify.app';
+const baseUrl = 'https://ostrune.netlify.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Arusyth Apex | Affordable Web Development, SEO & Growth Agency',
-    template: '%s | Arusyth Apex Technologies',
+    default: 'Ostrune | Affordable Web Development, SEO & Growth Agency',
+    template: '%s | Ostrune',
   },
   description:
-    'High-impact web engineering, old website speed upgrades, technical SEO, and final year student IEEE projects under MSME registered Learnithm for clients worldwide.',
-  keywords: [
-    'Arusyth Apex',
-    'Arusyth Apex Technologies',
-    'Arusyth Apex Netlify',
-    'Arusyth Apex Web Development',
-    'Web Development Agency',
-    'Affordable Web Development Company',
-    'Technical SEO Agency',
-    'Old Website Speed Overhaul',
-    'Custom React Next.js Development',
-    'BCA MCA Final Year Student Projects Learnithm',
-    'IEEE Project Documentation and Reports',
-    'MSME Registered Project Certification',
-  ],
-  authors: [{ name: 'Arusyth Apex Growth Team' }],
-  creator: 'Arusyth Apex Growth Team',
-  publisher: 'Arusyth Apex Technologies',
+    'High-impact web engineering, old website speed upgrades, technical SEO, and growth support for clients worldwide.',
+  authors: [{ name: 'Ostrune' }],
+  creator: 'Ostrune',
+  publisher: 'Ostrune',
   verification: {
     google: 's2W-AWEAXVsjx5SQMYZwRd33ZraT1c0qUbM4DGmpeW4',
   },
@@ -65,25 +51,25 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: baseUrl,
-    title: 'Arusyth Apex | Affordable Web Development, SEO & Performance Agency',
+    title: 'Ostrune | Affordable Web Development, SEO & Performance Agency',
     description:
-      'Engineered web portals, sub-second speed upgrades, top 3 SEO rankings, and MSME Learnithm student final year project guidance worldwide.',
-    siteName: 'Arusyth Apex',
+      'Engineered web portals, sub-second speed upgrades, and performance-focused growth support worldwide.',
+    siteName: 'Ostrune',
     images: [
       {
         url: `${baseUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'Arusyth Apex Digital Agency & Student Projects Portal',
+        alt: 'Ostrune Digital Agency',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Arusyth Apex Technologies | Web Development & SEO Growth Agency',
+    title: 'Ostrune | Web Development & SEO Growth Agency',
     description:
-      'Sub-second web engineering, technical SEO, and verified student project certifications under MSME registered Learnithm.',
-    creator: '@arusyth_apex',
+      'Sub-second web engineering, technical SEO, and growth systems for ambitious companies.',
+    creator: '@ostrune',
     images: [`${baseUrl}/og-image.png`],
   },
   robots: {
@@ -107,13 +93,10 @@ export default function RootLayout({
   const jsonLdOrg = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Arusyth Apex Technologies',
+    name: 'Ostrune',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
-    sameAs: [
-      'https://learnithm.vercel.app/',
-      'https://linkedin.com/company/arusyth-apex',
-    ],
+    sameAs: ['https://linkedin.com/'],
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+1-800-555-0199',
@@ -125,7 +108,7 @@ export default function RootLayout({
   const jsonLdWebSite = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Arusyth Apex',
+    name: 'Ostrune',
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',

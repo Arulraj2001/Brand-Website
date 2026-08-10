@@ -5,8 +5,35 @@ import StatCounter from '@/components/ui/StatCounter';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import { ShieldCheck, Award, TrendingUp, Users, Sparkles, Clock, Globe } from 'lucide-react';
+import { useSiteSettings } from '@/lib/useSiteData';
+import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function WhyChooseUsSection() {
+  const { settings } = useSiteSettings();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const statEntries = (activeSettings.stat_counters_text || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [label, value, suffix] = line.split('|');
+      return { label: label?.trim() || 'Metric', value: Number(value?.trim() || 0), suffix: suffix?.trim() || '', description: 'Admin-managed metric' };
+    });
+
+  const defaultStats = [
+    { label: 'Global Projects Delivered', value: 80, suffix: '+', description: 'Web platforms & speed overhauls across US, UK, CA & AU' },
+    { label: 'Client Retention Rate', value: 96, suffix: '%', description: 'Long-term retainer contracts for SEO & performance growth' },
+    { label: 'Avg Lead Increase', value: 340, suffix: '%', description: 'Verified inbound growth measured within 90 days' },
+    { label: 'Core Web Vitals', value: 100, suffix: '%', description: 'Sub-second speed scores guaranteed for upgraded sites' },
+  ];
+
+  const visibleStats = statEntries.length > 0 ? statEntries : defaultStats;
   return (
     <section className="py-16 bg-white border-t border-[#E5E7EB] relative overflow-hidden bg-dot-pattern">
       <div className="max-w-[1200px] mx-auto px-4">
@@ -62,49 +89,29 @@ export default function WhyChooseUsSection() {
 
           {/* Right 4 StatCounter Cards (6 cols) */}
           <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Card className="p-4 flex flex-col justify-between space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] flex items-center justify-center font-bold">
-                <Users size={16} />
-              </div>
-              <div className="font-mono-stats text-2xl font-extrabold text-[#1C1C1C]">
-                <StatCounter value={80} suffix="+" />
-              </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Global Projects Delivered</p>
-              <p className="text-[11px] text-[#6B7280]">Web platforms & speed overhauls across US, UK, CA & AU</p>
-            </Card>
+            {visibleStats.slice(0, 4).map((stat, index) => {
+              const cardStyles = [
+                'bg-[#3B82F6]/10 text-[#3B82F6]',
+                'bg-[#FFD21E] text-[#1C1C1C] border border-[#E5E7EB]',
+                'bg-[#10B981]/10 text-[#10B981]',
+                'bg-[#3B82F6]/10 text-[#3B82F6]',
+              ];
+              const valueStyles = ['text-[#1C1C1C]', 'text-[#FF9D00]', 'text-[#10B981]', 'text-[#3B82F6]'];
+              const icons = [<Users key="users" size={16} />, <Award key="award" size={16} />, <TrendingUp key="trending" size={16} />, <ShieldCheck key="shield" size={16} />];
 
-            <Card className="p-4 flex flex-col justify-between space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold border border-[#E5E7EB]">
-                <Award size={16} />
-              </div>
-              <div className="font-mono-stats text-2xl font-extrabold text-[#FF9D00]">
-                <StatCounter value={96} suffix="%" />
-              </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Client Retention Rate</p>
-              <p className="text-[11px] text-[#6B7280]">Long-term retainer contracts for SEO & performance growth</p>
-            </Card>
-
-            <Card className="p-4 flex flex-col justify-between space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center font-bold">
-                <TrendingUp size={16} />
-              </div>
-              <div className="font-mono-stats text-2xl font-extrabold text-[#10B981]">
-                <StatCounter value={340} suffix="%" />
-              </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Avg Lead Increase</p>
-              <p className="text-[11px] text-[#6B7280]">Verified inbound growth measured within 90 days</p>
-            </Card>
-
-            <Card className="p-4 flex flex-col justify-between space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] flex items-center justify-center font-bold">
-                <ShieldCheck size={16} />
-              </div>
-              <div className="font-mono-stats text-2xl font-extrabold text-[#3B82F6]">
-                <StatCounter value={100} suffix="%" />
-              </div>
-              <p className="text-xs font-bold text-[#1C1C1C]">Core Web Vitals</p>
-              <p className="text-[11px] text-[#6B7280]">Sub-second speed scores guaranteed for upgraded sites</p>
-            </Card>
+              return (
+                <Card key={stat.label} className="p-4 flex flex-col justify-between space-y-2">
+                  <div className={`w-8 h-8 rounded-lg ${cardStyles[index % cardStyles.length]} flex items-center justify-center font-bold`}>
+                    {icons[index % icons.length]}
+                  </div>
+                  <div className={`font-mono-stats text-2xl font-extrabold ${valueStyles[index % valueStyles.length]}`}>
+                    <StatCounter value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <p className="text-xs font-bold text-[#1C1C1C]">{stat.label}</p>
+                  <p className="text-[11px] text-[#6B7280]">{stat.description || 'Admin-managed metric'}</p>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </div>

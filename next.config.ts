@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -9,7 +10,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**.supabase.co",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
       },
       {
         protocol: "https",

@@ -32,6 +32,10 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsProps
   const current = testimonials[currentIndex] || testimonials[0];
   const location = current?.client_location || current?.client_city || 'Austin, USA';
 
+  if (!testimonials.length) {
+    return null;
+  }
+
   return (
     <section className="py-16 bg-white border-t border-[#E5E7EB] relative overflow-hidden bg-dot-pattern">
       <div className="max-w-4xl mx-auto px-4">

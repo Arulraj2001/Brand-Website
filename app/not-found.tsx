@@ -5,7 +5,7 @@ import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 
 export const metadata = {
-  title: '404 - Page Not Found | Arusyth Apex Digital',
+  title: '404 - Page Not Found | Ostrune',
   description: 'The requested page could not be found.',
 };
 

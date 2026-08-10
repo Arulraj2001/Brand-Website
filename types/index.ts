@@ -89,6 +89,12 @@ export interface SiteSettings {
   linkedin_url: string;
   twitter_url: string;
   instagram_url: string;
+  brand_name: string;
+  trust_logos_text: string;
+  stat_counters_text: string;
+  hero_feed_title: string;
+  hero_feed_subtitle: string;
+  hero_feed_badge: string;
 }
 
 export interface TeamMember {

@@ -11,7 +11,7 @@ import FinalCtaSection from '@/components/sections/FinalCtaSection';
 import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
 
 export const metadata = {
-  title: 'Affordable Web Development, SEO & Digital Marketing Agency | Arusyth Apex',
+  title: 'Affordable Web Development, SEO & Digital Marketing Agency | Ostrune',
   description: 'High-quality web engineering, SEO & digital growth for US, UK, CA & AU clients at 60% lower rates. Time-zone friendly with 12-hour SLA.',
 };
 
