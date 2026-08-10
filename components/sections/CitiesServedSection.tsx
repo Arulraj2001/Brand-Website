@@ -22,26 +22,26 @@ export default function CitiesServedSection() {
             Global Client Footprint
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-            Trusted by Clients <GradientText>Worldwide</GradientText>
+            Global Engineering & <GradientText>Regional Coverage</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
             Affordable premium web engineering, speed overhaul, and performance ad growth with guaranteed 12-hour reply times.
           </p>
         </div>
 
-        {/* Region Tags Grid */}
-        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto mb-6">
+        {/* Region Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto mb-8">
           {GLOBAL_REGIONS.map((region, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-[4px] bg-white border border-[#E5E7EB] shadow-xs hover:border-[#FF9D00] transition-colors group"
+              className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[#E5E7EB] shadow-xs hover:border-[#FF9D00] hover:shadow-md transition-all group text-left"
             >
-              <span className="text-xl shrink-0">{region.flag}</span>
-              <div className="text-left">
-                <p className="font-bold text-[#1C1C1C] text-xs group-hover:text-[#FF9D00] transition-colors">
+              <span className="text-2xl shrink-0 p-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">{region.flag}</span>
+              <div className="space-y-0.5">
+                <p className="font-bold text-[#1C1C1C] text-sm group-hover:text-[#FF9D00] transition-colors">
                   {region.name}
                 </p>
-                <p className="text-[10px] text-[#6B7280]">{region.detail}</p>
+                <p className="text-xs text-[#6B7280] leading-snug">{region.detail}</p>
               </div>
             </div>
           ))}

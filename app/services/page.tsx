@@ -10,6 +10,7 @@ import {
   Video,
   Zap,
   CheckCircle2,
+  AlertCircle,
   ArrowRight,
   Sparkles,
   ShieldCheck,
@@ -19,6 +20,7 @@ import {
 import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import BenchmarkImpactBadge from '@/components/ui/BenchmarkImpactBadge';
 
 export const metadata = {
   title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
@@ -166,47 +168,60 @@ export default function ServicesPage() {
         <div className="space-y-12">
           {SERVICES.map((service, idx) => {
             const Icon = service.icon;
+            const itemNumber = (idx + 1).toString().padStart(2, '0');
+
             return (
               <section
                 key={service.id}
                 id={service.id}
-                className="scroll-mt-32 border border-[#E5E7EB] rounded-2xl bg-white p-6 sm:p-8 shadow-xs space-y-6"
+                className="relative overflow-hidden scroll-mt-32 border border-[#E5E7EB] rounded-2xl bg-white p-6 sm:p-8 shadow-xs hover:shadow-xl hover:border-[#FF9D00]/50 transition-all duration-300 group space-y-6"
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold border border-[#E5E7EB] shrink-0">
+                {/* Top Accent Gradient Bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#3B82F6] opacity-80" />
+
+                {/* Card Header & Watermark Number */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5 relative">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-xl bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-extrabold border border-[#E5E7EB] shadow-2xs group-hover:scale-105 transition-transform shrink-0">
                       <Icon size={24} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-extrabold uppercase bg-[#3B82F6]/10 text-[#3B82F6] px-2 py-0.5 rounded-[4px]">
+                      <span className="text-[10px] font-extrabold uppercase bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]/60 px-2.5 py-0.5 rounded-full tracking-wide">
                         {service.badge}
                       </span>
-                      <h2 className="text-xl sm:text-2xl font-bold text-[#1C1C1C] mt-1">
+                      <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] mt-1 group-hover:text-[#FF9D00] transition-colors">
                         {service.title}
                       </h2>
                     </div>
                   </div>
 
-                  <Button href="/contact" variant="primary" size="sm" className="shrink-0">
-                    <span>Book Strategy Call</span>
-                    <ArrowRight size={14} />
-                  </Button>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="font-mono-stats text-3xl sm:text-4xl font-extrabold text-[#E5E7EB] group-hover:text-[#FFD21E]/60 transition-colors select-none">
+                      #{itemNumber}
+                    </span>
+                    <Button href="/contact" variant="primary" size="sm" className="shrink-0">
+                      <span>Book Strategy Call</span>
+                      <ArrowRight size={14} />
+                    </Button>
+                  </div>
                 </div>
 
                 <p className="text-sm sm:text-base text-[#6B7280] font-medium leading-relaxed">
                   {service.tagline}
                 </p>
 
+                {/* 2-Column Split: Pain Points vs Deliverables */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Pain Points Box */}
-                  <div className="bg-[#FFF9E6] border border-[#FFD21E]/60 p-4 rounded-xl space-y-3">
-                    <h3 className="text-xs font-extrabold uppercase text-[#FF9D00] tracking-wider">
-                      Common Pain Points We Solve
-                    </h3>
-                    <ul className="space-y-2 text-xs text-[#1C1C1C] font-semibold">
+                  <div className="bg-[#FFF9E6]/70 border border-[#FFD21E]/60 p-5 rounded-xl space-y-3 relative overflow-hidden">
+                    <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#FF9D00] tracking-wider">
+                      <AlertCircle size={14} className="text-[#FF9D00]" />
+                      <span>Common Pain Points We Solve</span>
+                    </div>
+                    <ul className="space-y-2.5 text-xs text-[#1C1C1C] font-semibold">
                       {service.painPoints.map((pt, pIdx) => (
-                        <li key={pIdx} className="flex items-start gap-2">
-                          <span className="text-[#FF9D00] font-bold">•</span>
+                        <li key={pIdx} className="flex items-start gap-2 leading-snug">
+                          <span className="text-[#FF9D00] font-bold text-sm shrink-0 leading-none">•</span>
                           <span>{pt}</span>
                         </li>
                       ))}
@@ -214,14 +229,15 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Audit & Deliverables Box */}
-                  <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-4 rounded-xl space-y-3">
-                    <h3 className="text-xs font-extrabold uppercase text-[#3B82F6] tracking-wider">
-                      Our Deliverables & Fix Process
-                    </h3>
-                    <ul className="space-y-2 text-xs text-[#1C1C1C]">
+                  <div className="bg-[#F4F6F8] border border-[#E5E7EB] p-5 rounded-xl space-y-3 relative overflow-hidden">
+                    <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#3B82F6] tracking-wider">
+                      <CheckCircle2 size={14} className="text-[#3B82F6]" />
+                      <span>Our Deliverables & Fix Process</span>
+                    </div>
+                    <ul className="space-y-2.5 text-xs text-[#1C1C1C]">
                       {service.auditProcess.map((ap, aIdx) => (
-                        <li key={aIdx} className="flex items-start gap-2">
-                          <CheckCircle2 size={13} className="text-[#10B981] shrink-0 mt-0.5" />
+                        <li key={aIdx} className="flex items-start gap-2 leading-snug">
+                          <CheckCircle2 size={14} className="text-[#10B981] shrink-0 mt-0.5" />
                           <span>{ap}</span>
                         </li>
                       ))}
@@ -229,10 +245,8 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between text-xs font-bold bg-[#F9FAFB] p-3 rounded-lg border border-[#E5E7EB]">
-                  <span className="text-[#6B7280]">Proven Benchmark Impact:</span>
-                  <span className="font-mono-stats text-[#10B981] text-sm">{service.results}</span>
-                </div>
+                {/* Dynamic Running Impact Ticker Badge */}
+                <BenchmarkImpactBadge results={service.results} />
               </section>
             );
           })}

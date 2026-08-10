@@ -6,7 +6,6 @@ import WhyChooseUsSection from '@/components/sections/WhyChooseUsSection';
 import PortfolioPreviewSection from '@/components/sections/PortfolioPreviewSection';
 import ProcessTimeline from '@/components/ui/ProcessTimeline';
 import TestimonialsCarousel from '@/components/sections/TestimonialsCarousel';
-import CitiesServedSection from '@/components/sections/CitiesServedSection';
 import FinalCtaSection from '@/components/sections/FinalCtaSection';
 import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
 
@@ -60,10 +59,7 @@ export default async function HomePage() {
       {/* 7. TESTIMONIALS CAROUSEL */}
       <TestimonialsCarousel testimonials={testimonials} />
 
-      {/* 8. GLOBAL CLIENTS FOOTPRINT */}
-      <CitiesServedSection />
-
-      {/* 9. FINAL CTA BAND */}
+      {/* 8. FINAL CTA BAND */}
       <FinalCtaSection />
     </div>
   );
