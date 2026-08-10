@@ -176,3 +176,19 @@ h1, h2, h3, h4, h5, h6 {
   animation-play-state: paused;
 }
 
+/* Running Border Outline Laser Beam */
+@keyframes border-dash-run {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -700;
+  }
+}
+
+.animate-running-border {
+  stroke-dasharray: 160 540;
+  animation: border-dash-run 7s linear infinite;
+}
+
+

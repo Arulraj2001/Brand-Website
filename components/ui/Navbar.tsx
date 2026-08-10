@@ -13,6 +13,7 @@ import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 export default function Navbar() {
   const { settings } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
@@ -20,6 +21,11 @@ export default function Navbar() {
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const currentProgress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, currentProgress)));
+      }
       if (window.scrollY > 20) {
         setScrolled(true);
       } else {
@@ -27,6 +33,7 @@ export default function Navbar() {
       }
     };
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -140,6 +147,14 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Left to Right Scroll Progress Indicator Line */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E5E7EB]/50 pointer-events-none overflow-hidden z-50">
+        <div
+          className="h-full bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#10B981] transition-all duration-150 ease-out shadow-[0_0_8px_rgba(255,157,0,0.8)]"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
     </header>
   );
 }

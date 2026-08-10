@@ -176,6 +176,28 @@ export default function ServicesPage() {
                 id={service.id}
                 className="relative overflow-hidden scroll-mt-32 border border-[#E5E7EB] rounded-2xl bg-white p-6 sm:p-8 shadow-xs hover:shadow-xl hover:border-[#FF9D00]/50 transition-all duration-300 group space-y-6"
               >
+                {/* RUNNING LASER BEAM ON TOP OF RECTANGLE CARD BORDER OUTLINE */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-2xl z-20 overflow-visible">
+                  <defs>
+                    <linearGradient id={`card-laser-${service.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFD21E" />
+                      <stop offset="50%" stopColor="#FF9D00" />
+                      <stop offset="100%" stopColor="#10B981" />
+                    </linearGradient>
+                  </defs>
+                  <rect
+                    x="1"
+                    y="1"
+                    width="calc(100% - 2px)"
+                    height="calc(100% - 2px)"
+                    rx="16"
+                    fill="none"
+                    stroke={`url(#card-laser-${service.id})`}
+                    strokeWidth="2.5"
+                    className="animate-running-border opacity-70 group-hover:opacity-100 transition-opacity"
+                  />
+                </svg>
+
                 {/* Top Accent Gradient Bar */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#3B82F6] opacity-80" />
 
