@@ -38,30 +38,101 @@ h1, h2, h3, h4, h5, h6 {
 
 .hf-card {
   background-color: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease-in-out;
+  border: 1px solid rgba(229, 231, 235, 0.85);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.hf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 157, 0, 0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .hf-card:hover {
-  border-color: #FF9D00;
-  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.12);
+  transform: translateY(-3px);
+  border-color: rgba(255, 157, 0, 0.6);
+  box-shadow: 0 12px 28px -6px rgba(255, 157, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.hf-card:hover::before {
+  opacity: 1;
 }
 
 .hf-card-featured {
-  background-color: #FFF9E6;
-  border: 1px solid #FFD21E;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(255, 157, 0, 0.08);
-  transition: all 0.2s ease-in-out;
+  background: linear-gradient(180deg, #FFFDF5 0%, #FFF9E6 100%);
+  border: 1.5px solid #FFD21E;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(255, 210, 30, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.hf-card-featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD21E, #FF9D00, #FFD21E);
 }
 
 .hf-card-featured:hover {
+  transform: translateY(-3px);
   border-color: #FF9D00;
-  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.15);
+  box-shadow: 0 14px 32px -6px rgba(255, 157, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Button Sheen Shimmer Animation */
+@keyframes button-shimmer {
+  0% {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(250%) rotate(25deg);
+  }
+}
+
+.btn-shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.btn-shimmer-effect:hover::after {
+  opacity: 1;
+  animation: button-shimmer 1.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .gradient-text {

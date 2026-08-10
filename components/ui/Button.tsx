@@ -18,23 +18,23 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'inline-flex items-center justify-center font-semibold transition-all duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer min-h-[44px]';
+    'inline-flex items-center justify-center font-semibold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer min-h-[44px] active:scale-[0.98] select-none';
 
   const sizeStyles = {
-    sm: 'text-xs px-3 py-1.5 rounded-lg gap-1.5',
-    md: 'text-[15px] px-[18px] py-[9px] rounded-lg gap-2',
-    lg: 'text-base px-6 py-3 rounded-lg gap-2.5',
+    sm: 'text-xs px-3.5 py-1.5 rounded-lg gap-1.5 shadow-xs',
+    md: 'text-[15px] px-[20px] py-[10px] rounded-xl gap-2 shadow-sm',
+    lg: 'text-base px-7 py-3.5 rounded-xl gap-2.5 shadow-md',
   };
 
   const variantStyles = {
     primary:
-      'bg-[#FF9D00] text-white hover:bg-[#E68E00] active:bg-[#CC7E00] shadow-sm',
+      'btn-shimmer-effect bg-gradient-to-r from-[#FF9D00] to-[#FFAE1A] text-white hover:from-[#E68E00] hover:to-[#FF9D00] hover:shadow-[0_6px_20px_rgba(255,157,0,0.35)] hover:-translate-y-0.5 border border-[#FFB833]/40',
     secondary:
-      'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:bg-[#F9FAFB] hover:border-[#9CA3AF]',
+      'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:bg-[#F9FAFB] hover:border-[#FF9D00]/60 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-0.5',
     ghost:
-      'text-[#1C1C1C] hover:bg-[#F9FAFB] hover:text-[#FF9D00]',
+      'text-[#1C1C1C] hover:bg-[#FF9D00]/10 hover:text-[#FF9D00]',
     featured:
-      'bg-[#FFF9E6] text-[#1C1C1C] border border-[#FFD21E] hover:bg-[#FFEFA6]',
+      'bg-gradient-to-r from-[#FFFDF5] to-[#FFF9E6] text-[#1C1C1C] border border-[#FFD21E] hover:border-[#FF9D00] hover:shadow-[0_4px_16px_rgba(255,210,30,0.3)] hover:-translate-y-0.5',
   };
 
   const combinedClasses = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`;
