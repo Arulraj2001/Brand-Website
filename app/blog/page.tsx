@@ -89,15 +89,23 @@ export default function BlogPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
               {/* Left Image (7 Cols) */}
               <div className="lg:col-span-7 relative min-h-[300px] lg:min-h-[380px] overflow-hidden bg-[#1C1C1C]">
+                {/* Ambient Blurred Background Fill */}
+                <Image
+                  src={featuredPost.cover_image_url}
+                  alt=""
+                  fill
+                  className="object-cover blur-xl opacity-40 scale-110"
+                />
+                {/* Sharp Foreground Image Fit To Card */}
                 <Image
                   src={featuredPost.cover_image_url}
                   alt={featuredPost.title}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+                  className="object-contain p-4 relative z-10 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/80 via-transparent to-transparent pointer-events-none z-15" />
                 <div className="absolute top-4 left-4 flex items-center gap-2">
                   <span className="px-3 py-1 rounded-[4px] bg-[#FF9D00] text-white text-xs font-extrabold uppercase shadow-xs">
                     Featured Masterclass
@@ -248,7 +256,18 @@ export default function BlogPage() {
                     >
                       <Card className="flex flex-col justify-between w-full p-0 overflow-hidden group hover:border-[#FF9D00] transition-colors">
                         {/* Cover Image Container */}
-                        <div className="relative h-48 w-full overflow-hidden bg-[#F9FAFB]">
+                        <div className="relative h-52 w-full overflow-hidden bg-[#1C1C1C]">
+                          {/* Ambient Blurred Background Fill */}
+                          <Image
+                            src={
+                              post.cover_image_url ||
+                              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                            }
+                            alt=""
+                            fill
+                            className="object-cover blur-lg opacity-35 scale-110"
+                          />
+                          {/* Sharp Foreground Image Fit To Card */}
                           <Image
                             src={
                               post.cover_image_url ||
@@ -257,9 +276,9 @@ export default function BlogPage() {
                             alt={post.title}
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="object-contain p-3 relative z-10 group-hover:scale-105 transition-transform duration-500"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/60 via-transparent to-transparent opacity-80" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/70 via-transparent to-transparent opacity-80 pointer-events-none z-15" />
 
                           {/* Category Badge */}
                           <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">

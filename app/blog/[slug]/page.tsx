@@ -201,7 +201,18 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
         </div>
 
         {/* Hero Cover Image */}
-        <div className="relative h-64 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-white">
+        <div className="relative h-64 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-[#1C1C1C]">
+          {/* Ambient Blurred Background Fill */}
+          <Image
+            src={
+              post.cover_image_url ||
+              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+            }
+            alt=""
+            fill
+            className="object-cover blur-xl opacity-40 scale-110"
+          />
+          {/* Sharp Foreground Image Fit To Frame */}
           <Image
             src={
               post.cover_image_url ||
@@ -211,7 +222,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
             fill
             priority
             sizes="(max-width: 768px) 100vw, 90vw"
-            className="object-cover"
+            className="object-contain p-4 relative z-10"
           />
         </div>
 
