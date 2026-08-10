@@ -10,7 +10,12 @@ export const INITIAL_SITE_SETTINGS: SiteSettings = {
   twitter_url: 'https://twitter.com/ostrune',
   instagram_url: 'https://instagram.com/ostrune',
   brand_name: 'Ostrune',
-  trust_logos_text: '',
+  trust_logos_text: `NovaPay | FinTech SaaS
+Aether AI | Generative AI
+Lumina Labs | E-Commerce
+Apex Capital | Venture Capital
+Veloce Speed | Speed Overhaul
+Hyperion | Cloud Systems`,
   stat_counters_text: '',
   hero_feed_title: '',
   hero_feed_subtitle: '',

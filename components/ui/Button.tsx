@@ -18,12 +18,12 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'inline-flex items-center justify-center font-semibold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer min-h-[44px] active:scale-[0.98] select-none';
+    'inline-flex items-center justify-center font-semibold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.98] select-none';
 
   const sizeStyles = {
-    sm: 'text-xs px-3.5 py-1.5 rounded-lg gap-1.5 shadow-xs',
-    md: 'text-[15px] px-[20px] py-[10px] rounded-xl gap-2 shadow-sm',
-    lg: 'text-base px-7 py-3.5 rounded-xl gap-2.5 shadow-md',
+    sm: 'text-xs px-3 py-1 rounded-lg gap-1.5 shadow-xs min-h-[32px]',
+    md: 'text-[15px] px-[20px] py-[10px] rounded-xl gap-2 shadow-sm min-h-[44px]',
+    lg: 'text-base px-7 py-3.5 rounded-xl gap-2.5 shadow-md min-h-[48px]',
   };
 
   const variantStyles = {
