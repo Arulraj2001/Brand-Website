@@ -65,7 +65,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm leading-relaxed max-w-sm text-[#6B7280]">
-              Affordable premium web engineering, old website speed overhauls, UGC video ads, and SEO dominance for growing businesses across the US, UK, Canada, Australia & Europe.
+              Affordable premium web engineering, old website speed overhauls, UGC video ads, and SEO dominance for growing businesses worldwide.
             </p>
             <div className="flex items-center gap-2.5 pt-1">
               {activeSettings.linkedin_url && (

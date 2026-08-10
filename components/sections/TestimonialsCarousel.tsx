@@ -49,7 +49,7 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsProps
             Loved by Ambitious <GradientText>Founders Worldwide</GradientText>
           </h2>
           <p className="text-base text-[#6B7280]">
-            Hear how our web engineering & ROI pipelines accelerated growth for international companies across US, UK, Canada & Australia.
+            Hear how our web engineering & ROI pipelines accelerated growth for ambitious companies worldwide.
           </p>
         </div>
 

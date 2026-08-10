@@ -25,7 +25,7 @@ export default function HeroSection() {
               <span>Affordable Premium Web Engineering & Performance Marketing</span>
               <span className="text-[#1C1C1C]/40">•</span>
               <span className="flex items-center gap-1 font-semibold">
-                <Globe size={12} /> US • UK • IN • CA • AU • EU
+                <Globe size={12} /> Serving Clients Worldwide
               </span>
             </div>
 
@@ -36,7 +36,7 @@ export default function HeroSection() {
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-[#6B7280] leading-[1.6] max-w-2xl">
-              High-quality web engineering, old website speed overhauls, UGC video ads, and SEO dominance at a fraction of US & UK agency rates. Fluent English communication with 12-hour reply guarantees across all time zones.
+              High-quality web engineering, old website speed overhauls, UGC video ads, and SEO dominance at a fraction of traditional agency rates. Fluent English communication with 12-hour reply guarantees across all time zones.
             </p>
 
             {/* CTA Group */}
@@ -58,7 +58,7 @@ export default function HeroSection() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock size={15} className="text-[#FF9D00]" />
-                <span>Time-Zone Friendly (US/UK/AU)</span>
+                <span>Global Time-Zone Coverage</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <ShieldCheck size={15} className="text-[#3B82F6]" />

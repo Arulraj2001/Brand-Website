@@ -27,7 +27,7 @@ export default function WhyChooseUsSection() {
     });
 
   const defaultStats = [
-    { label: 'Global Projects Delivered', value: 80, suffix: '+', description: 'Web platforms & speed overhauls across US, UK, CA & AU' },
+    { label: 'Global Projects Delivered', value: 80, suffix: '+', description: 'Web platforms & speed overhauls for clients worldwide' },
     { label: 'Client Retention Rate', value: 96, suffix: '%', description: 'Long-term retainer contracts for SEO & performance growth' },
     { label: 'Avg Lead Increase', value: 340, suffix: '%', description: 'Verified inbound growth measured within 90 days' },
     { label: 'Core Web Vitals', value: 100, suffix: '%', description: 'Sub-second speed scores guaranteed for upgraded sites' },
@@ -47,7 +47,7 @@ export default function WhyChooseUsSection() {
             Why International Brands <GradientText>Partner With Us</GradientText>
           </h2>
           <p className="text-base text-[#6B7280]">
-            Same high-quality web software engineering and performance marketing as top US & UK agencies, delivered at 60% lower rates.
+            Same high-quality web software engineering and performance marketing as top traditional agencies, delivered at 60% lower rates.
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default function WhyChooseUsSection() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Globe size={14} className="text-[#3B82F6]" />
-                  <span>Time-Zone Friendly (US/UK/AU)</span>
+                  <span>Global Time-Zone Coverage</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <ShieldCheck size={14} className="text-[#10B981]" />

@@ -33,7 +33,7 @@ export default function ServicesBentoSection() {
             Specialized Web Engineering & <GradientText>Growth Services</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
-            From sub-second web & mobile development to old site speed overhauls and high-ROAS UGC video ads for international brands across the US, UK, Canada & Europe.
+            From sub-second web & mobile development to old site speed overhauls and high-ROAS UGC video ads for international brands worldwide.
           </p>
         </div>
 

@@ -55,6 +55,12 @@ create table if not exists site_settings (
   linkedin_url text default 'https://linkedin.com/company/ostrune',
   twitter_url text default 'https://twitter.com/ostrune',
   instagram_url text default 'https://instagram.com/ostrune',
+  brand_name text default 'Ostrune',
+  trust_logos_text text,
+  stat_counters_text text,
+  hero_feed_title text,
+  hero_feed_subtitle text,
+  hero_feed_badge text,
   created_at timestamp with time zone default now()
 );
 

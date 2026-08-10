@@ -101,9 +101,9 @@ const INITIAL_LEADS: Lead[] = [
   {
     id: 'l2',
     name: 'Sarah Jenkins',
-    email: 'sarah@cleanenergy.uk',
+    email: 'sarah@cleanenergy.org',
     phone: '+44 20 7946 0912',
-    country: 'London, UK',
+    country: 'Global',
     service_interested: 'UGC Video Ads',
     budget_range: '$5,000+',
     message: 'Looking for 12 A/B UGC video ad hooks for our D2C e-commerce campaign.',
@@ -113,21 +113,21 @@ const INITIAL_LEADS: Lead[] = [
   {
     id: 'l3',
     name: 'Marcus Vance',
-    email: 'marcus@skyline.au',
+    email: 'marcus@skyline.org',
     phone: '+61 2 9374 4000',
-    country: 'Sydney, Australia',
+    country: 'Global',
     service_interested: 'Local Business Marketing',
     budget_range: '$1,000–$3,000',
-    message: 'Want to rank #1 on Google Map packs for our luxury property listings in Sydney.',
+    message: 'Want to rank #1 on Google Map packs for our luxury property listings.',
     status: 'closed',
     created_at: new Date(Date.now() - 172800000).toISOString(),
   },
   {
     id: 'l4',
     name: 'Emma Dupont',
-    email: 'emma@techhub.de',
+    email: 'emma@techhub.org',
     phone: '+49 30 1234567',
-    country: 'Berlin, Germany',
+    country: 'Global',
     service_interested: 'Website Development',
     budget_range: '$3,000–$5,000',
     message: 'Require custom web portal engineering with Stripe payment integration.',
@@ -199,6 +199,7 @@ export default function AdminDashboardPage() {
 
   const [leadSearch, setLeadSearch] = useState('');
   const [leadStatusFilter, setLeadStatusFilter] = useState('all');
+  const [deleteConfirmLead, setDeleteConfirmLead] = useState<Lead | null>(null);
 
   const [blogSearch, setBlogSearch] = useState('');
   const [blogCategoryFilter, setBlogCategoryFilter] = useState('all');
@@ -764,6 +765,13 @@ export default function AdminDashboardPage() {
     addToast('success', `Lead status updated to ${newStatus?.toUpperCase()}`);
   };
 
+  const handleDeleteLead = async (id: string) => {
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    if (id) await deleteLeadFromSupabase(id);
+    addToast('success', 'Inquiry lead deleted');
+    setDeleteConfirmLead(null);
+  };
+
   const openBlogStudioModal = (post: BlogPost | null) => {
     setEditingBlogPost(post);
     setBlogTitleText(post?.title || '');
@@ -1257,7 +1265,7 @@ export default function AdminDashboardPage() {
                     <th className="py-2.5 px-3">Service</th>
                     <th className="py-2.5 px-3">Budget ($ USD)</th>
                     <th className="py-2.5 px-3">Status Badge</th>
-                    <th className="py-2.5 px-3 text-right">Update Status</th>
+                    <th className="py-2.5 px-3 font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E5E7EB]">
@@ -1287,16 +1295,25 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right">
-                        <select
-                          value={l.status || 'new'}
-                          onChange={(e) => handleLeadStatusChange(l.id!, e.target.value as any)}
-                          className="px-2 py-1 border border-[#E5E7EB] rounded-md text-xs font-bold text-[#1C1C1C] bg-white focus:outline-none focus:border-[#FF9D00]"
-                        >
-                          <option value="new">New</option>
-                          <option value="contacted">Contacted</option>
-                          <option value="qualified">Qualified</option>
-                          <option value="closed">Won</option>
-                        </select>
+                        <div className="flex items-center justify-end gap-2">
+                          <select
+                            value={l.status || 'new'}
+                            onChange={(e) => handleLeadStatusChange(l.id!, e.target.value as any)}
+                            className="px-2 py-1 border border-[#E5E7EB] rounded-md text-xs font-bold text-[#1C1C1C] bg-white focus:outline-none focus:border-[#FF9D00]"
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="qualified">Qualified</option>
+                            <option value="closed">Won</option>
+                          </select>
+                          <button
+                            onClick={() => setDeleteConfirmLead(l)}
+                            className="p-1 rounded-md text-[#9CA3AF] hover:text-[#EF4444] hover:bg-[#FEF2F2] transition-colors"
+                            title="Delete Lead"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -2223,6 +2240,31 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
+      {/* LEAD DELETE CONFIRM */}
+      {deleteConfirmLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Confirm Delete Lead</h3>
+            <p className="text-xs text-[#6B7280]">
+              Are you sure you want to delete inquiry lead from <strong className="text-[#1C1C1C]">{deleteConfirmLead.name}</strong> ({deleteConfirmLead.email})?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmLead(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteLead(deleteConfirmLead.id!)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete Lead
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TEAM MEMBER MODAL */}
       {teamModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs overflow-y-auto">
@@ -2587,7 +2629,7 @@ export default function AdminDashboardPage() {
                     name="client_company"
                     required
                     defaultValue={editingTestimonial?.client_company || ''}
-                    placeholder="CEO, ZetaPay USA"
+                    placeholder="CEO, ZetaPay"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C]"
                   />
                 </div>

@@ -22,7 +22,7 @@ export default function CitiesServedSection() {
             Global Client Footprint
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] tracking-tight">
-            Trusted by Clients <GradientText>Across US, UK, India & Worldwide</GradientText>
+            Trusted by Clients <GradientText>Worldwide</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
             Affordable premium web engineering, speed overhaul, and performance ad growth with guaranteed 12-hour reply times.

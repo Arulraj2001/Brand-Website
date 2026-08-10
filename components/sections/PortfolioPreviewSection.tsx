@@ -31,7 +31,7 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
               Real Impact for <GradientText>International Brands</GradientText>
             </h2>
             <p className="text-sm text-[#6B7280]">
-              Explore how we engineer custom web experiences, speed overhauls, and UGC ad funnels across the US, UK, Canada & Australia.
+              Explore how we engineer custom web experiences, speed overhauls, and UGC ad funnels for growing brands worldwide.
             </p>
           </div>
           <Button href="/portfolio" variant="secondary" size="sm" className="shrink-0">

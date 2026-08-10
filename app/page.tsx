@@ -12,7 +12,7 @@ import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
 
 export const metadata = {
   title: 'Affordable Web Development, SEO & Digital Marketing Agency | Ostrune',
-  description: 'High-quality web engineering, SEO & digital growth for US, UK, CA & AU clients at 60% lower rates. Time-zone friendly with 12-hour SLA.',
+  description: 'High-quality web engineering, SEO & digital growth for clients worldwide at competitive rates. 24/7 availability with guaranteed 12-hour SLA.',
 };
 
 export const revalidate = 60; // Refresh data every minute

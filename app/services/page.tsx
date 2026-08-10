@@ -22,7 +22,7 @@ import Card from '@/components/ui/Card';
 
 export const metadata = {
   title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
-  description: 'Full-service digital agency for international clients across US, UK, Canada & Australia. High quality, 60% lower rates, sub-second web speed, UGC video ads, and SEO dominance.',
+  description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
 };
 
 const SERVICES = [
@@ -82,7 +82,7 @@ const SERVICES = [
     title: 'App Development',
     seoTitle: 'Affordable App Development Company | Web & Mobile Apps',
     tagline: 'Scalable web applications and iOS / Android mobile apps built with modern cloud databases.',
-    painPoints: ['High US/UK app development agency quotes ($50k+)?', 'Need real-time database backends and fast user authentication?'],
+    painPoints: ['High traditional agency app development quotes ($50k+)?', 'Need real-time database backends and fast user authentication?'],
     auditProcess: ['Full-stack web & mobile app engineering.', 'Real-time database sync and automated API endpoints.'],
     results: 'Cross-Platform Ready • Real-Time Database Sync • Enterprise Security',
   },
@@ -114,7 +114,7 @@ const SERVICES = [
     badge: 'PERFORMANCE ADS',
     title: 'Meta & LinkedIn Ads',
     seoTitle: 'Meta Ads Agency & Facebook Ad Management Company',
-    tagline: 'Full-funnel Facebook, Instagram & LinkedIn ad management for verified USD revenue growth.',
+    tagline: 'Full-funnel Facebook, Instagram & LinkedIn ad management for verified revenue growth.',
     painPoints: ['Unpredictable ad performance after iOS privacy updates?', 'Lack of Conversion API (CAPI) pixel tracking setup?'],
     auditProcess: ['Server-side CAPI pixel implementation.', 'High-converting ad copy and retargeting funnel sequences.'],
     results: '5.2x Verified ROAS • $1.2M Ad Revenue Generated',
@@ -146,12 +146,12 @@ export default function ServicesPage() {
             Affordable Web Engineering, SEO & <GradientText>Performance Growth Services</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            High-quality development and digital marketing at a fraction of US & UK agency costs. Fluent English communication, time-zone friendly scheduling, and guaranteed 12-hour reply times.
+            High-quality development and digital marketing at a fraction of traditional agency costs. Fluent English communication, time-zone friendly scheduling, and guaranteed 12-hour reply times.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-[#1C1C1C] pt-2">
             <span className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#E5E7EB]">
-              <Clock size={13} className="text-[#FF9D00]" /> Time-Zone Friendly (US/UK/AU/EU)
+              <Clock size={13} className="text-[#FF9D00]" /> Global Time-Zone Coverage
             </span>
             <span className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#E5E7EB]">
               <CheckCircle2 size={13} className="text-[#10B981]" /> 12-Hour Reply SLA

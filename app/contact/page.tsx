@@ -116,12 +116,12 @@ export default function ContactPage() {
             Let’s Discuss Your <GradientText>Project & Growth Goals</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Fill out the form below to receive a custom proposal and 15-minute strategy call. Response guaranteed within 12 hours across US, UK, Canada & Australia.
+            Fill out the form below to receive a custom proposal and 15-minute strategy call. Response guaranteed within 12 hours across all time zones.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-[#1C1C1C] pt-1">
             <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
-              <Clock size={13} className="text-[#FF9D00]" /> Time-Zone Friendly (US/UK/AU/EU)
+              <Clock size={13} className="text-[#FF9D00]" /> Global Time-Zone Coverage
             </span>
             <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
               <ShieldCheck size={13} className="text-[#3B82F6]" /> Stripe & PayPal Accepted
@@ -230,20 +230,9 @@ export default function ContactPage() {
                       <input
                         {...register('country')}
                         type="text"
-                        list="country-suggestions-contact"
-                        placeholder="e.g. United States, India, UK..."
+                        placeholder="e.g. Your city / country"
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       />
-                      <datalist id="country-suggestions-contact">
-                        <option value="United States" />
-                        <option value="India" />
-                        <option value="United Kingdom" />
-                        <option value="Canada" />
-                        <option value="Australia" />
-                        <option value="Germany" />
-                        <option value="Singapore" />
-                        <option value="United Arab Emirates" />
-                      </datalist>
                       {errors.country && (
                         <p className="text-xs text-[#EF4444] font-semibold mt-1">
                           {errors.country.message}
@@ -397,7 +386,7 @@ export default function ContactPage() {
                 Guaranteed Response Within 12 Hours
               </h3>
               <p className="text-xs text-[#6B7280] leading-relaxed">
-                Our lead technical strategists review incoming requests continuously across US, UK & Australian business hours.
+                Our lead technical strategists review incoming requests continuously across all business hours worldwide.
               </p>
             </Card>
 

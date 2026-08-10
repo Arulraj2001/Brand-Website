@@ -41,7 +41,7 @@ export interface PortfolioProject {
   title: string;
   slug: string;
   client_name: string;
-  client_location: string; // City + Country format e.g. "Austin, USA"
+  client_location: string; // Location format e.g. "Global"
   client_city?: string; // Legacy fallback alias
   service_type: ServiceType;
   short_description: string;
@@ -73,7 +73,7 @@ export interface Testimonial {
   id: string;
   client_name: string;
   client_company: string;
-  client_location: string; // City + Country format e.g. "London, UK"
+  client_location: string; // Location format e.g. "Global"
   client_city?: string; // Legacy fallback
   quote: string;
   rating: number;

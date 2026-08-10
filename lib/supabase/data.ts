@@ -31,7 +31,7 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     id: 't2',
     name: 'Riya Sen',
     role: 'Head of Paid Growth & UGC Ads',
-    location: 'London, UK & Global Remote',
+    location: 'Global Remote',
     badge: '$1.5M+ AD SPEND',
     bio: 'Specializes in CAPI pixel setups, high-converting UGC video hooks, and 5.2x ROAS acquisition funnels.',
     profile_image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
@@ -40,7 +40,7 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     id: 't3',
     name: 'Karan Verma',
     role: 'Director of Technical SEO & Speed Upgrades',
-    location: 'Toronto, Canada & Global Remote',
+    location: 'Global Remote',
     badge: '140+ RANK 1 KEYWORDS',
     bio: 'Architected structured JSON-LD schemas and 100/100 Core Web Vitals speed optimization engines.',
     profile_image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
@@ -74,8 +74,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     title: 'D2C Brand Website Speed & Technical SEO Overhaul',
     slug: 'nutra-pure-organic-seo',
     client_name: 'NutraPure Global',
-    client_location: 'London, UK',
-    client_city: 'London',
+    client_location: 'Global',
+    client_city: '',
     service_type: 'website_upgrade',
     short_description: 'Overhauled a slow legacy e-commerce site to achieve 100/100 Core Web Vitals and top 3 Google rankings across high-intent keywords.',
     full_description: 'We performed deep technical SEO fixes, structured data integration (JSON-LD), Core Web Vitals page speed optimization, and mobile rendering fixes.',
@@ -94,8 +94,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     title: 'UGC Video Ads & High-ROAS Meta Creative Scaling',
     slug: 'work-space-b2b-lead-gen',
     client_name: 'WorkSpace International',
-    client_city: 'Toronto',
-    client_location: 'Toronto, Canada',
+    client_city: '',
+    client_location: 'Global',
     service_type: 'ugc_ads',
     short_description: 'Produced scroll-stopping UGC video ad creatives and automated funnel landing pages for corporate client acquisition.',
     full_description: 'Produced 12 A/B UGC creator hooks, high-converting visual ad sequences, and retargeting campaigns across Meta & LinkedIn.',
@@ -114,8 +114,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     title: 'Local Business Marketing & Google Business Profile Strategy',
     slug: 'prestige-villas-lead-engine',
     client_name: 'Skyline Real Estate',
-    client_city: 'Sydney',
-    client_location: 'Sydney, Australia',
+    client_city: '',
+    client_location: 'Global',
     service_type: 'local_business',
     short_description: 'Dominated local search maps and built automated consultation booking funnels for luxury property listings.',
     full_description: 'Built a local SEO strategy, Google Business Profile optimization, and automated booking funnel.',
@@ -155,7 +155,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
   {
     id: '1',
     client_name: 'David Miller',
-    client_company: 'Founder & CEO, ZetaPay USA',
+    client_company: 'Founder & CEO, ZetaPay',
     client_location: 'Global',
     client_city: '',
     quote: 'Ostrune delivered a sub-second SaaS portal at a fraction of traditional agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
@@ -166,8 +166,8 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     id: '2',
     client_name: 'Sarah Jenkins',
     client_company: 'CMO, NutraPure Health',
-    client_location: 'London, UK',
-    client_city: 'London, UK',
+    client_location: 'Global',
+    client_city: '',
     quote: 'Our website speed score jumped from 32 to 99/100. Their old website upgrade service is the best investment we made all year.',
     rating: 5,
     created_at: new Date().toISOString(),
@@ -176,7 +176,8 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     id: '3',
     client_name: 'Marcus Vance',
     client_company: 'Director, Skyline Properties',
-    client_location: 'Sydney, Australia',
+    client_location: 'Global',
+    client_city: '',
     quote: 'Their UGC ad creatives doubled our Meta ad ROAS within 2 weeks. Seamless async communication across time zones.',
     rating: 5,
     created_at: new Date().toISOString(),
@@ -203,7 +204,7 @@ export const INITIAL_BLOG_POSTS: BlogPost[] = [
 
 A slow WordPress website isn't just annoying — it's actively destroying your revenue. Google confirmed that **53% of mobile users abandon sites that take longer than 3 seconds to load**, and every additional second of load time reduces conversions by 7%.
 
-We've rebuilt over 40 slow WordPress websites for clients across the US, UK, and Australia. This guide documents the exact process we follow — not generic advice you've read a hundred times, but the specific technical fixes that move the needle.
+We've rebuilt over 40 slow WordPress websites for clients globally. This guide documents the exact process we follow — not generic advice you've read a hundred times, but the specific technical fixes that move the needle.
 
 ## Step 1: Measure Before You Fix Anything
 
@@ -1198,7 +1199,7 @@ We regularly rebuild websites for clients who initially hired the cheapest devel
 
 ## How to Get the Best Value
 
-### Option 1: US/UK Agency (Highest Cost, Lowest Risk)
+### Option 1: Premium Agency (Highest Cost, Lowest Risk)
 
 - Expect $15,000-50,000+ for a business website
 - Best for: Enterprise companies with large budgets and complex compliance requirements
@@ -1260,7 +1261,8 @@ export function updateSiteSettings(newSettings: SiteSettings): void {
 }
 
 export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
-  if (!isSupabaseConfigured()) return getSiteSettings();
+  const local = getSiteSettings();
+  if (!isSupabaseConfigured()) return local;
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -1272,26 +1274,27 @@ export async function fetchSiteSettingsFromSupabase(): Promise<SiteSettings> {
     if (!error && data) {
       const settings: SiteSettings = {
         ...INITIAL_SITE_SETTINGS,
-        id: data.id,
-        phone: data.phone || INITIAL_SITE_SETTINGS.phone,
-        whatsapp_number: data.whatsapp_number || INITIAL_SITE_SETTINGS.whatsapp_number,
-        email: data.email || INITIAL_SITE_SETTINGS.email,
-        address: data.address || INITIAL_SITE_SETTINGS.address,
-        linkedin_url: data.linkedin_url || INITIAL_SITE_SETTINGS.linkedin_url,
-        twitter_url: data.twitter_url || INITIAL_SITE_SETTINGS.twitter_url,
-        instagram_url: data.instagram_url || INITIAL_SITE_SETTINGS.instagram_url,
-        brand_name: data.brand_name || INITIAL_SITE_SETTINGS.brand_name,
-        trust_logos_text: data.trust_logos_text || INITIAL_SITE_SETTINGS.trust_logos_text,
-        stat_counters_text: data.stat_counters_text || INITIAL_SITE_SETTINGS.stat_counters_text,
-        hero_feed_title: data.hero_feed_title || INITIAL_SITE_SETTINGS.hero_feed_title,
-        hero_feed_subtitle: data.hero_feed_subtitle || INITIAL_SITE_SETTINGS.hero_feed_subtitle,
-        hero_feed_badge: data.hero_feed_badge || INITIAL_SITE_SETTINGS.hero_feed_badge,
+        ...local,
+        id: data.id || 'global',
+        phone: data.phone || local.phone || INITIAL_SITE_SETTINGS.phone,
+        whatsapp_number: data.whatsapp_number || local.whatsapp_number || INITIAL_SITE_SETTINGS.whatsapp_number,
+        email: data.email || local.email || INITIAL_SITE_SETTINGS.email,
+        address: data.address || local.address || INITIAL_SITE_SETTINGS.address,
+        linkedin_url: data.linkedin_url ?? local.linkedin_url ?? INITIAL_SITE_SETTINGS.linkedin_url,
+        twitter_url: data.twitter_url ?? local.twitter_url ?? INITIAL_SITE_SETTINGS.twitter_url,
+        instagram_url: data.instagram_url ?? local.instagram_url ?? INITIAL_SITE_SETTINGS.instagram_url,
+        brand_name: data.brand_name || local.brand_name || INITIAL_SITE_SETTINGS.brand_name,
+        trust_logos_text: data.trust_logos_text ?? local.trust_logos_text ?? INITIAL_SITE_SETTINGS.trust_logos_text,
+        stat_counters_text: data.stat_counters_text ?? local.stat_counters_text ?? INITIAL_SITE_SETTINGS.stat_counters_text,
+        hero_feed_title: data.hero_feed_title ?? local.hero_feed_title ?? INITIAL_SITE_SETTINGS.hero_feed_title,
+        hero_feed_subtitle: data.hero_feed_subtitle ?? local.hero_feed_subtitle ?? INITIAL_SITE_SETTINGS.hero_feed_subtitle,
+        hero_feed_badge: data.hero_feed_badge ?? local.hero_feed_badge ?? INITIAL_SITE_SETTINGS.hero_feed_badge,
       };
       updateSiteSettings(settings);
       return settings;
     }
   } catch {}
-  return getSiteSettings();
+  return local;
 }
 
 export async function saveSiteSettingsToSupabase(newSettings: SiteSettings): Promise<void> {
@@ -1423,7 +1426,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 
     return data.map((t: any) => ({
       ...t,
-      client_location: t.client_location || t.client_city || 'USA',
+      client_location: t.client_location || t.client_city || 'Global',
     })) as Testimonial[];
   } catch {
     return INITIAL_TESTIMONIALS;
@@ -1473,7 +1476,7 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
         name: lead.name,
         email: lead.email,
         phone: lead.phone,
-        country: lead.country || lead.city || 'United States',
+        country: lead.country || lead.city || 'Global',
         service_interested: lead.service_interested,
         budget_range: lead.budget_range,
         message: lead.message,
@@ -1510,7 +1513,7 @@ export async function getLeadsFromSupabase(): Promise<Lead[]> {
     if (!error && data) {
       return data.map((l: any) => ({
         ...l,
-        country: l.country || l.city || 'United States',
+        country: l.country || l.city || 'Global',
       })) as Lead[];
     }
   } catch {}
@@ -1635,7 +1638,7 @@ export async function saveTestimonialToSupabase(t: Testimonial): Promise<Testimo
     const payload: any = {
       client_name: t.client_name,
       client_company: t.client_company,
-      client_location: t.client_location || t.client_city || 'USA',
+      client_location: t.client_location || t.client_city || 'Global',
       quote: t.quote,
       rating: t.rating || 5,
     };

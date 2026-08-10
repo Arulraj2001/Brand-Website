@@ -174,7 +174,7 @@ export default function LeadFormModal({
                 </div>
                 <h3 className="text-xl font-bold text-[#1C1C1C]">Book a Strategy Call / Quote</h3>
                 <p className="text-xs text-[#6B7280]">
-                  Guaranteed response within 12 hours across US, UK, CA & AU time zones.
+                  Guaranteed response within 12 hours across all time zones.
                 </p>
               </div>
 
@@ -234,20 +234,9 @@ export default function LeadFormModal({
                     </label>
                     <input
                       {...register('country')}
-                      list="country-suggestions-modal"
-                      placeholder="e.g. United States, India, UK..."
+                      placeholder="e.g. Your city / country"
                       className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors"
                     />
-                    <datalist id="country-suggestions-modal">
-                      <option value="United States" />
-                      <option value="India" />
-                      <option value="United Kingdom" />
-                      <option value="Canada" />
-                      <option value="Australia" />
-                      <option value="Germany" />
-                      <option value="Singapore" />
-                      <option value="United Arab Emirates" />
-                    </datalist>
                     {errors.country && (
                       <p className="text-xs font-semibold text-[#EF4444] mt-1">{errors.country.message}</p>
                     )}

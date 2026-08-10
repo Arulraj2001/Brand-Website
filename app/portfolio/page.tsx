@@ -66,7 +66,7 @@ export default function PortfolioPage() {
             Case Studies & <GradientText>Verified Client Results</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Discover how Ostrune engineered sub-second web platforms, speed overhauls, and high-ROAS ad campaigns for clients across US, UK, Canada & Australia.
+            Discover how Ostrune engineered sub-second web platforms, speed overhauls, and high-ROAS ad campaigns for clients worldwide.
           </p>
         </div>
 
