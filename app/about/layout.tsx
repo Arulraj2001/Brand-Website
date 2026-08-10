@@ -3,12 +3,12 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'About Us | Our Story, Team & Mission',
   description:
-    'Learn about Ostrune — our founding story, global engineering team, and mission to deliver US-standard web development at 60% lower cost for brands worldwide.',
+    'Learn about Ostrune — our founding story, global engineering team, and mission to deliver premium web development at competitive rates for brands worldwide.',
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'About Ostrune | Affordable Global Web Agency',
     description:
-      'Ostrune delivers US-standard web engineering, SEO, and growth systems at 60% lower cost. Meet our team and story.',
+      'Ostrune delivers premium web engineering, SEO, and growth systems at competitive rates. Meet our team and story.',
     url: '/about',
   },
 };

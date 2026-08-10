@@ -1,14 +1,14 @@
-﻿import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
+import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
 import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
   phone: '+1 (800) 555-0199',
   whatsapp_number: '18005550199',
   email: 'hello@ostrune.netlify.app',
-  address: 'Global Remote HQ • Austin, TX & International Hubs',
-  linkedin_url: 'https://linkedin.com/company/arusyth-apex',
-  twitter_url: 'https://twitter.com/arusyth_apex',
-  instagram_url: 'https://instagram.com/arusyth_apex',
+  address: 'Global Remote HQ',
+  linkedin_url: 'https://linkedin.com/company/ostrune',
+  twitter_url: 'https://twitter.com/ostrune',
+  instagram_url: 'https://instagram.com/ostrune',
   brand_name: 'Ostrune',
   trust_logos_text: '',
   stat_counters_text: '',
@@ -22,7 +22,7 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     id: 't1',
     name: 'Aarav Mehta',
     role: 'Co-Founder & Chief Software Architect',
-    location: 'Austin, TX & Global Remote',
+    location: 'Global Remote',
     badge: 'EX-FAANG ARCHITECT',
     bio: 'Pioneered sub-second web application architecture & enterprise database systems for global startups.',
     profile_image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -53,8 +53,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     title: 'FinTech App & High-Converting SaaS Portal',
     slug: 'cred-pay-fintech-portal',
     client_name: 'ZetaPay Global',
-    client_location: 'Austin, USA',
-    client_city: 'Austin',
+    client_location: 'Global',
+    client_city: '',
     service_type: 'web_dev',
     short_description: 'Engineered a web application with 99.9% uptime, sub-second latency, and integrated Stripe/PayPal payment flows.',
     full_description: 'ZetaPay needed a complete rebuild of their client acquisition platform. We redesigned the UX from the ground up using modern Tailwind CSS micro-animations, fast server-side rendering, and responsive UI components.',
@@ -64,7 +64,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
     ],
     results: '+340% Qualified Leads | 0.8s Average Page Load | $520K Monthly Transactions',
-    testimonial: 'Ostrune transformed our online acquisition flow completely. The visual depth and speed of the site impressed our US investors.',
+    testimonial: 'Ostrune transformed our online acquisition flow completely. The visual depth and speed of the site impressed our investors.',
     live_url: 'https://zetapay.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -131,11 +131,11 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
   },
   {
     id: '5',
-    title: 'Enterprise SaaS & Web Portal Rebuild for Indian Tech Unicorn',
+    title: 'Enterprise SaaS & Web Portal Rebuild for Tech Unicorn',
     slug: 'nexus-tech-saas-rebuild',
     client_name: 'NexusFlow Technologies',
-    client_location: 'Bangalore, India',
-    client_city: 'Bangalore',
+    client_location: 'Global',
+    client_city: '',
     service_type: 'web_dev',
     short_description: 'Re-architected legacy enterprise dashboard into a sub-second Next.js web portal with automated customer onboarding.',
     full_description: 'NexusFlow needed an international-standard web platform to serve global enterprise clients. We engineered a custom Next.js portal with server-side rendering, sub-second latency, and integrated Stripe/PayPal payment flows.',
@@ -144,7 +144,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
     ],
     results: '0.7s Average Page Speed | +280% Global Client Conversions | $450K Annual SaaS Revenue',
-    testimonial: 'Ostrune delivered world-class engineering that allowed us to win US & European contracts. Exceptional speed and international standards.',
+    testimonial: 'Ostrune delivered world-class engineering that allowed us to win international contracts. Exceptional speed and standards.',
     live_url: 'https://nexusflow.in',
     is_featured: true,
     created_at: new Date().toISOString(),
@@ -156,9 +156,9 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     id: '1',
     client_name: 'David Miller',
     client_company: 'Founder & CEO, ZetaPay USA',
-    client_location: 'Austin, TX (USA)',
-    client_city: 'Austin, USA',
-    quote: 'Ostrune delivered a sub-second SaaS portal at a fraction of US agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
+    client_location: 'Global',
+    client_city: '',
+    quote: 'Ostrune delivered a sub-second SaaS portal at a fraction of traditional agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -185,9 +185,9 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
     id: '4',
     client_name: 'Vikram Sharma',
     client_company: 'Co-Founder, NexusFlow Tech',
-    client_location: 'Bangalore, India',
-    client_city: 'Bangalore, India',
-    quote: 'Paying in USD for Ostrune engineering gave us US-standard speed, sub-second load times, and top Google rankings. Unmatched ROI.',
+    client_location: 'Global',
+    client_city: '',
+    quote: 'Ostrune engineering gave us exceptional speed, sub-second load times, and top Google rankings. Unmatched ROI.',
     rating: 5,
     created_at: new Date().toISOString(),
   },
@@ -744,7 +744,7 @@ Before diving into ideas, here's what your project selection should optimize for
 **26. Air Quality Index Prediction**
 - **Tech Stack:** Python, Random Forest, Streamlit, OpenWeatherMap API
 - **Unique Angle:** City-wise predictions with health advisory alerts
-- **Dataset:** Indian Government AQI data
+- **Dataset:** Government AQI data
 
 **27. Resume Screening with NLP**
 - **Tech Stack:** Python, spaCy, scikit-learn, Flask
@@ -1045,11 +1045,11 @@ If your site fails Core Web Vitals and you need a fast fix, our speed optimizati
 
 "How much does it cost to build a website?" is the most Googled question in the web development industry. And the answer most agencies give — "it depends" — is technically correct but completely useless.
 
-This guide gives you **actual dollar figures** based on what we charge and what we've seen competitors charge across the US, UK, India, Canada, and Australia. We'll break down exactly what you get at each price tier so you can make an informed decision.
+This guide gives you **actual dollar figures** based on what we charge and what we've seen competitors charge globally. We'll break down exactly what you get at each price tier so you can make an informed decision.
 
 ## The Quick Answer: Website Cost Tiers
 
-| Website Type | DIY/Template | Offshore Agency | US/UK Agency | Enterprise |
+| Website Type | DIY/Template | Agency (Value) | Premium Agency | Enterprise |
 |---|---|---|---|---|
 | **Simple Landing Page** (1-5 pages) | $0-200 | $500-1,500 | $3,000-8,000 | N/A |
 | **Business Website** (5-15 pages) | $200-500 | $1,500-4,000 | $8,000-25,000 | $25,000-50,000 |
@@ -1204,7 +1204,7 @@ We regularly rebuild websites for clients who initially hired the cheapest devel
 - Best for: Enterprise companies with large budgets and complex compliance requirements
 - Risk: Overpriced for small businesses
 
-### Option 2: Offshore Agency With Quality Standards (Best Value)
+### Option 2: Value Agency With Quality Standards (Best Value)
 
 - Expect $1,500-8,000 for the same scope as a $15,000+ US project
 - Best for: Small-medium businesses, startups, and cost-conscious enterprises
@@ -1218,7 +1218,7 @@ We regularly rebuild websites for clients who initially hired the cheapest devel
 
 ## Our Pricing Model
 
-At Ostrune, we operate as an offshore agency with US-standard quality. Our rates are 60% lower than US/UK agencies because our engineering team operates from international hubs with lower overhead costs — not because we cut corners.
+At Ostrune, we deliver premium-quality engineering at competitive rates. Our rates are 60% lower than traditional agencies because our engineering team operates efficiently with lower overhead costs — not because we cut corners.
 
 - **Landing Page Package:** Starting at $500
 - **Business Website:** Starting at $1,500
@@ -1394,7 +1394,7 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
     // Ensure fallback mapping for client_location
     return data.map((p: any) => ({
       ...p,
-      client_location: p.client_location || p.client_city || 'Austin, USA',
+      client_location: p.client_location || p.client_city || 'Global',
     })) as PortfolioProject[];
   } catch {
     return INITIAL_PORTFOLIO;
@@ -1583,7 +1583,7 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
       title: project.title,
       slug: project.slug,
       client_name: project.client_name,
-      client_location: project.client_location || project.client_city || 'Austin, USA',
+      client_location: project.client_location || project.client_city || 'Global',
       service_type: project.service_type,
       short_description: project.short_description,
       full_description: project.full_description,

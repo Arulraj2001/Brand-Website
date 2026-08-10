@@ -30,7 +30,7 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsProps
   };
 
   const current = testimonials[currentIndex] || testimonials[0];
-  const location = current?.client_location || current?.client_city || 'Austin, USA';
+  const location = current?.client_location || current?.client_city || 'Global';
 
   if (!testimonials.length) {
     return null;

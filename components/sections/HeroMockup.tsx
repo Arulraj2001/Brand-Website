@@ -15,8 +15,8 @@ export default function HeroMockup() {
   }, []);
 
   const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
-  const feedTitle = activeSettings.hero_feed_title || 'Qualified Inquiry Stream (US / UK / CA / AU)';
-  const feedSubtitle = activeSettings.hero_feed_subtitle || 'Austin, TX (USA) • Budget: $3,000–$5,000 • Web & Speed Overhaul';
+  const feedTitle = activeSettings.hero_feed_title || 'Qualified Inquiry Stream (Worldwide)';
+  const feedSubtitle = activeSettings.hero_feed_subtitle || 'Budget: $3,000–$5,000 • Web & Speed Overhaul';
   const feedBadge = activeSettings.hero_feed_badge || 'Just Now';
   return (
     <motion.div

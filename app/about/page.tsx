@@ -20,10 +20,10 @@ export default function AboutPage() {
           Global Agency Origins & Philosophy
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-          Affordable Engineering & Performance Growth <GradientText>For Global & Indian Brands</GradientText>
+          Affordable Engineering & Performance Growth <GradientText>For Brands Worldwide</GradientText>
         </h1>
         <p className="text-base text-[#6B7280] leading-relaxed">
-          Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises across the US, UK, India, Canada, Australia, and Europe at affordable USD rates.
+          Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.
         </p>
       </div>
 
@@ -34,7 +34,7 @@ export default function AboutPage() {
             {/* Left 7 Cols: Story Content */}
             <div className="lg:col-span-7 space-y-4">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#10B981]/15 text-[#10B981] text-xs font-bold border border-[#10B981]/20">
-                The Offshore Advantage
+                The Global Advantage
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
@@ -42,17 +42,17 @@ export default function AboutPage() {
               </h2>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">
-                Western agencies often charge $10,000+ for slow WordPress templates and bloated project management layers. Ostrune brings together senior software architects and performance growth leads to deliver custom engineering at affordable rates.
+                Western agencies often charge $10,000+ for slow WordPress templates and bloated project management layers. Ostrune brings together senior software architects and performance growth leads to deliver custom engineering at competitive rates.
               </p>
 
               <p className="text-sm text-[#6B7280] leading-relaxed">
-                We operate around your local time zone (US EST/PST, GMT & AEST) with fluent English communication, guaranteed 12-hour reply SLAs, and secure international payments via Stripe and PayPal.
+                We operate across multiple time zones with fluent English communication, guaranteed 12-hour reply SLAs, and secure international payments via Stripe and PayPal.
               </p>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="p-3.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg">
                   <p className="text-2xl font-bold text-[#FF9D00] font-mono-stats">60% Lower</p>
-                  <p className="text-xs font-bold text-[#1C1C1C]">Cost Compared to US/UK Agencies</p>
+                  <p className="text-xs font-bold text-[#1C1C1C]">Cost Compared to Traditional Agencies</p>
                   <p className="text-[11px] text-[#6B7280]">Same or superior code quality</p>
                 </div>
                 <div className="p-3.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg">
@@ -117,7 +117,7 @@ export default function AboutPage() {
           {teamMembers.map((member) => (
             <Card key={member.id} className="space-y-4 p-6 bg-white border border-[#E5E7EB] hover:border-[#FF9D00] group transition-all">
               <div className="flex items-start justify-between gap-3">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
                   {member.profile_image_url ? (
                     <Image
                       src={member.profile_image_url}

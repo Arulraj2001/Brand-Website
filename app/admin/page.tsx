@@ -91,7 +91,7 @@ const INITIAL_LEADS: Lead[] = [
     name: 'David Miller',
     email: 'david@company.com',
     phone: '+1 (512) 555-0199',
-    country: 'Austin, USA',
+    country: 'Global',
     service_interested: 'Old Website Upgrade',
     budget_range: '$3,000–$5,000',
     message: 'Need a complete speed overhaul and technical SEO cleanup for our SaaS portal.',
@@ -1601,7 +1601,7 @@ export default function AdminDashboardPage() {
                       required
                       value={settingsForm.address}
                       onChange={(e) => setSettingsForm({ ...settingsForm, address: e.target.value })}
-                      placeholder="Global Remote HQ • Austin, TX & International Hubs"
+                      placeholder="Global Remote HQ"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1711,7 +1711,7 @@ export default function AdminDashboardPage() {
                         type="text"
                         value={settingsForm.hero_feed_subtitle || ''}
                         onChange={(e) => setSettingsForm({ ...settingsForm, hero_feed_subtitle: e.target.value })}
-                        placeholder="Austin, TX • Budget: $3,000–$5,000"
+                        placeholder="Budget: $3,000-$5,000"
                         className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
                       <input
@@ -2266,7 +2266,7 @@ export default function AdminDashboardPage() {
                     name="location"
                     required
                     defaultValue={editingTeamMember?.location || ''}
-                    placeholder="e.g. Austin, TX & Global Remote"
+                    placeholder="e.g. Global Remote"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -2405,7 +2405,7 @@ export default function AdminDashboardPage() {
                     name="client_location"
                     required
                     defaultValue={editingProject?.client_location || editingProject?.client_city || ''}
-                    placeholder="e.g. Austin, USA"
+                    placeholder="e.g. Global"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                   />
                 </div>
@@ -2597,7 +2597,7 @@ export default function AdminDashboardPage() {
                     name="client_location"
                     required
                     defaultValue={editingTestimonial?.client_location || editingTestimonial?.client_city || ''}
-                    placeholder="Austin, USA"
+                    placeholder="Global"
                     className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C]"
                   />
                 </div>

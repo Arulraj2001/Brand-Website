@@ -5,12 +5,10 @@ import { Globe, Clock, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react'
 import GradientText from '@/components/ui/GradientText';
 
 const GLOBAL_REGIONS = [
-  { flag: '🇺🇸', name: 'United States', detail: 'Austin, NYC, SF, Chicago, Miami' },
-  { flag: '🇬🇧', name: 'United Kingdom', detail: 'London, Manchester, Edinburgh' },
-  { flag: '🇮🇳', name: 'India', detail: 'Bangalore, Mumbai, Delhi, Hyderabad' },
-  { flag: '🇨🇦', name: 'Canada', detail: 'Toronto, Vancouver, Montreal' },
-  { flag: '🇦🇺', name: 'Australia', detail: 'Sydney, Melbourne, Brisbane' },
-  { flag: '🇪🇺', name: 'Europe', detail: 'Berlin, Amsterdam, Dublin, Zurich' },
+  { flag: '🌎', name: 'North America', detail: 'Serving businesses across the continent' },
+  { flag: '🌍', name: 'Europe', detail: 'Premium engineering for European brands' },
+  { flag: '🌏', name: 'Asia Pacific', detail: 'Scaling startups & enterprises across APAC' },
+  { flag: '🌐', name: 'Worldwide', detail: 'Remote-first, any time zone, any industry' },
 ];
 
 export default function CitiesServedSection() {

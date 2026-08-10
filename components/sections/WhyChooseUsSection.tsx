@@ -62,11 +62,11 @@ export default function WhyChooseUsSection() {
                 </div>
 
                 <h3 className="text-xl sm:text-2xl font-bold text-[#1C1C1C] leading-snug">
-                  No Overpriced Overhead. Just <span className="text-[#FF9D00]">Verified USD Revenue Growth</span> & Sub-Second Code.
+                  No Overpriced Overhead. Just <span className="text-[#FF9D00]">Verified Revenue Growth</span> & Sub-Second Code.
                 </h3>
 
                 <p className="text-sm text-[#6B7280] leading-relaxed">
-                  Most Western agencies charge $10,000+ for slow WordPress templates. We engineer sub-second web platforms, overhaul sluggish legacy sites to 100/100 Core Web Vitals, and run high-converting UGC video ad campaigns across US, UK, Canada & Australia.
+                  Most traditional agencies charge $10,000+ for slow WordPress templates. We engineer sub-second web platforms, overhaul sluggish legacy sites to 100/100 Core Web Vitals, and run high-converting UGC video ad campaigns for clients worldwide.
                 </p>
               </div>
 

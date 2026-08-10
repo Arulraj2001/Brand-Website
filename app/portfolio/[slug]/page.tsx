@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: CaseStudyProps) {
     };
   }
 
-  const location = project.client_location || project.client_city || 'Austin, USA';
+  const location = project.client_location || project.client_city || 'Global';
 
   return {
     title: `${project.title} | ${project.client_name} (${location})`,
@@ -49,7 +49,7 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
     notFound();
   }
 
-  const location = project.client_location || project.client_city || 'Austin, USA';
+  const location = project.client_location || project.client_city || 'Global';
 
   const breadcrumbLd = {
     '@context': 'https://schema.org',

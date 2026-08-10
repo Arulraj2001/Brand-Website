@@ -105,7 +105,7 @@ export default function PortfolioPage() {
             <AnimatePresence>
               {filteredProjects.map((project) => {
                 const isFeatured = project.is_featured;
-                const location = project.client_location || project.client_city || 'Austin, USA';
+                const location = project.client_location || project.client_city || 'Global';
 
                 return (
                   <motion.div

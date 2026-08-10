@@ -9,7 +9,7 @@ const STEPS = [
   {
     number: '01',
     title: 'Discovery & Audit',
-    description: 'In-depth analysis of your target audience across Tier 1 & Tier 2 Indian markets, competitor landscape, and conversion funnels.',
+    description: 'In-depth analysis of your target audience, local and international market landscape, competitor positioning, and conversion funnels.',
     icon: Search,
   },
   {

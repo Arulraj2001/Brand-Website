@@ -44,7 +44,7 @@ export default function PortfolioPreviewSection({ projects }: PortfolioPreviewPr
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
           {displayProjects.map((project, idx) => {
             const isFeatured = project.is_featured;
-            const location = project.client_location || project.client_city || 'Austin, USA';
+            const location = project.client_location || project.client_city || 'Global';
 
             return (
               <motion.div

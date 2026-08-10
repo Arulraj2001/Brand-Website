@@ -39,19 +39,9 @@ export default function Footer() {
     address: {
       '@type': 'PostalAddress',
       streetAddress: activeSettings.address,
-      addressLocality: 'Austin',
-      addressRegion: 'TX',
-      postalCode: '78701',
-      addressCountry: 'US',
+      addressCountry: 'Worldwide',
     },
-    areaServed: [
-      'United States',
-      'United Kingdom',
-      'India',
-      'Canada',
-      'Australia',
-      'Europe',
-    ],
+    areaServed: 'Worldwide',
   };
 
   const whatsappClean = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');
@@ -230,7 +220,7 @@ export default function Footer() {
           <div className="flex items-center gap-1.5">
             <Globe size={14} className="text-[#3B82F6]" />
             <span>
-              <strong>Serving Clients Worldwide:</strong> United States • United Kingdom • India • Canada • Australia • Europe
+              <strong>Serving Clients Worldwide</strong>
             </span>
           </div>
           <div className="flex items-center gap-3">
