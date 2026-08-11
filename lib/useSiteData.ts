@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import {
@@ -101,11 +101,11 @@ export function useStudentData() {
     setProjects(getStudentProjects());
 
     fetchStudentFeedbackFromSupabase().then((fresh) => {
-      if (fresh && fresh.length > 0) setFeedbackVideos(fresh);
+      if (fresh) setFeedbackVideos(fresh);
     });
 
     fetchStudentProjectsFromSupabase().then((freshProj) => {
-      if (freshProj && freshProj.length > 0) setProjects(freshProj);
+      if (freshProj) setProjects(freshProj);
     });
 
     const handleUpdate = () => {

@@ -1635,11 +1635,8 @@ export async function deleteBlogPostFromSupabase(id: string, slug?: string): Pro
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('blog_posts').delete().eq('id', id);
-    } else if (slug) {
-      await supabase.from('blog_posts').delete().eq('slug', slug);
-    }
+    if (id) await supabase.from('blog_posts').delete().eq('id', id);
+    if (slug) await supabase.from('blog_posts').delete().eq('slug', slug);
   } catch (err) {
     console.error('Error deleting blog post from Supabase:', err);
   }
@@ -1695,11 +1692,8 @@ export async function deleteProjectFromSupabase(id: string, slug?: string): Prom
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('portfolio_projects').delete().eq('id', id);
-    } else if (slug) {
-      await supabase.from('portfolio_projects').delete().eq('slug', slug);
-    }
+    if (id) await supabase.from('portfolio_projects').delete().eq('id', id);
+    if (slug) await supabase.from('portfolio_projects').delete().eq('slug', slug);
   } catch (err) {
     console.error('Error deleting project from Supabase:', err);
   }
@@ -1740,9 +1734,7 @@ export async function deleteTestimonialFromSupabase(id: string): Promise<void> {
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('testimonials').delete().eq('id', id);
-    }
+    if (id) await supabase.from('testimonials').delete().eq('id', id);
   } catch (err) {
     console.error('Error deleting testimonial from Supabase:', err);
   }
@@ -1752,9 +1744,7 @@ export async function updateLeadStatusInSupabase(id: string, status: Lead['statu
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('leads').update({ status }).eq('id', id);
-    }
+    if (id) await supabase.from('leads').update({ status }).eq('id', id);
   } catch (err) {
     console.error('Error updating lead status in Supabase:', err);
   }
@@ -1764,9 +1754,7 @@ export async function deleteLeadFromSupabase(id: string): Promise<void> {
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('leads').delete().eq('id', id);
-    }
+    if (id) await supabase.from('leads').delete().eq('id', id);
   } catch (err) {
     console.error('Error deleting lead from Supabase:', err);
   }
@@ -1776,9 +1764,7 @@ export async function deleteTeamMemberFromSupabase(id: string): Promise<void> {
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
-      await supabase.from('team_members').delete().eq('id', id);
-    }
+    if (id) await supabase.from('team_members').delete().eq('id', id);
   } catch (err) {
     console.error('Error deleting team member from Supabase:', err);
   }
@@ -1936,7 +1922,7 @@ export async function fetchStudentFeedbackFromSupabase(): Promise<StudentFeedbac
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       saveStudentFeedbackLocal(data as StudentFeedbackVideo[]);
       return data as StudentFeedbackVideo[];
     }
@@ -2001,7 +1987,7 @@ export async function deleteStudentFeedbackFromSupabase(id: string): Promise<voi
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
+    if (id) {
       await supabase.from('student_feedback_videos').delete().eq('id', id);
     }
   } catch (err) {
@@ -2039,7 +2025,7 @@ export async function fetchStudentProjectsFromSupabase(): Promise<StudentProject
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       saveStudentProjectsLocal(data as StudentProject[]);
       return data as StudentProject[];
     }
@@ -2104,7 +2090,7 @@ export async function deleteStudentProjectFromSupabase(id: string): Promise<void
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (isUUID(id)) {
+    if (id) {
       await supabase.from('student_projects').delete().eq('id', id);
     }
   } catch (err) {
