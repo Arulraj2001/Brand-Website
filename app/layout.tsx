@@ -53,16 +53,18 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: baseUrl,
-    title: 'Ostrune | Affordable Web Development, SEO & Performance Agency',
+    title: 'Ostrune | Affordable Web Development, SEO & Growth Agency',
     description:
-      'Engineered web portals, sub-second speed upgrades, and performance-focused growth support worldwide.',
+      'High-impact web engineering, sub-second speed upgrades, technical SEO, and growth support for clients worldwide.',
     siteName: 'Ostrune',
     images: [
       {
         url: `${baseUrl}/og-image.png`,
+        secureUrl: `${baseUrl}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'Ostrune Digital Agency',
+        type: 'image/png',
       },
     ],
   },
@@ -72,7 +74,12 @@ export const metadata: Metadata = {
     description:
       'Sub-second web engineering, technical SEO, and growth systems for ambitious companies.',
     creator: '@ostrune',
-    images: [`${baseUrl}/og-image.png`],
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        alt: 'Ostrune Digital Agency',
+      },
+    ],
   },
   robots: {
     index: true,
