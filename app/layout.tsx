@@ -59,10 +59,18 @@ export const metadata: Metadata = {
     siteName: 'Ostrune',
     images: [
       {
+        url: `${baseUrl}/og-image.jpg`,
+        secureUrl: `${baseUrl}/og-image.jpg`,
+        width: 1024,
+        height: 1024,
+        alt: 'Ostrune Digital Agency',
+        type: 'image/jpeg',
+      },
+      {
         url: `${baseUrl}/og-image.png`,
         secureUrl: `${baseUrl}/og-image.png`,
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 1024,
         alt: 'Ostrune Digital Agency',
         type: 'image/png',
       },
@@ -76,7 +84,7 @@ export const metadata: Metadata = {
     creator: '@ostrune',
     images: [
       {
-        url: `${baseUrl}/og-image.png`,
+        url: `${baseUrl}/og-image.jpg`,
         alt: 'Ostrune Digital Agency',
       },
     ],
