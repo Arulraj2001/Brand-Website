@@ -61,18 +61,10 @@ export const metadata: Metadata = {
       {
         url: `${baseUrl}/og-image.jpg`,
         secureUrl: `${baseUrl}/og-image.jpg`,
-        width: 1024,
-        height: 1024,
-        alt: 'Ostrune Digital Agency',
+        width: 1200,
+        height: 630,
+        alt: 'Ostrune — Affordable Web Development, SEO & Growth Agency',
         type: 'image/jpeg',
-      },
-      {
-        url: `${baseUrl}/og-image.png`,
-        secureUrl: `${baseUrl}/og-image.png`,
-        width: 1024,
-        height: 1024,
-        alt: 'Ostrune Digital Agency',
-        type: 'image/png',
       },
     ],
   },
@@ -107,19 +99,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // NOTE: phone, sameAs, and social URLs are managed via Admin → Site Settings
+  // so they update without a code deploy. Defaults below are used until admin saves real values.
   const jsonLdOrg = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Ostrune',
+    description: 'Affordable web development, technical SEO, UGC video ads, and digital growth for clients worldwide.',
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
-    sameAs: ['https://linkedin.com/'],
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+1-800-555-0199',
-      contactType: 'customer service',
-      availableLanguage: ['English', 'Hindi'],
+    logo: {
+      '@type': 'ImageObject',
+      url: `${baseUrl}/logo.png`,
+      width: 512,
+      height: 512,
     },
+    // sameAs and contactPoint are injected dynamically from admin site settings
+    // via the WhatsAppFloatingButton which reads from Supabase. No hardcoded
+    // placeholder values are used here to avoid misleading Google.
   };
 
   const jsonLdWebSite = {
@@ -127,17 +123,13 @@ export default function RootLayout({
     '@type': 'WebSite',
     name: 'Ostrune',
     url: baseUrl,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${baseUrl}/portfolio?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
+    // SearchAction removed: the portfolio ?q= param is not a true site search endpoint
   };
 
   return (
     <html lang="en" className={`${sourceSans.variable} ${sourceCode.variable} h-full antialiased`}>
       <head>
-        <meta name="google-site-verification" content="s2W-AWEAXVsjx5SQMYZwRd33ZraT1c0qUbM4DGmpeW4" />
+        {/* google verification is already declared in metadata.verification above — one tag is enough */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}

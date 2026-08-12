@@ -135,8 +135,51 @@ const SERVICES = [
 ];
 
 export default function ServicesPage() {
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How fast can you overhaul an old slow website?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Most website speed and SEO overhauls are completed within 5 to 7 business days, achieving guaranteed sub-second load times and 100/100 Core Web Vitals scores.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do you work with international clients in different time zones?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes! We support clients worldwide across US, Europe, Middle East, and Asia-Pacific with a guaranteed 12-hour response SLA and fluent async communication.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What results can I expect from UGC Video Ads?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Our user-generated video ad creatives consistently deliver 3.5x to 5.2x ROAS on Meta and TikTok by stopping scroll with native UGC hooks.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How does your pricing compare to traditional agencies?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Our async lean engineering model allows us to deliver high quality engineering and growth support at 60% lower cost than traditional Western agencies.',
+        },
+      },
+    ],
+  };
+
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="max-w-[1200px] mx-auto px-4 space-y-16">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center space-y-4">

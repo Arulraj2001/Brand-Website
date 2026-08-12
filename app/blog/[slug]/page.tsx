@@ -68,7 +68,14 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: [post.cover_image_url],
+      images: [
+        {
+          url: post.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+          alt: post.title,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }
@@ -109,7 +116,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt,
-    image: post.cover_image_url,
+    image: post.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
     datePublished: post.published_at || post.created_at,
     author: {
       '@type': 'Person',
@@ -125,11 +132,40 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
     },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://ostrune.netlify.app',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://ostrune.netlify.app/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `https://ostrune.netlify.app/blog/${post.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <article className="max-w-6xl mx-auto px-4 space-y-8">
@@ -210,6 +246,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
             }
             alt=""
             fill
+            sizes="(max-width: 768px) 100vw, 90vw"
             className="object-cover blur-xl opacity-40 scale-110"
           />
           {/* Sharp Foreground Image Fit To Frame */}

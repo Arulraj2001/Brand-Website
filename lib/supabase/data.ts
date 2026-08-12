@@ -2,12 +2,12 @@ import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost
 import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
-  phone: '+1 (800) 555-0199',
-  whatsapp_number: '18005550199',
+  phone: '',
+  whatsapp_number: '',
   email: 'hello@ostrune.netlify.app',
   address: 'Global Remote HQ',
   linkedin_url: 'https://linkedin.com/company/ostrune',
-  twitter_url: 'https://twitter.com/ostrune',
+  twitter_url: 'https://x.com/ostrune',
   instagram_url: 'https://instagram.com/ostrune',
   brand_name: 'Ostrune',
   trust_logos_text: `NovaPay | FinTech SaaS

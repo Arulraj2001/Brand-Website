@@ -540,6 +540,7 @@ export default function StudentProjectsPage() {
                           src={video.thumbnail_url}
                           alt={video.student_name}
                           fill
+                          sizes="(max-width: 768px) 100vw, 350px"
                           className="object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"
                         />
                       ) : (
@@ -651,6 +652,7 @@ export default function StudentProjectsPage() {
                     src={project.image_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80'}
                     alt={project.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 200px"
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <span className="absolute top-2 left-2 bg-[#1C1C1C]/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">

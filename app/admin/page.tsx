@@ -222,7 +222,7 @@ export default function AdminDashboardPage() {
   const [deleteConfirmBlogPost, setDeleteConfirmBlogPost] = useState<BlogPost | null>(null);
 
   // Advanced Blog Writing Studio State
-  const [blogStudioTab, setBlogStudioTab] = useState<'write' | 'meta' | 'preview'>('write');
+  const [blogStudioTab, setBlogStudioTab] = useState<'write' | 'meta' | 'preview' | 'import'>('write');
   const [blogTitleText, setBlogTitleText] = useState('');
   const [blogContentText, setBlogContentText] = useState('');
   const [blogKeywordText, setBlogKeywordText] = useState('');
@@ -230,6 +230,11 @@ export default function AdminDashboardPage() {
   const [blogExcerptText, setBlogExcerptText] = useState('');
   const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
   const [blogAuthorVal, setBlogAuthorVal] = useState('');
+
+  // Claude JSON Import State
+  const [blogImportJson, setBlogImportJson] = useState('');
+  const [blogImportError, setBlogImportError] = useState('');
+  const [blogImportPromptCopied, setBlogImportPromptCopied] = useState(false);
 
   // Modal Image Inputs State
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
@@ -368,6 +373,115 @@ export default function AdminDashboardPage() {
 
   const insertMarkdownToolbar = (prefix: string, suffix: string = '') => {
     setBlogContentText((prev) => `${prev}\n${prefix}sample text${suffix}`);
+  };
+
+  // Claude JSON Import Handler
+  const handleImportJson = () => {
+    setBlogImportError('');
+
+    const raw = blogImportJson.trim();
+    if (!raw) { setBlogImportError('Paste your Claude JSON output above first.'); return; }
+
+    // ── Pass 1: try direct JSON.parse ─────────────────────────────────────────
+    // ── Pass 2: char-by-char sanitizer for literal newlines inside strings ────
+    // ── Pass 3: manual field extraction for unescaped quotes inside content ───
+
+    const sanitizeNewlines = (str: string): string => {
+      let out = ''; let inStr = false; let esc = false;
+      for (const ch of str) {
+        if (esc) { out += ch; esc = false; }
+        else if (ch === '\\' && inStr) { out += ch; esc = true; }
+        else if (ch === '"') { inStr = !inStr; out += ch; }
+        else if (inStr && ch === '\n') { out += '\\n'; }
+        else if (inStr && ch === '\r') { /* skip bare \r */ }
+        else { out += ch; }
+      }
+      return out;
+    };
+
+    // Pass 3: extract each known field individually — handles unescaped quotes
+    // inside the content body (e.g. Claude writes "coffee shop near me" literally)
+    const extractManually = (str: string): Record<string, unknown> => {
+      const get = (field: string): string => {
+        // Match "field": "value" where value has no embedded raw quotes
+        const m = str.match(new RegExp(`"${field}"\\s*:\\s*"([^"\\r\\n]*)"`, ));
+        return m ? m[1] : '';
+      };
+
+      // secondary_keywords array
+      const kwBlock = str.match(/"secondary_keywords"\s*:\s*\[([^\]]*)\]/);
+      const keywords: string[] = kwBlock
+        ? [...kwBlock[1].matchAll(/"([^"]*)"/g)].map((m) => m[1])
+        : [];
+
+      // content: from "content": " to the last " before closing }
+      let content = '';
+      const contentKeyIdx = str.indexOf('"content"');
+      if (contentKeyIdx !== -1) {
+        const colonIdx = str.indexOf(':', contentKeyIdx);
+        const openQ = str.indexOf('"', colonIdx + 1);
+        const closingBrace = str.lastIndexOf('}');
+        const closeQ = str.lastIndexOf('"', closingBrace - 1);
+        if (openQ !== -1 && closeQ > openQ) {
+          content = str.substring(openQ + 1, closeQ)
+            .replace(/\\n/g, '\n')
+            .replace(/\\"/g, '"');
+        }
+      }
+
+      const result = {
+        title: get('title'),
+        slug: get('slug'),
+        excerpt: get('excerpt'),
+        category: get('category'),
+        target_keyword: get('target_keyword'),
+        city: get('city'),
+        author_name: get('author_name'),
+        cover_image_url: get('cover_image_url'),
+        secondary_keywords: keywords,
+        content,
+      };
+      if (!result.title || !result.content) throw new Error('extraction failed');
+      return result;
+    };
+
+    let parsed: Record<string, unknown>;
+    try {
+      parsed = JSON.parse(raw);                          // Pass 1
+    } catch {
+      try {
+        parsed = JSON.parse(sanitizeNewlines(raw));      // Pass 2
+      } catch {
+        try {
+          parsed = extractManually(raw);                 // Pass 3
+          addToast('success', '⚡ Auto-fixed Claude formatting quirks and imported successfully!');
+        } catch {
+          setBlogImportError('Could not parse Claude output. Make sure you copied only the { ... } JSON block with no text before or after it.');
+          return;
+        }
+      }
+    }
+
+    if (!parsed.title) { setBlogImportError('Missing field: "title" — check your Claude output'); return; }
+    if (!parsed.content) { setBlogImportError('Missing field: "content" — check your Claude output'); return; }
+
+    setBlogTitleText((parsed.title as string) || '');
+    setBlogContentText((parsed.content as string) || '');
+    setBlogExcerptText((parsed.excerpt as string) || '');
+    setBlogKeywordText((parsed.target_keyword as string) || '');
+    setBlogSecondaryKeywordsText(
+      Array.isArray(parsed.secondary_keywords)
+        ? (parsed.secondary_keywords as string[]).join(', ')
+        : ((parsed.secondary_keywords as string) || '')
+    );
+    if (parsed.category) setBlogCategoryVal(parsed.category as BlogCategory);
+    if (parsed.author_name) setBlogAuthorVal(parsed.author_name as string);
+    if (parsed.cover_image_url) setBlogCoverUrl(parsed.cover_image_url as string);
+
+    if (!parsed.title) return;
+    addToast('success', `✅ Blog imported: "${parsed.title as string}" — switch to Write tab to review`);
+    setBlogStudioTab('write');
+    setBlogImportJson('');
   };
 
   // Portfolio Save Handler
@@ -2004,6 +2118,15 @@ export default function AdminDashboardPage() {
                 >
                   👁 Live Preview
                 </button>
+                <button
+                  type="button"
+                  onClick={() => { setBlogStudioTab('import'); setBlogImportError(''); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                    blogStudioTab === 'import' ? 'bg-[#8B5CF6] text-white shadow-xs' : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                  }`}
+                >
+                  📥 Import JSON
+                </button>
                 <button onClick={() => setBlogModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C] p-1">
                   <X size={18} />
                 </button>
@@ -2205,11 +2328,81 @@ export default function AdminDashboardPage() {
                   </div>
                   <h1 className="text-2xl font-extrabold text-[#1C1C1C]">{blogTitleText || 'Article Title'}</h1>
                   <p className="text-xs text-[#6B7280] italic border-l-4 border-[#FF9D00] pl-3 py-1">
-                    "{blogExcerptText || 'Executive summary...'}"
+                    &quot;{blogExcerptText || 'Executive summary...'}&quot;
                   </p>
                   <div className="pt-2 text-xs text-[#1C1C1C] whitespace-pre-line leading-relaxed font-sans border-t border-[#E5E7EB]">
                     {blogContentText || 'Write markdown content to preview...'}
                   </div>
+                </div>
+              )}
+
+              {/* TAB 4: CLAUDE JSON IMPORT */}
+              {blogStudioTab === 'import' && (
+                <div className="space-y-4">
+                  {/* Instructions banner */}
+                  <div className="p-4 bg-[#F3F0FF] border border-[#8B5CF6]/30 rounded-xl text-xs space-y-2">
+                    <p className="font-bold text-[#6D28D9] flex items-center gap-1.5">📋 How to use Claude Import</p>
+                    <ol className="list-decimal list-inside text-[#4C1D95] space-y-0.5 leading-relaxed">
+                      <li>Open Claude and use the <strong>Master Blog Prompt</strong> — copy it below</li>
+                      <li>Claude returns a ready JSON block — copy the entire JSON output</li>
+                      <li>Paste it in the box below and click <strong>Import &amp; Fill All Fields</strong></li>
+                      <li>Switch to Write / Meta tabs to review, upload cover image, then Save</li>
+                    </ol>
+                  </div>
+
+                  {/* Copy master prompt shortcut */}
+                  <div className="p-3 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl flex items-start justify-between gap-3">
+                    <div className="text-xs">
+                      <p className="font-bold text-[#1C1C1C] mb-0.5">🤖 Need the Claude Prompt?</p>
+                      <p className="text-[#6B7280]">Copy the Master Blog Prompt and paste it directly to Claude — it will write and output the JSON automatically.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        const MASTER_PROMPT = `You are an expert SEO content strategist and professional blog writer for a digital agency.\n\nToday is ${today}.\n\nYour task: Write a complete, high-performing blog post for today and return ONLY a valid JSON object — no markdown fences, no explanation, no preamble. Just raw JSON.\n\nAutonomously decide the best:\n- Title type (how-to, listicle, evergreen, trending, question-based, or data-driven — pick whatever ranks best today)\n- Topic (from digital marketing, SEO, web development, paid ads, or business growth)\n- Primary keyword (high-intent, realistic to rank for, not too competitive)\n- 4–6 secondary long-tail keywords\n- Best-fit category (pick exactly one: seo | web_dev | app_dev | website_upgrade | local_business | meta_ads | ugc_ads | sales_growth | general)\n\nCONTENT FORMAT — CRITICAL: Write content in MARKDOWN format only. Do NOT use HTML tags.\n- Use ## for H2 section headings (e.g. ## Why This Matters)\n- Use ### for H3 sub-headings (e.g. ### Step 1: Do This)\n- Use **text** for bold emphasis\n- Use *text* for italic emphasis\n- Use - item for bullet list items (one per line)\n- Use > text for blockquotes\n- Write plain paragraph text as-is, no wrapping tags\n- Minimum 900 words\n- No keyword stuffing — write naturally, like a real expert\n- Include at least 1 blockquote (> ...) with an expert insight or industry stat\n- End with a motivating CTA paragraph\n- No placeholder text — every word must be real, useful content\n\nReturn this exact JSON (all fields required, no extra keys):\n{\n  "title": "SEO-optimized blog title under 60 characters",\n  "slug": "url-friendly-slug-with-hyphens-only",\n  "excerpt": "2-3 sentence compelling meta description under 160 characters",\n  "category": "one_of_the_categories_above",\n  "target_keyword": "your chosen primary keyword",\n  "secondary_keywords": ["keyword2", "keyword3", "keyword4", "keyword5"],\n  "city": "Global",\n  "author_name": "Your Brand Team",\n  "cover_image_url": "",\n  "cover_image_prompt": "Detailed DALL-E image generation prompt for a professional blog cover. Describe subject, mood, lighting, colors, photographic style. No text overlays in image.",\n  "content": "## First Section Heading\n\nParagraph text here. Use markdown throughout.\n\n## Second Section\n\n- Bullet one\n- Bullet two\n\n> Blockquote insight here"\n}`;
+                        navigator.clipboard.writeText(MASTER_PROMPT);
+                        setBlogImportPromptCopied(true);
+                        addToast('success', '📋 Master Claude Prompt copied to clipboard!');
+                        setTimeout(() => setBlogImportPromptCopied(false), 3000);
+                      }}
+                      className="shrink-0 px-3 py-2 rounded-lg bg-[#FF9D00] text-white font-bold text-xs flex items-center gap-1.5 hover:bg-[#e08b00] transition-colors min-h-[44px]"
+                    >
+                      {blogImportPromptCopied ? <Check size={14} /> : <Copy size={14} />}
+                      <span>{blogImportPromptCopied ? 'Copied!' : 'Copy Prompt'}</span>
+                    </button>
+                  </div>
+
+                  {/* JSON paste area */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#1C1C1C] mb-1.5">Paste Claude JSON Output Here</label>
+                    <textarea
+                      rows={10}
+                      value={blogImportJson}
+                      onChange={(e) => { setBlogImportJson(e.target.value); setBlogImportError(''); }}
+                      placeholder={'{\n  "title": "...",\n  "slug": "...",\n  "excerpt": "...",\n  "category": "seo",\n  "target_keyword": "...",\n  "secondary_keywords": ["..."],\n  "city": "Global",\n  "author_name": "...",\n  "cover_image_prompt": "...",\n  "content": "<h2>...</h2><p>...</p>"\n}'}
+                      className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] text-xs font-mono text-[#1C1C1C] focus:outline-none focus:border-[#8B5CF6] leading-relaxed bg-[#F9FAFB]"
+                    />
+                    {blogImportError && (
+                      <p className="mt-1.5 text-xs font-semibold text-[#EF4444] flex items-center gap-1">
+                        ⚠️ {blogImportError}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Import button */}
+                  <button
+                    type="button"
+                    onClick={handleImportJson}
+                    className="w-full py-3 rounded-xl bg-[#8B5CF6] text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#7C3AED] transition-colors"
+                  >
+                    <CheckCircle2 size={16} />
+                    Import &amp; Fill All Fields
+                  </button>
+
+                  <p className="text-center text-[11px] text-[#9CA3AF]">
+                    Post will be saved as <strong>Draft</strong> — publish manually after reviewing content and uploading cover image
+                  </p>
                 </div>
               )}
 
@@ -2220,11 +2413,11 @@ export default function AdminDashboardPage() {
                     type="checkbox"
                     id="is_published"
                     name="is_published"
-                    defaultChecked={editingBlogPost?.is_published ?? true}
+                    defaultChecked={editingBlogPost?.is_published ?? false}
                     className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
                   />
                   <label htmlFor="is_published" className="text-xs font-bold text-[#1C1C1C]">
-                    Publish Article Immediately (Visible to public readers & Google sitemap)
+                    Publish Article Immediately (Visible to public readers &amp; Google sitemap)
                   </label>
                 </div>
 
@@ -2234,7 +2427,7 @@ export default function AdminDashboardPage() {
                   </Button>
                   <Button type="submit" variant="primary" size="sm">
                     <Send size={14} />
-                    <span>Save & Publish Article</span>
+                    <span>Save &amp; Publish Article</span>
                   </Button>
                 </div>
               </div>
