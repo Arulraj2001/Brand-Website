@@ -11,9 +11,10 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import CurrencySelector from '@/components/ui/CurrencySelector';
-import { useCurrency } from '@/components/ui/CurrencyContext';
+import { useCurrency, CURRENCIES } from '@/components/ui/CurrencyContext';
 import { submitLead, INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 import { useSiteSettings } from '@/lib/useSiteData';
+import { getBudgetOptionsForCurrency } from '@/lib/budgetOptions';
 
 const leadSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -21,7 +22,7 @@ const leadSchema = z.object({
   phone: z.string().min(6, 'Please enter a valid contact phone number'),
   country: z.string().min(2, 'Please enter your country/location'),
   service_interested: z.string().min(1, 'Please select a service'),
-  budget_range: z.string().min(1, 'Please select or enter your budget in USD ($)'),
+  budget_range: z.string().min(1, 'Please select your budget range'),
   custom_budget: z.string().optional(),
   message: z.string().optional(),
 });
@@ -30,11 +31,11 @@ type LeadFormData = z.infer<typeof leadSchema>;
 
 export default function ContactPage() {
   const { settings } = useSiteSettings();
-  const { formatBudgetLabel, isConverted, convertAmount, currency } = useCurrency();
+  const { isConverted, convertAmount, currency, rates } = useCurrency();
   const [mounted, setMounted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [budgetSelection, setBudgetSelection] = useState<string>('$50–$500');
+  const [budgetSelection, setBudgetSelection] = useState<string>('');
   const [customAmount, setCustomAmount] = useState<string>('');
 
   React.useEffect(() => {
@@ -53,7 +54,7 @@ export default function ContactPage() {
   } = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
     defaultValues: {
-      budget_range: '$50–$500',
+      budget_range: '',
       service_interested: 'Website Development',
     },
   });
@@ -64,25 +65,33 @@ export default function ContactPage() {
     if (val !== 'custom') {
       setValue('budget_range', val);
     } else {
-      setValue('budget_range', customAmount ? `$${customAmount}` : '');
+      const symbol = currency === 'INR' ? '₹' : '$';
+      setValue('budget_range', customAmount ? `${symbol}${customAmount}` : '');
     }
   };
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setCustomAmount(val);
-    const cleanVal = val.replace(/^\$\s*/, '');
-    setValue('budget_range', cleanVal ? `$${cleanVal}` : '');
+    const cleanVal = val.replace(/^[$\u20B9]\s*/, '');
+    const symbol = currency === 'INR' ? '₹' : '$';
+    setValue('budget_range', cleanVal ? `${symbol}${cleanVal}` : '');
   };
 
   const onSubmit = async (data: LeadFormData) => {
+    if (!budgetSelection || budgetSelection === '') {
+      setValue('budget_range', '');
+      return;
+    }
+
     setSubmitting(true);
 
+    const symbol = currency === 'INR' ? '₹' : '$';
     const finalBudget =
       budgetSelection === 'custom'
-        ? customAmount.trim().startsWith('$')
+        ? customAmount.trim().startsWith('$') || customAmount.trim().startsWith('₹')
           ? customAmount.trim()
-          : `$${customAmount.trim()}`
+          : `${symbol}${customAmount.trim()}`
         : data.budget_range;
 
     const result = await submitLead({
@@ -98,7 +107,7 @@ export default function ContactPage() {
     if (result.success) {
       setSubmitted(true);
       reset();
-      setBudgetSelection('$50–$500');
+      setBudgetSelection('');
       setCustomAmount('');
     }
   };
@@ -148,7 +157,7 @@ export default function ContactPage() {
                     Project Inquiry Received!
                   </h2>
                   <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                    Thank you! We'll get back to you within 12 hours with a custom project proposal and transparent USD ($) budget options.
+                    Thank you! We'll get back to you within 12 hours with a custom project proposal and transparent budget options.
                   </p>
                   <div className="pt-2 flex justify-center gap-3">
                     <Button
@@ -213,7 +222,7 @@ export default function ContactPage() {
                       <input
                         {...register('phone')}
                         type="tel"
-                        placeholder="+1 (512) 555-0199"
+                        placeholder="Your WhatsApp number (with country code)"
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       />
                       {errors.phone && (
@@ -241,7 +250,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  {/* Service & USD Budget */}
+                  {/* Service & Budget */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
@@ -269,7 +278,7 @@ export default function ContactPage() {
                           <div className="w-5 h-5 rounded-md bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <DollarSign size={13} className="stroke-[2.5]" />
                           </div>
-                          <span>Budget Range (USD $) *</span>
+                          <span>Budget Range ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol}) *</span>
                         </label>
                         <CurrencySelector />
                       </div>
@@ -280,19 +289,26 @@ export default function ContactPage() {
                           onChange={handleBudgetDropdownChange}
                           className="w-full pl-3.5 pr-8 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] focus:border-[#FF9D00] shadow-2xs transition-all font-mono-stats cursor-pointer"
                         >
-                          <option value="$50–$500">🌱 {formatBudgetLabel('$50–$500')} (Starter)</option>
-                          <option value="$500–$1,000">💼 {formatBudgetLabel('$500–$1,000')}</option>
-                          <option value="$1,000–$3,000">🚀 {formatBudgetLabel('$1,000–$3,000')} (Popular)</option>
-                          <option value="$3,000–$5,000">⭐ {formatBudgetLabel('$3,000–$5,000')} (Enterprise)</option>
-                          <option value="$5,000+">👑 {formatBudgetLabel('$5,000+')} (Custom Scale)</option>
-                          <option value="custom">✏️ Enter Custom Amount (USD $)...</option>
+                          <option value="" disabled>Select your budget range *</option>
+                          {getBudgetOptionsForCurrency(currency, rates).map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                          <option value="custom">✏️ Enter Custom Amount ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol})...</option>
                         </select>
                       </div>
+
+                      {errors.budget_range && (
+                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
+                          {errors.budget_range.message}
+                        </p>
+                      )}
 
                       {isConverted && (
                         <p className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 pt-0.5">
                           <Info size={13} className="text-[#FF9D00] shrink-0" />
-                          <span>Currency converted live — invoices & billing are in USD ($).</span>
+                          <span>Currency converted live — billing available in {currency}.</span>
                         </p>
                       )}
                     </div>
@@ -306,31 +322,21 @@ export default function ContactPage() {
                       className="relative mt-2 space-y-1.5"
                     >
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Custom Budget Amount (USD $) *
+                        Custom Budget Amount ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol}) *
                       </label>
                       <div className="relative">
                         <div className="absolute left-3 top-2.5 text-xs font-extrabold text-[#FF9D00] flex items-center gap-1">
-                          <DollarSign size={13} />
-                          <span>USD</span>
+                          <span>{(CURRENCIES[currency] || CURRENCIES.USD).symbol}</span>
+                          <span>{currency}</span>
                         </div>
                         <input
                           type="text"
                           value={customAmount}
                           onChange={handleCustomAmountChange}
-                          placeholder="e.g. 250 or 1,500"
-                          className="w-full pl-14 pr-3.5 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] font-mono-stats"
+                          placeholder={`e.g. 250 or 1,500 in ${currency}`}
+                          className="w-full pl-16 pr-3.5 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] font-mono-stats"
                         />
                       </div>
-
-                      {/* Live Conversion Output for Custom Amount */}
-                      {isConverted && customAmount && !isNaN(Number(customAmount.replace(/[^0-9.]/g, ''))) && (
-                        <div className="text-[11px] font-bold text-[#047857] bg-[#ECFDF5] px-3 py-1.5 rounded-lg flex items-center justify-between border border-[#10B981]/30">
-                          <span>Live Converted Amount ({currency}):</span>
-                          <span className="font-mono-stats text-xs font-extrabold text-[#065F46]">
-                            {convertAmount(Number(customAmount.replace(/[^0-9.]/g, ''))).formatted} {currency}
-                          </span>
-                        </div>
-                      )}
 
                       {errors.budget_range && (
                         <p className="text-xs text-[#EF4444] font-semibold mt-1">

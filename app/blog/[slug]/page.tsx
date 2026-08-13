@@ -18,6 +18,7 @@ import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import RichArticleContent from '@/components/blog/RichArticleContent';
+import BlogEndCta from '@/components/blog/BlogEndCta';
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
 
 interface BlogPostPageProps {
@@ -263,32 +264,21 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
           />
         </div>
 
-        {/* Rich Article Renderer with ToC Sidebar */}
+        {/* Rich Article Renderer with ToC Sidebar & Dynamic Mid-Article CTA */}
         <RichArticleContent
           content={post.content}
           excerpt={post.excerpt}
           title={post.title}
+          category={post.category}
+          postSlug={post.slug}
         />
 
-        {/* Free Consultation CTA Block */}
-        <Card className="p-6 sm:p-8 bg-white border-2 border-[#FFD21E] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center sm:text-left">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold">
-              <Sparkles size={13} /> Ready to Scale Your Organic Pipeline?
-            </div>
-            <h3 className="text-xl font-bold text-[#1C1C1C]">
-              Get a Free Growth & Technical SEO Audit
-            </h3>
-            <p className="text-xs text-[#6B7280]">
-              Our engineering team will analyze your site speed, keyword gaps, and conversion funnel for free.
-            </p>
-          </div>
-
-          <Button href="/contact" variant="primary" size="md" className="shrink-0">
-            <span>Get Free Consultation</span>
-            <ArrowRight size={15} />
-          </Button>
-        </Card>
+        {/* Dynamic Category-Matched End-of-Post CTA & Free Audit Lead Capture Form */}
+        <BlogEndCta
+          category={post.category}
+          postSlug={post.slug}
+          postTitle={post.title}
+        />
 
         {/* Related Posts Section (2-3 posts from same category) */}
         {finalRelated.length > 0 && (

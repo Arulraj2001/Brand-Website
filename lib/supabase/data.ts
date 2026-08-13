@@ -1530,6 +1530,38 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 // Helper to submit lead
 export async function submitLead(lead: Lead): Promise<{ success: boolean; message: string }> {
+  const payload = {
+    name: lead.name,
+    email: lead.email,
+    phone: lead.phone,
+    country: lead.country || lead.city || 'Global',
+    service_interested: lead.service_interested,
+    budget_range: lead.budget_range,
+    message: lead.message,
+    created_at: new Date().toISOString(),
+    status: 'new',
+  };
+
+  // Try server API route first for service-role bypass
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return {
+          success: true,
+          message: json.message || 'Thank you! Your inquiry has been received. Our team will reply within 12 hours.',
+        };
+      }
+    } catch (e) {
+      console.warn('API leads fetch error, falling back to direct client:', e);
+    }
+  }
+
   if (!isSupabaseConfigured()) {
     return {
       success: true,
@@ -1538,19 +1570,7 @@ export async function submitLead(lead: Lead): Promise<{ success: boolean; messag
   }
   try {
     const supabase = createClient();
-    const { error } = await supabase.from('leads').insert([
-      {
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        country: lead.country || lead.city || 'Global',
-        service_interested: lead.service_interested,
-        budget_range: lead.budget_range,
-        message: lead.message,
-        created_at: new Date().toISOString(),
-        status: 'new',
-      },
-    ]);
+    const { error } = await supabase.from('leads').insert([payload]);
 
     if (error) {
       console.warn('Supabase insert note:', error.message);

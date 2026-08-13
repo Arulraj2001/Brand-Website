@@ -3,11 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Copy, Check, Share2, List, BookOpen, ArrowUp, ChevronRight } from 'lucide-react';
+import BlogMidCallout from './BlogMidCallout';
+import { BlogCategory } from '@/types';
 
 interface RichArticleContentProps {
   content: string;
   excerpt?: string;
   title: string;
+  category?: BlogCategory;
+  postSlug?: string;
 }
 
 interface TocItem {
@@ -16,7 +20,13 @@ interface TocItem {
   level: number;
 }
 
-export default function RichArticleContent({ content, excerpt, title }: RichArticleContentProps) {
+export default function RichArticleContent({
+  content,
+  excerpt,
+  title,
+  category,
+  postSlug,
+}: RichArticleContentProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
   const [activeTocId, setActiveTocId] = useState<string>('');
@@ -65,7 +75,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
 
   // Custom Markdown parsing engine
   const parseMarkdownToBlocks = (mdText: string) => {
-    const blocks: React.ReactNode[] = [];
+    const rawBlocks: React.ReactElement[] = [];
     const lines = mdText.split('\n');
 
     let i = 0;
@@ -83,7 +93,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
       // H1 Header
       if (line.startsWith('# ')) {
         const text = line.replace('# ', '').trim();
-        blocks.push(
+        rawBlocks.push(
           <h1 key={`h1-${keyIndex++}`} className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] pb-2 border-b-2 border-[#FFD21E] mt-8 mb-4">
             {text}
           </h1>
@@ -96,7 +106,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
       if (line.startsWith('## ')) {
         const text = line.replace('## ', '').trim();
         const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        blocks.push(
+        rawBlocks.push(
           <h2 id={id} key={`h2-${keyIndex++}`} className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] pt-6 pb-2 mt-8 border-b border-[#E5E7EB] flex items-center gap-2 group scroll-mt-28">
             <span className="w-2.5 h-6 rounded-full bg-[#FF9D00] inline-block shrink-0" />
             <span className="group-hover:text-[#FF9D00] transition-colors">{text}</span>
@@ -109,7 +119,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
       // H3 Header
       if (line.startsWith('### ')) {
         const text = line.replace('### ', '').trim();
-        blocks.push(
+        rawBlocks.push(
           <h3 key={`h3-${keyIndex++}`} className="text-lg font-bold text-[#1C1C1C] mt-6 mb-2 flex items-center gap-2">
             <span className="w-1.5 h-4 rounded-full bg-[#3B82F6] inline-block" />
             {text}
@@ -126,7 +136,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
           quoteLines.push(lines[i].replace('> ', '').trim());
           i++;
         }
-        blocks.push(
+        rawBlocks.push(
           <blockquote key={`quote-${keyIndex++}`} className="my-6 p-4 sm:p-5 rounded-r-xl border-l-4 border-[#FF9D00] bg-[#FFF9E6] text-[#1C1C1C] font-medium text-sm sm:text-base italic shadow-xs">
             "{quoteLines.join(' ')}"
           </blockquote>
@@ -145,7 +155,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
         }
         i++; // skip closing ```
 
-        blocks.push(
+        rawBlocks.push(
           <div key={`code-${keyIndex++}`} className="my-6 rounded-xl bg-[#1C1C1C] border border-[#333] overflow-hidden shadow-md">
             <div className="flex items-center justify-between px-4 py-2 bg-[#262626] border-b border-[#333] text-[11px] font-mono text-[#9CA3AF]">
               <span>{lang || 'code'}</span>
@@ -176,7 +186,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
           i++;
         }
 
-        blocks.push(
+        rawBlocks.push(
           <div key={`table-${keyIndex++}`} className="my-6 overflow-x-auto border border-[#E5E7EB] rounded-xl shadow-xs">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-[#1C1C1C] text-white font-bold">
@@ -212,7 +222,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
           listItems.push(lines[i].replace(/^[-*]\s+/, '').trim());
           i++;
         }
-        blocks.push(
+        rawBlocks.push(
           <ul key={`list-${keyIndex++}`} className="my-4 space-y-2.5 pl-2">
             {listItems.map((item, lIdx) => (
               <li key={lIdx} className="flex items-start gap-2.5 text-sm sm:text-base text-[#1C1C1C] leading-relaxed">
@@ -226,7 +236,7 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
       }
 
       // Regular Paragraphs
-      blocks.push(
+      rawBlocks.push(
         <p key={`p-${keyIndex++}`} className="my-4 text-sm sm:text-base text-[#374151] leading-relaxed">
           {formatInlineStyles(line)}
         </p>
@@ -234,7 +244,49 @@ export default function RichArticleContent({ content, excerpt, title }: RichArti
       i++;
     }
 
-    return blocks;
+    // Natural Callout Injection Strategy:
+    // If category is provided, find a natural insertion point (e.g. before the 2nd/3rd H2 section or after a mid-article paragraph)
+    if (category && rawBlocks.length >= 4) {
+      const finalBlocks: React.ReactNode[] = [...rawBlocks];
+      
+      // Find all H2 indices
+      const h2Indices: number[] = [];
+      rawBlocks.forEach((b, idx) => {
+        const keyStr = b?.key ? String(b.key) : '';
+        if (keyStr.startsWith('h2-')) {
+          h2Indices.push(idx);
+        }
+      });
+
+      let insertIdx = -1;
+      if (h2Indices.length >= 3) {
+        // Insert right before the 2nd or 3rd H2 heading
+        insertIdx = h2Indices[Math.min(2, Math.floor(h2Indices.length / 2))];
+      } else if (h2Indices.length === 2) {
+        insertIdx = h2Indices[1];
+      } else {
+        // Fallback: find a paragraph around 40-50% into the article
+        const targetMid = Math.floor(rawBlocks.length * 0.45);
+        for (let j = targetMid; j < rawBlocks.length; j++) {
+          const keyStr = rawBlocks[j]?.key ? String(rawBlocks[j].key) : '';
+          if (keyStr.startsWith('p-')) {
+            insertIdx = j + 1; // insert right after paragraph
+            break;
+          }
+        }
+      }
+
+      if (insertIdx > 0 && insertIdx <= finalBlocks.length) {
+        finalBlocks.splice(
+          insertIdx,
+          0,
+          <BlogMidCallout key="blog-mid-callout" category={category} postSlug={postSlug} />
+        );
+      }
+      return finalBlocks;
+    }
+
+    return rawBlocks;
   };
 
   // Inline formatting helper for **bold**, `code`, [links]

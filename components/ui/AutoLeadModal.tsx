@@ -3,25 +3,33 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Send, CheckCircle2, ShieldCheck, Clock, Phone, Mail, DollarSign } from 'lucide-react';
+import { X, Sparkles, Send, CheckCircle2, ShieldCheck, Clock, DollarSign } from 'lucide-react';
 import { submitLead, INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 import { useSiteSettings } from '@/lib/useSiteData';
+import CurrencySelector from '@/components/ui/CurrencySelector';
+import { useCurrency, CURRENCIES } from '@/components/ui/CurrencyContext';
+import { getBudgetOptionsForCurrency } from '@/lib/budgetOptions';
 
 export default function AutoLeadModal() {
   const pathname = usePathname();
   const { settings } = useSiteSettings();
+  const { currency, rates } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const activeCurrencyConfig = CURRENCIES[currency] || CURRENCIES.USD;
+  const budgetTiers = getBudgetOptionsForCurrency(currency, rates);
+  const defaultPopularBudget = budgetTiers.find((t) => t.value.includes('Popular'))?.value || budgetTiers[3]?.value || budgetTiers[0].value;
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     country: '',
-    service_interested: 'Website Development',
-    budget_range: '$1,000–$3,000',
+    service_interested: '',
+    budget_range: defaultPopularBudget,
     message: '',
   });
 
@@ -44,6 +52,12 @@ export default function AutoLeadModal() {
     }
   }, [pathname]);
 
+  // Keep pre-selected budget tier in sync when user toggles any currency (USD, INR, EUR, GBP, AUD, CAD)
+  useEffect(() => {
+    const popularTier = budgetTiers.find((t) => t.value.includes('Popular'))?.value || budgetTiers[3]?.value || budgetTiers[0].value;
+    setFormData((prev) => ({ ...prev, budget_range: popularTier }));
+  }, [currency]);
+
   if (pathname?.startsWith('/admin')) {
     return null;
   }
@@ -52,7 +66,7 @@ export default function AutoLeadModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.service_interested) {
       return;
     }
     setSubmitting(true);
@@ -63,7 +77,7 @@ export default function AutoLeadModal() {
       country: formData.country || 'Global Remote',
       service_interested: formData.service_interested,
       budget_range: formData.budget_range,
-      message: formData.message || '5-Second Auto Popup Strategy Request',
+      message: formData.message || 'Auto Popup Strategy Request',
     });
     setSubmitting(false);
     if (result.success) {
@@ -139,11 +153,11 @@ export default function AutoLeadModal() {
                       <Sparkles size={13} className="animate-pulse text-[#FF9D00]" />
                       <span>Free 15-Min Strategy Call & Custom Quote</span>
                     </div>
-                    <h2 className="text-2xl font-extrabold text-[#1C1C1C] tracking-tight">
-                      Ready to Scale Your Website & Sales?
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] tracking-tight leading-snug">
+                      Get a Free Audit — We’ll Show You Exactly What’s Holding Your Site Back
                     </h2>
                     <p className="text-xs text-[#6B7280] leading-relaxed">
-                      Get a free technical audit & 60% offshore engineering rate card delivered to your inbox.
+                      Tell us your goal — we’ll send a free audit and a clear action plan within 12 hours.
                     </p>
                   </div>
 
@@ -189,20 +203,22 @@ export default function AutoLeadModal() {
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="+1 (555) 000-0000"
+                          placeholder="Your WhatsApp number (with country code)"
                           className="w-full px-3 py-2 text-xs rounded-lg border border-[#E5E7EB] text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-[#F9FAFB] focus:bg-white transition-colors"
                         />
                       </div>
 
                       <div>
                         <label className="block text-[11px] font-extrabold text-[#1C1C1C] uppercase mb-1">
-                          Service Interested
+                          Service Interested *
                         </label>
                         <select
+                          required
                           value={formData.service_interested}
                           onChange={(e) => setFormData({ ...formData, service_interested: e.target.value })}
                           className="w-full px-3 py-2 text-xs rounded-lg border border-[#E5E7EB] text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-[#F9FAFB] focus:bg-white transition-colors"
                         >
+                          <option value="" disabled>Select a Service *</option>
                           <option value="Website Development">Website Development</option>
                           <option value="Old Website Upgrade">Old Website Speed & SEO</option>
                           <option value="UGC Ads">UGC Video Ads</option>
@@ -213,20 +229,28 @@ export default function AutoLeadModal() {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-[11px] font-extrabold text-[#1C1C1C] uppercase mb-1">
-                        Budget Range (USD $)
-                      </label>
+                    {/* Budget Range UI with Currency Switcher */}
+                    <div className="p-3 rounded-xl bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border border-[#FFD21E] shadow-2xs space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-extrabold text-[#1C1C1C] uppercase flex items-center gap-1.5">
+                          <div className="w-4 h-4 rounded bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-[10px] shrink-0">
+                            <DollarSign size={11} className="stroke-[2.5]" />
+                          </div>
+                          <span>Budget Range ({activeCurrencyConfig.code} {activeCurrencyConfig.symbol})</span>
+                        </label>
+                        <CurrencySelector />
+                      </div>
+
                       <select
                         value={formData.budget_range}
                         onChange={(e) => setFormData({ ...formData, budget_range: e.target.value })}
-                        className="w-full px-3 py-2 text-xs rounded-lg border border-[#FFD21E] text-[#1C1C1C] bg-[#FFF9E6] font-bold focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats"
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-[#FFD21E] text-[#1C1C1C] bg-white font-bold focus:outline-none focus:border-[#FF9D00] transition-colors font-mono-stats cursor-pointer"
                       >
-                        <option value="$50–$500">🌱 $50–$500 (Starter)</option>
-                        <option value="$500–$1,000">💼 $500–$1,000</option>
-                        <option value="$1,000–$3,000">🚀 $1,000–$3,000 (Popular)</option>
-                        <option value="$3,000–$5,000">⭐ $3,000–$5,000 (Enterprise)</option>
-                        <option value="$5,000+">👑 $5,000+ (Custom Scale)</option>
+                        {budgetTiers.map((tier) => (
+                          <option key={tier.value} value={tier.value}>
+                            {tier.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
