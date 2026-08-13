@@ -65,10 +65,10 @@ create table if not exists testimonials (
 -- 4. Site Settings Table
 create table if not exists site_settings (
   id text primary key default 'global',
-  phone text not null default '+1 (800) 555-0199',
-  whatsapp_number text not null default '18005550199',
-  email text not null default 'hello@ostrune.netlify.app',
-  address text not null default 'Global Remote HQ',
+  phone text not null default '+91 8637474067',
+  whatsapp_number text not null default '918637474067',
+  email text not null default 'arulraj8637@gmail.com',
+  address text not null default 'Tiruvannamalai, Tamil Nadu, India',
   linkedin_url text default 'https://linkedin.com/company/ostrune',
   twitter_url text default 'https://twitter.com/ostrune',
   instagram_url text default 'https://instagram.com/ostrune',
@@ -117,10 +117,10 @@ alter table blog_posts add column if not exists secondary_keywords text;
 insert into site_settings (id, phone, whatsapp_number, email, address, linkedin_url, twitter_url, instagram_url)
 values (
   'global',
-  '+1 (800) 555-0199',
-  '18005550199',
-  'hello@ostrune.netlify.app',
-  'Global Remote HQ',
+  '+91 8637474067',
+  '918637474067',
+  'arulraj8637@gmail.com',
+  'Tiruvannamalai, Tamil Nadu, India',
   'https://linkedin.com/company/ostrune',
   'https://twitter.com/ostrune',
   'https://instagram.com/ostrune'

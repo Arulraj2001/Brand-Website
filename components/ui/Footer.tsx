@@ -36,20 +36,20 @@ export default function Footer() {
 
   const jsonLdData = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'LocalBusiness',
     name: activeSettings.brand_name || 'Ostrune',
     image: 'https://ostrune.netlify.app/logo.png',
     '@id': 'https://ostrune.netlify.app',
     url: 'https://ostrune.netlify.app',
-    telephone: activeSettings.phone,
-    email: activeSettings.email,
-    priceRange: '$100 - $10,000',
+    telephone: activeSettings.phone || '+91 8637474067',
+    email: activeSettings.email || 'arulraj8637@gmail.com',
+    priceRange: '₹₹',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: activeSettings.address,
-      addressCountry: 'Worldwide',
+      streetAddress: activeSettings.address || 'Tiruvannamalai, Tamil Nadu, India',
+      addressCountry: 'India',
     },
-    areaServed: 'Worldwide',
+    areaServed: ['India', 'Global'],
   };
 
   const whatsappClean = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');

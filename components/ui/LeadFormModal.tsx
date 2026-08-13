@@ -217,7 +217,7 @@ export default function LeadFormModal({
                     </label>
                     <input
                       {...register('phone')}
-                      placeholder="+1 (512) 555-0199"
+                      placeholder="+91 8637474067"
                       className="w-full px-3.5 py-[9px] text-sm text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#FF9D00] transition-colors"
                     />
                     {errors.phone && (

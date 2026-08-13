@@ -90,7 +90,7 @@ const INITIAL_LEADS: Lead[] = [
     id: 'l1',
     name: 'David Miller',
     email: 'david@company.com',
-    phone: '+1 (512) 555-0199',
+    phone: '+91 8637474067',
     country: 'Global',
     service_interested: 'Old Website Upgrade',
     budget_range: '$3,000–$5,000',
@@ -1713,7 +1713,7 @@ export default function AdminDashboardPage() {
                       required
                       value={settingsForm.phone}
                       onChange={(e) => setSettingsForm({ ...settingsForm, phone: e.target.value })}
-                      placeholder="+1 (800) 555-0199"
+                      placeholder="+91 8637474067"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>
@@ -1721,14 +1721,14 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1 flex items-center gap-1.5">
                       <WhatsAppIcon size={14} fill="#25D366" />
-                      <span>WhatsApp Number (Digits only, e.g. 18005550199) *</span>
+                      <span>WhatsApp Number (Digits only, e.g. 918637474067) *</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={settingsForm.whatsapp_number}
                       onChange={(e) => setSettingsForm({ ...settingsForm, whatsapp_number: e.target.value })}
-                      placeholder="18005550199"
+                      placeholder="918637474067"
                       className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                     />
                   </div>

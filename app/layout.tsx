@@ -26,11 +26,11 @@ const baseUrl = 'https://ostrune.netlify.app';
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Ostrune | Affordable Web Development, SEO & Growth Agency',
+    default: 'Ostrune — Web Development & SEO Agency India',
     template: '%s | Ostrune',
   },
   description:
-    'High-impact web engineering, old website speed upgrades, technical SEO, and growth support for clients worldwide.',
+    'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
   authors: [{ name: 'Ostrune' }],
   creator: 'Ostrune',
   publisher: 'Ostrune',
@@ -51,11 +51,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'en_IN',
     url: baseUrl,
-    title: 'Ostrune | Affordable Web Development, SEO & Growth Agency',
+    title: 'Ostrune — Web Development & SEO Agency India',
     description:
-      'High-impact web engineering, sub-second speed upgrades, technical SEO, and growth support for clients worldwide.',
+      'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
     siteName: 'Ostrune',
     images: [
       {
@@ -63,21 +63,21 @@ export const metadata: Metadata = {
         secureUrl: `${baseUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Ostrune — Affordable Web Development, SEO & Growth Agency',
+        alt: 'Ostrune — Web Development & SEO Agency India',
         type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ostrune | Web Development & SEO Growth Agency',
+    title: 'Ostrune — Web Development & SEO Agency India',
     description:
-      'Sub-second web engineering, technical SEO, and growth systems for ambitious companies.',
+      'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
     creator: '@ostrune',
     images: [
       {
         url: `${baseUrl}/og-image.jpg`,
-        alt: 'Ostrune Digital Agency',
+        alt: 'Ostrune — Web Development & SEO Agency India',
       },
     ],
   },
@@ -99,13 +99,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // NOTE: phone, sameAs, and social URLs are managed via Admin → Site Settings
-  // so they update without a code deploy. Defaults below are used until admin saves real values.
+  const jsonLdLocalBusiness = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Ostrune',
+    url: baseUrl,
+    telephone: '+91 8637474067',
+    email: 'arulraj8637@gmail.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Tiruvannamalai',
+      addressLocality: 'Tiruvannamalai',
+      addressRegion: 'Tamil Nadu',
+      addressCountry: 'India',
+    },
+    areaServed: ['India', 'Global'],
+    priceRange: '₹₹',
+    image: `${baseUrl}/logo.png`,
+  };
+
   const jsonLdOrg = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Ostrune',
-    description: 'Affordable web development, technical SEO, UGC video ads, and digital growth for clients worldwide.',
+    description: 'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
     url: baseUrl,
     logo: {
       '@type': 'ImageObject',
@@ -113,9 +130,8 @@ export default function RootLayout({
       width: 512,
       height: 512,
     },
-    // sameAs and contactPoint are injected dynamically from admin site settings
-    // via the WhatsAppFloatingButton which reads from Supabase. No hardcoded
-    // placeholder values are used here to avoid misleading Google.
+    telephone: '+91 8637474067',
+    email: 'arulraj8637@gmail.com',
   };
 
   const jsonLdWebSite = {
@@ -123,13 +139,15 @@ export default function RootLayout({
     '@type': 'WebSite',
     name: 'Ostrune',
     url: baseUrl,
-    // SearchAction removed: the portfolio ?q= param is not a true site search endpoint
   };
 
   return (
     <html lang="en" className={`${sourceSans.variable} ${sourceCode.variable} h-full antialiased`}>
       <head>
-        {/* google verification is already declared in metadata.verification above — one tag is enough */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdLocalBusiness) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}

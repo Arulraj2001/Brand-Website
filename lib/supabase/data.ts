@@ -2,10 +2,10 @@ import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost
 import { createClient, isSupabaseConfigured } from './client';
 
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
-  phone: '',
-  whatsapp_number: '',
-  email: 'hello@ostrune.netlify.app',
-  address: 'Global Remote HQ',
+  phone: '+91 8637474067',
+  whatsapp_number: '918637474067',
+  email: 'arulraj8637@gmail.com',
+  address: 'Tiruvannamalai, Tamil Nadu, India',
   linkedin_url: 'https://linkedin.com/company/ostrune',
   twitter_url: 'https://x.com/ostrune',
   instagram_url: 'https://instagram.com/ostrune',

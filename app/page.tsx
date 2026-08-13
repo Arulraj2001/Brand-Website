@@ -9,9 +9,14 @@ import TestimonialsCarousel from '@/components/sections/TestimonialsCarousel';
 import FinalCtaSection from '@/components/sections/FinalCtaSection';
 import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
 
-export const metadata = {
-  title: 'Affordable Web Development, SEO & Digital Marketing Agency | Ostrune',
-  description: 'High-quality web engineering, SEO & digital growth for clients worldwide at competitive rates. 24/7 availability with guaranteed 12-hour SLA.',
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'Ostrune — Web Development & SEO Agency India',
+  },
+  description:
+    'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
 };
 
 export const revalidate = 60; // Refresh data every minute
