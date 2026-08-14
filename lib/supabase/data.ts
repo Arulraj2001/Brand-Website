@@ -1502,20 +1502,26 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
-  let posts: BlogPost[] = [];
-  if (!isSupabaseConfigured()) {
-    posts = INITIAL_BLOG_POSTS;
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = localStorage.getItem('ostrune_blog_posts');
-        if (cached) posts = JSON.parse(cached);
-      } catch (e) {
-        console.warn('localStorage blog read error:', e);
+  let localPosts: BlogPost[] = INITIAL_BLOG_POSTS;
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_blog_posts');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          localPosts = parsed;
+        }
       }
+    } catch (e) {
+      console.warn('localStorage blog read error:', e);
     }
-    return publishedOnly ? posts.filter((p) => p.is_published) : posts;
   }
 
+  if (!isSupabaseConfigured()) {
+    return publishedOnly ? localPosts.filter((p) => p.is_published) : localPosts;
+  }
+
+  let dbPosts: BlogPost[] = [];
   try {
     const supabase = createClient();
     let query = supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
@@ -1525,23 +1531,33 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
     }
 
     const { data, error } = await query;
-
-    if (error || !data || data.length === 0) {
-      posts = INITIAL_BLOG_POSTS;
-    } else {
-      posts = data as BlogPost[];
+    if (!error && data && data.length > 0) {
+      dbPosts = data as BlogPost[];
     }
-  } catch {
-    posts = INITIAL_BLOG_POSTS;
+  } catch (err) {
+    console.warn('Supabase fetch blog_posts error:', err);
   }
 
-  if (typeof window !== 'undefined' && posts.length > 0) {
+  // Merge dbPosts and localPosts seamlessly by slug/id (dbPosts take precedence)
+  const map = new Map<string, BlogPost>();
+  for (const post of localPosts) {
+    const key = post.slug || post.id;
+    if (key) map.set(key, post);
+  }
+  for (const post of dbPosts) {
+    const key = post.slug || post.id;
+    if (key) map.set(key, post);
+  }
+
+  const combined = Array.from(map.values());
+
+  if (typeof window !== 'undefined' && combined.length > 0) {
     try {
-      localStorage.setItem('ostrune_blog_posts', JSON.stringify(posts));
+      localStorage.setItem('ostrune_blog_posts', JSON.stringify(combined));
     } catch {}
   }
 
-  return publishedOnly ? posts.filter((p) => p.is_published) : posts;
+  return publishedOnly ? combined.filter((p) => p.is_published) : combined;
 }
 
 // Helper to fetch single published blog post by slug
@@ -1691,6 +1707,16 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
 }
 
 export async function deleteBlogPostFromSupabase(id: string, slug?: string): Promise<void> {
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_blog_posts');
+      if (cached) {
+        const list: BlogPost[] = JSON.parse(cached);
+        const filtered = list.filter((p) => p.id !== id && p.slug !== slug);
+        localStorage.setItem('ostrune_blog_posts', JSON.stringify(filtered));
+      }
+    } catch {}
+  }
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
