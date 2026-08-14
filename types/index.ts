@@ -26,6 +26,7 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   cover_image_url: string;
+  cover_image_prompt?: string;
   category: BlogCategory;
   target_keyword?: string;
   secondary_keywords?: string[] | string;

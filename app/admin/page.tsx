@@ -224,12 +224,15 @@ export default function AdminDashboardPage() {
   // Advanced Blog Writing Studio State
   const [blogStudioTab, setBlogStudioTab] = useState<'write' | 'meta' | 'preview' | 'import'>('write');
   const [blogTitleText, setBlogTitleText] = useState('');
+  const [blogSlugText, setBlogSlugText] = useState('');
   const [blogContentText, setBlogContentText] = useState('');
   const [blogKeywordText, setBlogKeywordText] = useState('');
   const [blogSecondaryKeywordsText, setBlogSecondaryKeywordsText] = useState('');
   const [blogExcerptText, setBlogExcerptText] = useState('');
   const [blogCategoryVal, setBlogCategoryVal] = useState<BlogCategory>('seo');
+  const [blogCityText, setBlogCityText] = useState('Global');
   const [blogAuthorVal, setBlogAuthorVal] = useState('');
+  const [blogCoverPromptText, setBlogCoverPromptText] = useState('');
 
   // Claude JSON Import State
   const [blogImportJson, setBlogImportJson] = useState('');
@@ -375,16 +378,24 @@ export default function AdminDashboardPage() {
     setBlogContentText((prev) => `${prev}\n${prefix}sample text${suffix}`);
   };
 
-  // Claude JSON Import Handler
+  // AI JSON Import Handler (Claude / GPT / Gemini output)
   const handleImportJson = () => {
     setBlogImportError('');
 
-    const raw = blogImportJson.trim();
-    if (!raw) { setBlogImportError('Paste your Claude JSON output above first.'); return; }
+    let raw = blogImportJson.trim();
+    if (!raw) { setBlogImportError('Paste your AI JSON output above first.'); return; }
 
-    // ── Pass 1: try direct JSON.parse ─────────────────────────────────────────
-    // ── Pass 2: char-by-char sanitizer for literal newlines inside strings ────
-    // ── Pass 3: manual field extraction for unescaped quotes inside content ───
+    // Strip markdown code fences if present e.g. ```json ... ```
+    if (raw.includes('```')) {
+      raw = raw.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+    }
+
+    // Isolate JSON object between first { and last }
+    const firstBrace = raw.indexOf('{');
+    const lastBrace = raw.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      raw = raw.substring(firstBrace, lastBrace + 1);
+    }
 
     const sanitizeNewlines = (str: string): string => {
       let out = ''; let inStr = false; let esc = false;
@@ -399,20 +410,27 @@ export default function AdminDashboardPage() {
       return out;
     };
 
-    // Pass 3: extract each known field individually — handles unescaped quotes
-    // inside the content body (e.g. Claude writes "coffee shop near me" literally)
+    // Pass 3: extract each known field individually — handles unescaped quotes inside strings
     const extractManually = (str: string): Record<string, unknown> => {
       const get = (field: string): string => {
-        // Match "field": "value" where value has no embedded raw quotes
-        const m = str.match(new RegExp(`"${field}"\\s*:\\s*"([^"\\r\\n]*)"`, ));
-        return m ? m[1] : '';
+        const m = str.match(new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
+        if (m) {
+          return m[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
+        }
+        return '';
       };
 
-      // secondary_keywords array
+      // secondary_keywords array or comma-separated string
+      let keywords: string[] = [];
       const kwBlock = str.match(/"secondary_keywords"\s*:\s*\[([^\]]*)\]/);
-      const keywords: string[] = kwBlock
-        ? [...kwBlock[1].matchAll(/"([^"]*)"/g)].map((m) => m[1])
-        : [];
+      if (kwBlock) {
+        keywords = [...kwBlock[1].matchAll(/"([^"]*)"/g)].map((m) => m[1]);
+      } else {
+        const kwStrMatch = str.match(/"secondary_keywords"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/);
+        if (kwStrMatch) {
+          keywords = kwStrMatch[1].split(',').map((k) => k.trim());
+        }
+      }
 
       // content: from "content": " to the last " before closing }
       let content = '';
@@ -438,6 +456,7 @@ export default function AdminDashboardPage() {
         city: get('city'),
         author_name: get('author_name'),
         cover_image_url: get('cover_image_url'),
+        cover_image_prompt: get('cover_image_prompt'),
         secondary_keywords: keywords,
         content,
       };
@@ -454,32 +473,42 @@ export default function AdminDashboardPage() {
       } catch {
         try {
           parsed = extractManually(raw);                 // Pass 3
-          addToast('success', '⚡ Auto-fixed Claude formatting quirks and imported successfully!');
+          addToast('success', '⚡ Auto-fixed AI formatting quirks and imported successfully!');
         } catch {
-          setBlogImportError('Could not parse Claude output. Make sure you copied only the { ... } JSON block with no text before or after it.');
+          setBlogImportError('Could not parse AI output. Make sure you copied the JSON block containing "title" and "content".');
           return;
         }
       }
     }
 
-    if (!parsed.title) { setBlogImportError('Missing field: "title" — check your Claude output'); return; }
-    if (!parsed.content) { setBlogImportError('Missing field: "content" — check your Claude output'); return; }
+    const titleVal = (parsed.title as string) || '';
+    const contentVal = (parsed.content as string) || '';
 
-    setBlogTitleText((parsed.title as string) || '');
-    setBlogContentText((parsed.content as string) || '');
+    if (!titleVal) { setBlogImportError('Missing field: "title" — check your AI JSON output'); return; }
+    if (!contentVal) { setBlogImportError('Missing field: "content" — check your AI JSON output'); return; }
+
+    const slugVal = (parsed.slug as string) || titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    let secondaryKwVal = '';
+    if (Array.isArray(parsed.secondary_keywords)) {
+      secondaryKwVal = (parsed.secondary_keywords as string[]).join(', ');
+    } else if (typeof parsed.secondary_keywords === 'string') {
+      secondaryKwVal = parsed.secondary_keywords;
+    }
+
+    setBlogTitleText(titleVal);
+    setBlogSlugText(slugVal);
+    setBlogContentText(contentVal);
     setBlogExcerptText((parsed.excerpt as string) || '');
     setBlogKeywordText((parsed.target_keyword as string) || '');
-    setBlogSecondaryKeywordsText(
-      Array.isArray(parsed.secondary_keywords)
-        ? (parsed.secondary_keywords as string[]).join(', ')
-        : ((parsed.secondary_keywords as string) || '')
-    );
+    setBlogSecondaryKeywordsText(secondaryKwVal);
+    setBlogCityText((parsed.city as string) || 'Global');
     if (parsed.category) setBlogCategoryVal(parsed.category as BlogCategory);
     if (parsed.author_name) setBlogAuthorVal(parsed.author_name as string);
     if (parsed.cover_image_url) setBlogCoverUrl(parsed.cover_image_url as string);
+    if (parsed.cover_image_prompt) setBlogCoverPromptText(parsed.cover_image_prompt as string);
 
-    if (!parsed.title) return;
-    addToast('success', `✅ Blog imported: "${parsed.title as string}" — switch to Write tab to review`);
+    addToast('success', `✅ Blog imported: "${titleVal}" — all fields filled successfully!`);
     setBlogStudioTab('write');
     setBlogImportJson('');
   };
@@ -689,6 +718,7 @@ export default function AdminDashboardPage() {
     const formData = new FormData(e.currentTarget);
     const title = blogTitleText || (formData.get('title') as string);
     const slug =
+      blogSlugText ||
       (formData.get('slug') as string) ||
       title
         .toLowerCase()
@@ -697,12 +727,13 @@ export default function AdminDashboardPage() {
     const category = blogCategoryVal || (formData.get('category') as BlogCategory) || 'seo';
     const target_keyword = blogKeywordText || (formData.get('target_keyword') as string);
     const secondary_keywords = blogSecondaryKeywordsText || (formData.get('secondary_keywords') as string);
-    const city = (formData.get('city') as string) || 'Global';
+    const city = blogCityText || (formData.get('city') as string) || 'Global';
     const author_name = blogAuthorVal || (formData.get('author_name') as string) || `${settings.brand_name || 'Ostrune'} Team`;
     const cover_image_url =
       blogCoverUrl ||
       (formData.get('cover_image_url') as string) ||
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+    const cover_image_prompt = blogCoverPromptText || (formData.get('cover_image_prompt') as string) || '';
     const excerpt = blogExcerptText || (formData.get('excerpt') as string);
     const content = blogContentText || (formData.get('content') as string);
     const is_published = formData.get('is_published') === 'on';
@@ -718,6 +749,7 @@ export default function AdminDashboardPage() {
         city,
         author_name,
         cover_image_url,
+        cover_image_prompt,
         excerpt,
         content,
         is_published,
@@ -739,6 +771,7 @@ export default function AdminDashboardPage() {
         city,
         author_name,
         cover_image_url,
+        cover_image_prompt,
         excerpt,
         content,
         is_published,
@@ -917,12 +950,19 @@ export default function AdminDashboardPage() {
   const openBlogStudioModal = (post: BlogPost | null) => {
     setEditingBlogPost(post);
     setBlogTitleText(post?.title || '');
+    setBlogSlugText(post?.slug || '');
     setBlogContentText(post?.content || '');
     setBlogKeywordText(post?.target_keyword || '');
+    const secKw = Array.isArray(post?.secondary_keywords)
+      ? post.secondary_keywords.join(', ')
+      : (post?.secondary_keywords || '');
+    setBlogSecondaryKeywordsText(secKw);
     setBlogExcerptText(post?.excerpt || '');
+    setBlogCityText(post?.city || 'Global');
     setBlogCategoryVal(post?.category || 'seo');
     setBlogAuthorVal(post?.author_name || `${settings.brand_name || 'Ostrune'} Team`);
     setBlogCoverUrl(post?.cover_image_url || '');
+    setBlogCoverPromptText(post?.cover_image_prompt || '');
     setBlogStudioTab('write');
     setBlogModalOpen(true);
   };
@@ -2195,7 +2235,8 @@ export default function AdminDashboardPage() {
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">URL Slug</label>
                       <input
                         name="slug"
-                        defaultValue={editingBlogPost?.slug || ''}
+                        value={blogSlugText}
+                        onChange={(e) => setBlogSlugText(e.target.value)}
                         placeholder="why-is-my-website-ranking-dropping"
                         className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
@@ -2250,7 +2291,8 @@ export default function AdminDashboardPage() {
                       <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Target Region</label>
                       <input
                         name="city"
-                        defaultValue={editingBlogPost?.city || 'Global'}
+                        value={blogCityText}
+                        onChange={(e) => setBlogCityText(e.target.value)}
                         placeholder="Global"
                         className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
@@ -2274,7 +2316,7 @@ export default function AdminDashboardPage() {
                     <div className="flex gap-2 items-center">
                       <input
                         name="cover_image_url"
-                        value={blogCoverUrl || editingBlogPost?.cover_image_url || ''}
+                        value={blogCoverUrl}
                         onChange={(e) => setBlogCoverUrl(e.target.value)}
                         placeholder="https://images.unsplash.com/photo-..."
                         className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
@@ -2297,6 +2339,32 @@ export default function AdminDashboardPage() {
                       </label>
                     </div>
                   </div>
+
+                  {blogCoverPromptText && (
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-[#1C1C1C]">AI Cover Image Prompt (DALL-E / Midjourney)</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(blogCoverPromptText);
+                            addToast('success', 'AI Image Prompt copied to clipboard!');
+                          }}
+                          className="text-[11px] font-bold text-[#8B5CF6] hover:underline flex items-center gap-1"
+                        >
+                          <Copy size={12} /> Copy Prompt
+                        </button>
+                      </div>
+                      <textarea
+                        name="cover_image_prompt"
+                        rows={2}
+                        value={blogCoverPromptText}
+                        onChange={(e) => setBlogCoverPromptText(e.target.value)}
+                        placeholder="AI image prompt for cover image generation..."
+                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                      />
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Excerpt / Executive Summary *</label>

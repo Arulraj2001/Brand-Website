@@ -1621,6 +1621,7 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
       excerpt: post.excerpt,
       content: post.content,
       cover_image_url: post.cover_image_url,
+      cover_image_prompt: post.cover_image_prompt || null,
       category: post.category,
       target_keyword: post.target_keyword,
       secondary_keywords: Array.isArray(post.secondary_keywords)
