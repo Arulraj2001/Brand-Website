@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   GraduationCap,
   Award,
@@ -21,21 +20,17 @@ import {
   ArrowRight,
   Send,
   X,
-  Filter,
   Check,
-  PhoneCall,
   Video,
   ExternalLink,
 } from 'lucide-react';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 import StatCounter from '@/components/ui/StatCounter';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import LeadFormModal from '@/components/ui/LeadFormModal';
 import { useStudentData, useSiteSettings } from '@/lib/useSiteData';
-import { StudentFeedbackVideo, StudentProject, StudentProjectCategory } from '@/types';
-import { submitLead, INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
+import { StudentFeedbackVideo } from '@/types';
+import { submitLead } from '@/lib/supabase/data';
 
 // Helper to convert any YouTube, YouTube Shorts, Vimeo, or MP4 URL into embeddable format
 export function parseVideoEmbed(url: string): { type: 'youtube' | 'vimeo' | 'mp4' | 'unknown'; embedUrl: string } {
@@ -75,11 +70,6 @@ export function parseVideoEmbed(url: string): { type: 'youtube' | 'vimeo' | 'mp4
 export default function StudentProjectsPage() {
   const { feedbackVideos, projects } = useStudentData();
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Filters state
   const [selectedBranchFilter, setSelectedBranchFilter] = useState<string>('all');
@@ -107,7 +97,7 @@ export default function StudentProjectsPage() {
   });
   const [submittingForm, setSubmittingForm] = useState(false);
 
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const cleanPhone = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');
 
   const branches = [

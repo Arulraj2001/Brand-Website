@@ -40,20 +40,24 @@ export default function CaseStudyClientView({
   useEffect(() => {
     if (serverProject) return;
 
-    try {
-      const cached = localStorage.getItem('ostrune_portfolio_projects');
-      if (cached) {
-        const parsed: PortfolioProject[] = JSON.parse(cached);
-        const found = parsed.find((p) => p.slug === slug);
-        if (found) {
-          setProject(found);
+    async function loadProjectFromCache() {
+      try {
+        const cached = localStorage.getItem('ostrune_portfolio_projects');
+        if (cached) {
+          const parsed: PortfolioProject[] = JSON.parse(cached);
+          const found = parsed.find((p) => p.slug === slug);
+          if (found) {
+            setProject(found);
+          }
         }
+      } catch (e) {
+        console.warn('Error reading portfolio project from localStorage', e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.warn('Error reading portfolio project from localStorage', e);
-    } finally {
-      setLoading(false);
     }
+
+    loadProjectFromCache();
   }, [slug, serverProject]);
 
   if (loading) {
@@ -306,7 +310,7 @@ export default function CaseStudyClientView({
           <Card className="bg-white border border-[#E5E7EB] p-6 sm:p-8 rounded-2xl relative overflow-hidden shadow-xs space-y-4">
             <Quote size={36} className="text-[#FFD21E] absolute top-4 right-4 opacity-40" />
             <p className="text-base sm:text-lg text-[#1C1C1C] font-medium leading-relaxed italic">
-              "{project.testimonial}"
+              &ldquo;{project.testimonial}&rdquo;
             </p>
             <div className="border-t border-[#E5E7EB] pt-3 flex items-center justify-between">
               <div>

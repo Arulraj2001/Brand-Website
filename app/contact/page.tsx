@@ -5,14 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Globe, Info, DollarSign } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Info, DollarSign } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useCurrency, CURRENCIES } from '@/components/ui/CurrencyContext';
-import { submitLead, INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
+import { submitLead } from '@/lib/supabase/data';
 import { useSiteSettings } from '@/lib/useSiteData';
 import { getBudgetOptionsForCurrency } from '@/lib/budgetOptions';
 
@@ -31,19 +30,13 @@ type LeadFormData = z.infer<typeof leadSchema>;
 
 export default function ContactPage() {
   const { settings } = useSiteSettings();
-  const { isConverted, convertAmount, currency, rates } = useCurrency();
-  const [mounted, setMounted] = useState(false);
+  const { isConverted, currency, rates } = useCurrency();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [budgetSelection, setBudgetSelection] = useState<string>('');
   const [customAmount, setCustomAmount] = useState<string>('');
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
-  const whatsappClean = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');
+  const activeSettings = settings;
 
   const {
     register,
@@ -157,7 +150,7 @@ export default function ContactPage() {
                     Project Inquiry Received!
                   </h2>
                   <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                    Thank you! We'll get back to you within 12 hours with a custom project proposal and transparent budget options.
+                    Thank you! We&apos;ll get back to you within 12 hours with a custom project proposal and transparent budget options.
                   </p>
                   <div className="pt-2 flex justify-center gap-3">
                     <Button

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, DollarSign } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useCurrency, CURRENCIES, CurrencyCode } from './CurrencyContext';
 
 interface CurrencySelectorProps {
@@ -9,7 +9,7 @@ interface CurrencySelectorProps {
   variant?: 'pill' | 'dropdown';
 }
 
-export default function CurrencySelector({ className = '', variant = 'pill' }: CurrencySelectorProps) {
+export default function CurrencySelector({ className = '' }: CurrencySelectorProps) {
   const { currency, setCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

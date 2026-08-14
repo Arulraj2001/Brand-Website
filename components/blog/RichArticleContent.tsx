@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Copy, Check, Share2, List, BookOpen, ArrowUp, ChevronRight } from 'lucide-react';
+import { Copy, Check, Share2, List, BookOpen, ArrowUp } from 'lucide-react';
 import BlogMidCallout from './BlogMidCallout';
 import { BlogCategory } from '@/types';
 
@@ -23,7 +22,6 @@ interface TocItem {
 export default function RichArticleContent({
   content,
   excerpt,
-  title,
   category,
   postSlug,
 }: RichArticleContentProps) {
@@ -131,14 +129,14 @@ export default function RichArticleContent({
 
       // Blockquotes
       if (line.startsWith('> ')) {
-        let quoteLines: string[] = [];
+        const quoteLines: string[] = [];
         while (i < lines.length && lines[i].startsWith('> ')) {
           quoteLines.push(lines[i].replace('> ', '').trim());
           i++;
         }
         rawBlocks.push(
           <blockquote key={`quote-${keyIndex++}`} className="my-6 p-4 sm:p-5 rounded-r-xl border-l-4 border-[#FF9D00] bg-[#FFF9E6] text-[#1C1C1C] font-medium text-sm sm:text-base italic shadow-xs">
-            "{quoteLines.join(' ')}"
+            &ldquo;{quoteLines.join(' ')}&rdquo;
           </blockquote>
         );
         continue;
@@ -148,7 +146,7 @@ export default function RichArticleContent({
       if (line.startsWith('```')) {
         const lang = line.replace('```', '').trim();
         i++;
-        let codeLines: string[] = [];
+        const codeLines: string[] = [];
         while (i < lines.length && !lines[i].startsWith('```')) {
           codeLines.push(lines[i]);
           i++;

@@ -2,17 +2,11 @@
 
 import React from 'react';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function LogoMarquee() {
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = React.useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const DEFAULT_LOGOS = [
     { name: 'NovaPay', category: 'FinTech SaaS' },
     { name: 'Aether AI', category: 'Generative AI' },

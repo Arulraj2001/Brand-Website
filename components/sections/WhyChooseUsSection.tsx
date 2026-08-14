@@ -6,17 +6,11 @@ import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import { ShieldCheck, Award, TrendingUp, Users, Sparkles, Clock, Globe } from 'lucide-react';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function WhyChooseUsSection() {
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = React.useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const statEntries = (activeSettings.stat_counters_text || '')
     .split('\n')
     .map((line) => line.trim())

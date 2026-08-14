@@ -13,6 +13,11 @@ import { getBlogPosts } from '@/lib/supabase/data';
 
 const POSTS_PER_PAGE = 6;
 
+function getReadTimeMinutes(content?: string): number {
+  const wordCount = content ? content.trim().split(/\s+/).filter(Boolean).length : 300;
+  return Math.max(2, Math.ceil(wordCount / 200));
+}
+
 interface BlogPageClientProps {
   initialPosts?: BlogPost[];
 }
@@ -27,7 +32,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
   useEffect(() => {
     async function loadData() {
       const data = await getBlogPosts(true);
-      if (data && data.length > 0) {
+      if (data) {
         setPosts(data);
       }
       setLoading(false);
@@ -50,12 +55,14 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = posts.find((p) => p.is_published) || posts[0];
+  const featuredPost = filteredPosts.find((p) => p.is_published) || filteredPosts[0];
   const gridPosts = filteredPosts.filter((p) => p.id !== featuredPost?.id);
 
-  const totalPages = Math.ceil(gridPosts.length / POSTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const totalPages = Math.max(1, Math.ceil(gridPosts.length / POSTS_PER_PAGE));
+  const effectiveCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const startIndex = (effectiveCurrentPage - 1) * POSTS_PER_PAGE;
   const paginatedPosts = gridPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const featuredReadTimeMinutes = getReadTimeMinutes(featuredPost?.content);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
@@ -131,7 +138,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Clock size={13} /> 5 min read
+                      <Clock size={13} /> {featuredReadTimeMinutes} min read
                     </span>
                   </div>
 
@@ -227,13 +234,13 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
           <div className="py-16 text-center text-[#6B7280] font-medium text-sm">
             Loading published articles...
           </div>
-        ) : gridPosts.length === 0 ? (
+        ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12 space-y-3 bg-white rounded-2xl border border-[#E5E7EB] p-8">
             <BookOpen size={32} className="mx-auto text-[#FF9D00]" />
             <h3 className="text-lg font-bold text-[#1C1C1C]">No Articles Found</h3>
             <p className="text-xs text-[#6B7280]">Try searching with a different keyword or resetting filters.</p>
           </div>
-        ) : (
+        ) : gridPosts.length === 0 ? null : (
           <div className="space-y-10">
             <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
               <AnimatePresence mode="popLayout">
@@ -247,8 +254,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                       })
                     : 'Recent';
 
-                  const wordCount = post.content ? post.content.split(/\s+/).length : 300;
-                  const readTimeMinutes = Math.max(2, Math.ceil(wordCount / 200));
+                  const readTimeMinutes = getReadTimeMinutes(post.content);
 
                   return (
                     <motion.div
@@ -364,10 +370,10 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                 <div className="flex items-center gap-2">
                   {/* Previous Button */}
                   <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(effectiveCurrentPage - 1)}
+                    disabled={effectiveCurrentPage === 1}
                     className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
-                      currentPage === 1
+                      effectiveCurrentPage === 1
                         ? 'opacity-40 cursor-not-allowed bg-white text-[#9CA3AF] border border-[#E5E7EB]'
                         : 'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:border-[#FF9D00] hover:text-[#FF9D00]'
                     }`}
@@ -383,7 +389,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
                         className={`w-9 h-9 rounded-lg text-xs font-bold transition-all ${
-                          currentPage === pageNum
+                          effectiveCurrentPage === pageNum
                             ? 'bg-[#FF9D00] text-white shadow-xs'
                             : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
                         }`}
@@ -395,10 +401,10 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
 
                   {/* Next Button */}
                   <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(effectiveCurrentPage + 1)}
+                    disabled={effectiveCurrentPage === totalPages}
                     className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
-                      currentPage === totalPages
+                      effectiveCurrentPage === totalPages
                         ? 'opacity-40 cursor-not-allowed bg-white text-[#9CA3AF] border border-[#E5E7EB]'
                         : 'bg-white text-[#1C1C1C] border border-[#E5E7EB] hover:border-[#FF9D00] hover:text-[#FF9D00]'
                     }`}

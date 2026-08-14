@@ -17,6 +17,7 @@ import {
   Video,
   RotateCcw,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import IconBox from '@/components/ui/IconBox';
 import GradientText from '@/components/ui/GradientText';
 
@@ -25,7 +26,7 @@ interface ServiceItem {
   category: 'engineering' | 'growth';
   isFeaturedLarge?: boolean;
   isFeaturedRight?: boolean;
-  icon: any;
+  icon: LucideIcon;
   iconVariant: 'secondary' | 'accent' | 'success';
   badge: string;
   title: string;

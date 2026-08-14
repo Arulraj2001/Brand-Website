@@ -72,8 +72,11 @@ export async function POST(req: NextRequest) {
       path: data.path,
       name: file.name,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Upload route error:', err);
-    return NextResponse.json({ error: err.message || 'Upload failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Upload failed' },
+      { status: 500 }
+    );
   }
 }

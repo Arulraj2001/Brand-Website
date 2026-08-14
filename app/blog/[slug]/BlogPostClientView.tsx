@@ -38,25 +38,30 @@ export default function BlogPostClientView({
   useEffect(() => {
     if (serverPost) return;
 
-    // Check client-side localStorage fallback
-    try {
-      const cached = localStorage.getItem('ostrune_blog_posts');
-      if (cached) {
-        const parsed: BlogPost[] = JSON.parse(cached);
-        const found = parsed.find((p) => p.slug === slug && p.is_published);
+    async function loadPublishedPost() {
+      try {
+        const publishedPosts = await getBlogPosts(true);
+        const found = publishedPosts.find((p) => p.slug === slug) || null;
+        setPost(found);
+
         if (found) {
-          setPost(found);
-          const rel = parsed
-            .filter((p) => p.slug !== slug && p.is_published && p.category === found.category)
+          const relatedByCategory = publishedPosts
+            .filter((p) => p.slug !== slug && p.category === found.category)
             .slice(0, 3);
-          setRelatedPosts(rel.length > 0 ? rel : parsed.filter((p) => p.slug !== slug && p.is_published).slice(0, 3));
+          setRelatedPosts(
+            relatedByCategory.length > 0
+              ? relatedByCategory
+              : publishedPosts.filter((p) => p.slug !== slug).slice(0, 3)
+          );
         }
+      } catch (e) {
+        console.warn('Error loading published blog post', e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.warn('Error reading blog post from localStorage', e);
-    } finally {
-      setLoading(false);
     }
+
+    loadPublishedPost();
   }, [slug, serverPost]);
 
   if (loading) {

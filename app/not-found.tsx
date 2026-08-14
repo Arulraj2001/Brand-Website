@@ -1,6 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
-import { ArrowLeft, Sparkles, Compass } from 'lucide-react';
+import { ArrowLeft, Compass } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 

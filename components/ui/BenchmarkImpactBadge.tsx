@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { TrendingUp, Zap, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Zap } from 'lucide-react';
 
 export default function BenchmarkImpactBadge({ results }: { results: string }) {
   // Split the results string by bullet points into items if applicable

@@ -76,7 +76,7 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsProps
 
                 {/* Quote Text */}
                 <p className="text-base sm:text-lg text-[#1C1C1C] font-medium leading-relaxed italic">
-                  "{current?.quote}"
+                  &ldquo;{current?.quote}&rdquo;
                 </p>
 
                 {/* Author Info */}

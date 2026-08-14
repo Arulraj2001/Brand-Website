@@ -18,12 +18,9 @@ import {
   X,
   Sparkles,
   TrendingUp,
-  Award,
-  Clock,
   ShieldCheck,
   Star,
   ExternalLink,
-  ChevronRight,
   Filter,
   UserCheck,
   Settings as SettingsIcon,
@@ -35,20 +32,16 @@ import {
   Link2,
   Send,
   FileText,
-  Tag,
   Eye,
   EyeOff,
   UploadCloud,
   Copy,
   Check,
-  ImageIcon,
   Heading,
   Bold,
-  Italic,
   List,
   Quote as QuoteIcon,
   Code,
-  FileSpreadsheet,
   GraduationCap,
   Video,
   Play,
@@ -78,11 +71,31 @@ import {
 import { useSiteSettings, useTeamMembers, useStudentData } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
 
+type AdminTab =
+  | 'overview'
+  | 'portfolio'
+  | 'leads'
+  | 'testimonials'
+  | 'team'
+  | 'settings'
+  | 'blog'
+  | 'media'
+  | 'student_projects';
+type LeadStatus = NonNullable<Lead['status']>;
+
 interface MediaItem {
   id: string;
   url: string;
   name: string;
   created_at: string;
+}
+
+let localIdCounter = 0;
+
+function createLocalId(prefix = ''): string {
+  localIdCounter += 1;
+  const randomPart = globalThis.crypto?.randomUUID?.() || localIdCounter.toString(36);
+  return `${prefix}${randomPart}`;
 }
 
 const INITIAL_LEADS: Lead[] = [
@@ -137,7 +150,7 @@ const INITIAL_LEADS: Lead[] = [
 ];
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'leads' | 'testimonials' | 'team' | 'settings' | 'blog' | 'media' | 'student_projects'>('overview');
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -190,7 +203,9 @@ export default function AdminDashboardPage() {
   const [settingsForm, setSettingsForm] = useState<SiteSettings>(settings);
 
   useEffect(() => {
-    setSettingsForm(settings);
+    Promise.resolve().then(() => {
+      setSettingsForm(settings);
+    });
   }, [settings]);
 
   // Search & Filter States
@@ -247,7 +262,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
 
   const addToast = (type: 'success' | 'error', text: string) => {
-    const id = Math.random().toString(36).substring(2, 9);
+    const id = createLocalId('toast-');
     setToasts((prev) => [...prev, { id, type, text }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -316,7 +331,7 @@ export default function AdminDashboardPage() {
 
       const publicUrl: string = json.url;
       const newItem: MediaItem = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: createLocalId('media-'),
         name: file.name,
         url: publicUrl,
         created_at: new Date().toISOString(),
@@ -324,9 +339,9 @@ export default function AdminDashboardPage() {
       setMediaList((prev) => [newItem, ...prev]);
       setUploadingMedia(false);
       return publicUrl;
-    } catch (e: any) {
+    } catch (e: unknown) {
       setUploadingMedia(false);
-      const msg: string = e?.message || 'Upload failed';
+      const msg = e instanceof Error ? e.message : 'Upload failed';
       addToast('error', msg.includes('service role key')
         ? '⚠️ Add SUPABASE_SERVICE_ROLE_KEY to .env.local to enable uploads.'
         : `Upload failed: ${msg}`);
@@ -572,7 +587,7 @@ export default function AdminDashboardPage() {
       addToast('success', `Project "${title}" updated successfully`);
     } else {
       const newProj: PortfolioProject = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: createLocalId('project-'),
         title,
         slug,
         client_name,
@@ -632,7 +647,7 @@ export default function AdminDashboardPage() {
       addToast('success', `Testimonial from "${client_name}" updated`);
     } else {
       const newTest: Testimonial = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: createLocalId('testimonial-'),
         client_name,
         client_company,
         client_location,
@@ -680,7 +695,7 @@ export default function AdminDashboardPage() {
       addToast('success', `Team profile "${name}" updated successfully`);
     } else {
       const newMember: TeamMember = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: createLocalId('team-'),
         name,
         role,
         location,
@@ -739,8 +754,9 @@ export default function AdminDashboardPage() {
     const is_published = formData.get('is_published') === 'on';
 
     if (editingBlogPost) {
+      const previousPost = editingBlogPost;
       const updated: BlogPost = {
-        ...editingBlogPost,
+        ...previousPost,
         title,
         slug,
         category,
@@ -754,23 +770,33 @@ export default function AdminDashboardPage() {
         content,
         is_published,
         published_at: is_published
-          ? editingBlogPost.published_at || new Date().toISOString()
-          : editingBlogPost.published_at,
+          ? previousPost.published_at || new Date().toISOString()
+          : previousPost.published_at,
       };
       
       // Instantly update UI & close modal (0ms latency)
-      setBlogPosts((prev) => prev.map((post) => (post.id === editingBlogPost.id ? updated : post)));
+      setBlogPosts((prev) => prev.map((post) => (post.id === previousPost.id ? updated : post)));
       setBlogModalOpen(false);
       setEditingBlogPost(null);
       addToast('success', `⚡ Article "${title}" ${is_published ? 'published' : 'saved'} successfully!`);
 
       // Persist to Supabase in background
-      saveBlogPostToSupabase(updated).catch((err) => {
+      saveBlogPostToSupabase(updated).then((saved) => {
+        setBlogPosts((prev) =>
+          prev.map((post) =>
+            post.id === previousPost.id || post.slug === previousPost.slug || post.slug === saved.slug
+              ? saved
+              : post
+          )
+        );
+      }).catch((err) => {
         console.error('Error saving blog post to Supabase:', err);
+        setBlogPosts((prev) => prev.map((post) => (post.id === previousPost.id ? previousPost : post)));
+        addToast('error', `Article save failed: ${err instanceof Error ? err.message : 'Supabase rejected the update'}`);
       });
     } else {
       const newPost: BlogPost = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: createLocalId('blog-'),
         title,
         slug,
         category,
@@ -800,6 +826,7 @@ export default function AdminDashboardPage() {
         }
       }).catch((err) => {
         console.error('Error saving blog post to Supabase:', err);
+        addToast('error', `Article create failed: ${err instanceof Error ? err.message : 'Supabase rejected the article'}`);
       });
     }
   };
@@ -828,6 +855,8 @@ export default function AdminDashboardPage() {
     addToast('success', `Post "${target.title}" ${nextPublished ? 'published' : 'unpublished'}`);
     saveBlogPostToSupabase(updated).catch((err) => {
       console.error('Error updating publish status in Supabase:', err);
+      setBlogPosts((prev) => prev.map((p) => (p.id === id ? target : p)));
+      addToast('error', `Publish update failed: ${err instanceof Error ? err.message : 'Supabase rejected the update'}`);
     });
   };
 
@@ -862,7 +891,7 @@ export default function AdminDashboardPage() {
       addToast('success', `Student video review by "${student_name}" updated`);
     } else {
       const newVideo: StudentFeedbackVideo = {
-        id: 'sv-' + Math.random().toString(36).substring(2, 9),
+        id: createLocalId('sv-'),
         student_name,
         degree_branch,
         project_title,
@@ -924,7 +953,7 @@ export default function AdminDashboardPage() {
       addToast('success', `Student project "${title}" updated`);
     } else {
       const newProj: StudentProject = {
-        id: 'sp-' + Math.random().toString(36).substring(2, 9),
+        id: createLocalId('sp-'),
         title,
         category,
         degree,
@@ -1032,7 +1061,7 @@ export default function AdminDashboardPage() {
   const studioReadTime = Math.max(1, Math.ceil(studioWordCount / 200));
   const hasKeywordInTitle = blogKeywordText && blogTitleText.toLowerCase().includes(blogKeywordText.toLowerCase());
 
-  const NAV_ITEMS = [
+  const NAV_ITEMS: Array<{ id: AdminTab; label: string; icon: React.ElementType }> = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
     { id: 'leads', label: 'Leads Queue', icon: Users },
@@ -1074,7 +1103,7 @@ export default function AdminDashboardPage() {
               return (
                 <button
                   key={nav.id}
-                  onClick={() => setActiveTab(nav.id as any)}
+                  onClick={() => setActiveTab(nav.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-xs ${
                     isActive
                       ? 'bg-[#FF9D00] text-white font-bold shadow-xs'
@@ -1498,7 +1527,7 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center justify-end gap-2">
                           <select
                             value={l.status || 'new'}
-                            onChange={(e) => handleLeadStatusChange(l.id!, e.target.value as any)}
+                            onChange={(e) => handleLeadStatusChange(l.id!, e.target.value as LeadStatus)}
                             className="px-2 py-1 border border-[#E5E7EB] rounded-md text-xs font-bold text-[#1C1C1C] bg-white focus:outline-none focus:border-[#FF9D00]"
                           >
                             <option value="new">New</option>
@@ -1551,7 +1580,7 @@ export default function AdminDashboardPage() {
                       ))}
                     </div>
                   </div>
-                  <p className="text-xs text-[#6B7280] italic">"{t.quote}"</p>
+                  <p className="text-xs text-[#6B7280] italic">&ldquo;{t.quote}&rdquo;</p>
                   <div className="flex justify-end gap-2 pt-2 border-t border-[#E5E7EB]">
                     <button
                       onClick={() => { setEditingTestimonial(t); setTestimonialModalOpen(true); }}
@@ -1687,7 +1716,7 @@ export default function AdminDashboardPage() {
               <div>
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Team Architects Manager</h1>
                 <p className="text-xs text-[#6B7280]">
-                  Manage team profiles on the About page ("Meet the Growth Architects")
+                  Manage team profiles on the About page (&ldquo;Meet the Growth Architects&rdquo;)
                 </p>
               </div>
               <Button onClick={() => { setEditingTeamMember(null); setTeamProfileUrl(''); setTeamModalOpen(true); }} variant="primary" size="sm">
@@ -2358,31 +2387,30 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  {blogCoverPromptText && (
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-[#1C1C1C]">AI Cover Image Prompt (DALL-E / Midjourney)</label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(blogCoverPromptText);
-                            addToast('success', 'AI Image Prompt copied to clipboard!');
-                          }}
-                          className="text-[11px] font-bold text-[#8B5CF6] hover:underline flex items-center gap-1"
-                        >
-                          <Copy size={12} /> Copy Prompt
-                        </button>
-                      </div>
-                      <textarea
-                        name="cover_image_prompt"
-                        rows={2}
-                        value={blogCoverPromptText}
-                        onChange={(e) => setBlogCoverPromptText(e.target.value)}
-                        placeholder="AI image prompt for cover image generation..."
-                        className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
-                      />
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-semibold text-[#1C1C1C]">AI Cover Image Prompt (DALL-E / Midjourney)</label>
+                      <button
+                        type="button"
+                        disabled={!blogCoverPromptText}
+                        onClick={() => {
+                          navigator.clipboard.writeText(blogCoverPromptText);
+                          addToast('success', 'AI Image Prompt copied to clipboard!');
+                        }}
+                        className="text-[11px] font-bold text-[#8B5CF6] hover:underline flex items-center gap-1 disabled:opacity-40 disabled:pointer-events-none"
+                      >
+                        <Copy size={12} /> Copy Prompt
+                      </button>
                     </div>
-                  )}
+                    <textarea
+                      name="cover_image_prompt"
+                      rows={2}
+                      value={blogCoverPromptText}
+                      onChange={(e) => setBlogCoverPromptText(e.target.value)}
+                      placeholder="AI image prompt for cover image generation..."
+                      className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                    />
+                  </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">Excerpt / Executive Summary *</label>
@@ -2975,6 +3003,32 @@ export default function AdminDashboardPage() {
                 className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
               >
                 Delete Project
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TESTIMONIAL DELETE CONFIRM MODAL */}
+      {deleteConfirmTestimonial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Confirm Delete</h3>
+            <p className="text-xs text-[#6B7280]">
+              Are you sure you want to delete the testimonial from{' '}
+              <strong className="text-[#1C1C1C]">{deleteConfirmTestimonial.client_name}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmTestimonial(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteTestimonial(deleteConfirmTestimonial.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete Testimonial
               </Button>
             </div>
           </div>

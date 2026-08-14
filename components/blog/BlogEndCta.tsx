@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { ArrowRight, Sparkles, ShieldCheck, CheckCircle2, Award, Zap } from 'lucide-react';
-import Card from '@/components/ui/Card';
+import { ArrowRight, Sparkles, CheckCircle2, Award, Zap } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import FreeAuditLeadForm from './FreeAuditLeadForm';
 import { BlogCategory } from '@/types';
@@ -72,7 +70,7 @@ export default function BlogEndCta({ category, postSlug, postTitle }: BlogEndCta
                   <span className="text-[#6B7280] font-normal">{matchedCaseStudy.client_name}</span>
                 </div>
                 <p className="text-xs font-bold text-[#1C1C1C] leading-snug">
-                  "{matchedCaseStudy.results}"
+                  &ldquo;{matchedCaseStudy.results}&rdquo;
                 </p>
               </div>
             )}

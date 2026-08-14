@@ -2,10 +2,9 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ShieldCheck, Award, MapPin, Zap, ArrowRight, Code2, Target, User, Globe, Clock } from 'lucide-react';
+import { ArrowRight, User, Globe } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
-import IconBox from '@/components/ui/IconBox';
 import Button from '@/components/ui/Button';
 import { useTeamMembers } from '@/lib/useSiteData';
 

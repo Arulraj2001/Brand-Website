@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import {
   Code2,
   Smartphone,
@@ -15,7 +14,6 @@ import {
   Sparkles,
   ShieldCheck,
   Clock,
-  Globe,
 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';

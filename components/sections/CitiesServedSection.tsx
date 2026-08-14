@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Globe, Clock, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Globe, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 
 const GLOBAL_REGIONS = [

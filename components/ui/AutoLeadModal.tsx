@@ -4,20 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Send, CheckCircle2, ShieldCheck, Clock, DollarSign } from 'lucide-react';
-import { submitLead, INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
-import { useSiteSettings } from '@/lib/useSiteData';
+import { submitLead } from '@/lib/supabase/data';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useCurrency, CURRENCIES } from '@/components/ui/CurrencyContext';
 import { getBudgetOptionsForCurrency } from '@/lib/budgetOptions';
 
 export default function AutoLeadModal() {
   const pathname = usePathname();
-  const { settings } = useSiteSettings();
   const { currency, rates } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const activeCurrencyConfig = CURRENCIES[currency] || CURRENCIES.USD;
   const budgetTiers = getBudgetOptionsForCurrency(currency, rates);
@@ -34,7 +31,6 @@ export default function AutoLeadModal() {
   });
 
   useEffect(() => {
-    setMounted(true);
     // Don't trigger popup on admin routes
     if (pathname?.startsWith('/admin')) {
       return;
@@ -54,15 +50,14 @@ export default function AutoLeadModal() {
 
   // Keep pre-selected budget tier in sync when user toggles any currency (USD, INR, EUR, GBP, AUD, CAD)
   useEffect(() => {
-    const popularTier = budgetTiers.find((t) => t.value.includes('Popular'))?.value || budgetTiers[3]?.value || budgetTiers[0].value;
-    setFormData((prev) => ({ ...prev, budget_range: popularTier }));
-  }, [currency]);
+    Promise.resolve().then(() => {
+      setFormData((prev) => ({ ...prev, budget_range: defaultPopularBudget }));
+    });
+  }, [defaultPopularBudget]);
 
   if (pathname?.startsWith('/admin')) {
     return null;
   }
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

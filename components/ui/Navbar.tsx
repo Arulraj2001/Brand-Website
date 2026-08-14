@@ -3,21 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PhoneCall, Menu, X, ArrowRight, Globe } from 'lucide-react';
+import { PhoneCall, Menu, X, ArrowRight } from 'lucide-react';
 import Button from './Button';
 import ArusythApexLogo from './ArusythApexLogo';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function Navbar() {
   const { settings } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    setMounted(true);
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setScrolled(true);
@@ -40,7 +37,7 @@ export default function Navbar() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const cleanPhoneTel = activeSettings.phone.replace(/[^0-9+]/g, '');
 
   return (

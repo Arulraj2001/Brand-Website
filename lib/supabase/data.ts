@@ -1,6 +1,11 @@
 import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
 import { createClient, isSupabaseConfigured } from './client';
 
+type PortfolioProjectRow = PortfolioProject & { client_city?: string };
+type TestimonialRow = Testimonial & { client_city?: string };
+type LeadRow = Lead & { city?: string };
+type BlogPostPayload = Record<string, unknown>;
+
 export const INITIAL_SITE_SETTINGS: SiteSettings = {
   phone: '+91 8637474067',
   whatsapp_number: '918637474067',
@@ -417,7 +422,7 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
     }
 
     // Ensure fallback mapping for client_location
-    return data.map((p: any) => ({
+    return (data as PortfolioProjectRow[]).map((p) => ({
       ...p,
       client_location: p.client_location || p.client_city || 'Global',
     })) as PortfolioProject[];
@@ -446,7 +451,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
       return INITIAL_TESTIMONIALS;
     }
 
-    return data.map((t: any) => ({
+    return (data as TestimonialRow[]).map((t) => ({
       ...t,
       client_location: t.client_location || t.client_city || 'Global',
     })) as Testimonial[];
@@ -508,7 +513,8 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
 
   if (typeof window !== 'undefined' && combined.length > 0) {
     try {
-      localStorage.setItem('ostrune_blog_posts', JSON.stringify(combined));
+      const cacheablePosts = publishedOnly ? combined.filter((p) => p.is_published) : combined;
+      localStorage.setItem('ostrune_blog_posts', JSON.stringify(cacheablePosts));
     } catch {}
   }
 
@@ -516,8 +522,11 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
 }
 
 // Helper to fetch single published blog post by slug
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const all = await getBlogPosts(false);
+export async function getBlogPostBySlug(
+  slug: string,
+  options: { includeDrafts?: boolean } = {}
+): Promise<BlogPost | null> {
+  const all = await getBlogPosts(!options.includeDrafts);
   return all.find((p) => p.slug === slug) || null;
 }
 
@@ -591,7 +600,7 @@ export async function getLeadsFromSupabase(): Promise<Lead[]> {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      return data.map((l: any) => ({
+      return (data as LeadRow[]).map((l) => ({
         ...l,
         country: l.country || l.city || 'Global',
       })) as Lead[];
@@ -604,27 +613,38 @@ const isUUID = (str?: string) =>
   typeof str === 'string' &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
-  if (typeof window !== 'undefined') {
-    try {
-      const cached = localStorage.getItem('ostrune_blog_posts');
-      let list: BlogPost[] = cached ? JSON.parse(cached) : INITIAL_BLOG_POSTS;
-      const idx = list.findIndex((p) => p.id === post.id || p.slug === post.slug);
-      if (idx !== -1) {
-        list[idx] = { ...list[idx], ...post };
-      } else {
-        list = [post, ...list];
-      }
-      localStorage.setItem('ostrune_blog_posts', JSON.stringify(list));
-    } catch (e) {
-      console.warn('localStorage blog write warning', e);
+function cacheBlogPostLocal(post: BlogPost, previousSlug?: string): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const cached = localStorage.getItem('ostrune_blog_posts');
+    let list: BlogPost[] = cached ? JSON.parse(cached) : INITIAL_BLOG_POSTS;
+    const idx = list.findIndex(
+      (p) =>
+        p.id === post.id ||
+        p.slug === post.slug ||
+        (previousSlug ? p.slug === previousSlug : false)
+    );
+
+    if (idx !== -1) {
+      list[idx] = { ...list[idx], ...post };
+    } else {
+      list = [post, ...list];
     }
+
+    localStorage.setItem('ostrune_blog_posts', JSON.stringify(list));
+  } catch (e) {
+    console.warn('localStorage blog write warning', e);
   }
+}
+
+export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
+  cacheBlogPostLocal(post);
 
   if (!isSupabaseConfigured()) return post;
   try {
     const supabase = createClient();
-    const payload: any = {
+    const payload: BlogPostPayload = {
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
@@ -642,21 +662,34 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
       published_at: post.published_at || (post.is_published ? new Date().toISOString() : null),
     };
 
-    if (isUUID(post.id)) {
-      payload.id = post.id;
+    const savePayload = (nextPayload: BlogPostPayload) =>
+      isUUID(post.id)
+        ? supabase.from('blog_posts').update(nextPayload).eq('id', post.id).select().single()
+        : supabase.from('blog_posts').upsert(nextPayload, { onConflict: 'slug' }).select().single();
+
+    let { data, error } = await savePayload(payload);
+
+    if (error && error.message?.includes('cover_image_prompt')) {
+      const legacyPayload = { ...payload };
+      delete legacyPayload.cover_image_prompt;
+      console.warn('blog_posts.cover_image_prompt is missing in Supabase; saving article without that field.');
+      const retry = await savePayload(legacyPayload);
+      data = retry.data;
+      error = retry.error;
     }
 
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .upsert(payload, { onConflict: 'slug' })
-      .select()
-      .single();
+    if (error) {
+      throw error;
+    }
 
-    if (!error && data) {
-      return data as BlogPost;
+    if (data) {
+      const saved = data as BlogPost;
+      cacheBlogPostLocal(saved, post.slug);
+      return saved;
     }
   } catch (err) {
     console.error('Error saving blog post to Supabase:', err);
+    throw err;
   }
   return post;
 }
@@ -675,8 +708,11 @@ export async function deleteBlogPostFromSupabase(id: string, slug?: string): Pro
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (id) await supabase.from('blog_posts').delete().eq('id', id);
-    if (slug) await supabase.from('blog_posts').delete().eq('slug', slug);
+    if (slug) {
+      await supabase.from('blog_posts').delete().eq('slug', slug);
+    } else if (isUUID(id)) {
+      await supabase.from('blog_posts').delete().eq('id', id);
+    }
   } catch (err) {
     console.error('Error deleting blog post from Supabase:', err);
   }
@@ -686,7 +722,7 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
   if (!isSupabaseConfigured()) return project;
   try {
     const supabase = createClient();
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       title: project.title,
       slug: project.slug,
       client_name: project.client_name,
@@ -743,7 +779,7 @@ export async function saveTestimonialToSupabase(t: Testimonial): Promise<Testimo
   if (!isSupabaseConfigured()) return t;
   try {
     const supabase = createClient();
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       client_name: t.client_name,
       client_company: t.client_company,
       client_location: t.client_location || t.client_city || 'Global',

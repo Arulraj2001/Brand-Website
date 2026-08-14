@@ -2,13 +2,11 @@
 
 import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { TrendingUp, CheckCircle2, Sparkles, Globe, Zap, Gauge, ShieldCheck } from 'lucide-react';
+import { TrendingUp, CheckCircle2, Sparkles, Gauge } from 'lucide-react';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function HeroMockup() {
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = React.useState(false);
 
   // Mouse Gyroscope 3D Tilt Values
   const mouseX = useMotionValue(0);
@@ -16,10 +14,6 @@ export default function HeroMockup() {
 
   const rotateX = useTransform(mouseY, [-150, 150], [8, -8]);
   const rotateY = useTransform(mouseX, [-150, 150], [-8, 8]);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -34,7 +28,7 @@ export default function HeroMockup() {
     mouseY.set(0);
   };
 
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const feedTitle = activeSettings.hero_feed_title || 'Verified Strategy Consultation Call';
   const feedSubtitle = activeSettings.hero_feed_subtitle || 'Budget: $1,000–$3,000 • Sub-Second Speed Upgrade';
   const feedBadge = activeSettings.hero_feed_badge || 'Just Now';

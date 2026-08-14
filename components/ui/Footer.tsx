@@ -2,37 +2,27 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Mail, Phone, MapPin, Globe, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, ShieldCheck } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 import ArusythApexLogo from './ArusythApexLogo';
 import {
   LinkedInIcon,
   TwitterXIcon,
   InstagramIcon,
-  GitHubIcon,
-  YouTubeIcon,
-  FacebookIcon,
 } from './SocialIcons';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function Footer() {
   const pathname = usePathname();
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Hide footer completely on all admin routes (/admin, /admin/login)
   if (pathname?.startsWith('/admin')) {
     return null;
   }
 
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
 
   const jsonLdData = {
     '@context': 'https://schema.org',

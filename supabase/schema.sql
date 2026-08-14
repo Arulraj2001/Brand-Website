@@ -101,6 +101,7 @@ create table if not exists blog_posts (
   excerpt text,
   content text not null,
   cover_image_url text,
+  cover_image_prompt text,
   category text check (category in ('seo', 'web_dev', 'app_dev', 'website_upgrade', 'local_business', 'meta_ads', 'ugc_ads', 'sales_growth', 'general')),
   target_keyword text,
   secondary_keywords text,
@@ -112,6 +113,7 @@ create table if not exists blog_posts (
 );
 
 alter table blog_posts add column if not exists secondary_keywords text;
+alter table blog_posts add column if not exists cover_image_prompt text;
 
 -- Insert Default Site Settings Row
 insert into site_settings (id, phone, whatsapp_number, email, address, linkedin_url, twitter_url, instagram_url)

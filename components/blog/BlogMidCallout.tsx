@@ -11,8 +11,18 @@ interface BlogMidCalloutProps {
   postSlug?: string;
 }
 
-export default function BlogMidCallout({ category }: BlogMidCalloutProps) {
+function withBlogSource(url: string, postSlug?: string): string {
+  if (!postSlug) return url;
+
+  const [baseUrl, hash] = url.split('#');
+  const separator = baseUrl.includes('?') ? '&' : '?';
+  const trackedUrl = `${baseUrl}${separator}source=blog&post=${encodeURIComponent(postSlug)}`;
+  return hash ? `${trackedUrl}#${hash}` : trackedUrl;
+}
+
+export default function BlogMidCallout({ category, postSlug }: BlogMidCalloutProps) {
   const ctaConfig = getBlogCtaConfig(category);
+  const serviceUrl = withBlogSource(ctaConfig.serviceUrl, postSlug);
 
   return (
     <div className="my-8 p-5 sm:p-6 bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border-l-4 border-[#FF9D00] border-y border-r border-[#FFD21E]/60 rounded-r-2xl shadow-2xs space-y-3 relative overflow-hidden group">
@@ -29,7 +39,7 @@ export default function BlogMidCallout({ category }: BlogMidCalloutProps) {
         </div>
 
         <Link
-          href={ctaConfig.serviceUrl}
+          href={serviceUrl}
           className="text-xs font-bold text-[#1C1C1C] hover:text-[#FF9D00] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
         >
           <span>{ctaConfig.ctaButtonText}</span>
@@ -51,7 +61,7 @@ export default function BlogMidCallout({ category }: BlogMidCalloutProps) {
           Need custom engineering or audit for your site?
         </span>
         <Link
-          href={ctaConfig.serviceUrl}
+          href={serviceUrl}
           className="font-bold text-[#FF9D00] hover:underline inline-flex items-center gap-1 shrink-0"
         >
           <Zap size={12} />

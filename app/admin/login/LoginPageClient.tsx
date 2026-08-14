@@ -9,7 +9,6 @@ import Button from '@/components/ui/Button';
 import ArusythApexLogo from '@/components/ui/ArusythApexLogo';
 import { createClient } from '@/lib/supabase/client';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function LoginPageClient() {
   const [email, setEmail] = useState('');
@@ -18,13 +17,8 @@ export default function LoginPageClient() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const router = useRouter();
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +55,8 @@ export default function LoginPageClient() {
         router.push('/admin');
         router.refresh();
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'An unexpected error occurred.');
       setLoading(false);
     }
   };

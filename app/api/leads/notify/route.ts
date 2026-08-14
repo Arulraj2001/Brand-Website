@@ -175,11 +175,11 @@ export async function POST(request: Request) {
       emailId: resendData.id,
       message: 'Email notification sent successfully to arulraj8637@gmail.com',
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[Lead Notification] Exception:', err);
     return NextResponse.json({
       success: false,
-      error: err.message || 'Unknown error dispatching email',
+      error: err instanceof Error ? err.message : 'Unknown error dispatching email',
     }, { status: 500 });
   }
 }

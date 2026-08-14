@@ -1,20 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import WhatsAppIcon from './WhatsAppIcon';
 import { useSiteSettings } from '@/lib/useSiteData';
-import { INITIAL_SITE_SETTINGS } from '@/lib/supabase/data';
 
 export default function WhatsAppFloatingButton() {
   const { settings } = useSiteSettings();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const activeSettings = mounted ? settings : INITIAL_SITE_SETTINGS;
+  const activeSettings = settings;
   const phoneNumber = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');
   const message = encodeURIComponent(
     `Hi ${activeSettings.brand_name || 'Ostrune'}! I would like to book a strategy call for my project.`

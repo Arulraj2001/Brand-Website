@@ -1,8 +1,11 @@
 import React from 'react';
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
+import type { BlogPost } from '@/types';
 import BlogPostClientView from './BlogPostClientView';
 
 export const dynamicParams = true;
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -72,7 +75,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
 
-  let finalRelated: any[] = [];
+  let finalRelated: BlogPost[] = [];
   if (post) {
     const allPublished = await getBlogPosts(true);
     const relatedPosts = allPublished

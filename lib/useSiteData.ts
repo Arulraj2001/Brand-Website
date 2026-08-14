@@ -23,7 +23,6 @@ import {
   saveStudentProjectToSupabase,
   deleteStudentProjectFromSupabase,
   INITIAL_SITE_SETTINGS,
-  INITIAL_TEAM_MEMBERS,
   INITIAL_STUDENT_FEEDBACK_VIDEOS,
   INITIAL_STUDENT_PROJECTS,
 } from '@/lib/supabase/data';
@@ -32,12 +31,16 @@ export function useSiteSettings() {
   const [settings, setSettings] = useState<SiteSettings>(INITIAL_SITE_SETTINGS);
 
   useEffect(() => {
+    let active = true;
+
     // 1. Initial load from local cache/defaults
-    setSettings(getSiteSettings());
+    Promise.resolve().then(() => {
+      if (active) setSettings(getSiteSettings());
+    });
 
     // 2. Fetch fresh settings from Supabase DB asynchronously
     fetchSiteSettingsFromSupabase().then((fresh) => {
-      if (fresh) setSettings(fresh);
+      if (active && fresh) setSettings(fresh);
     });
 
     const handleUpdate = () => {
@@ -47,6 +50,7 @@ export function useSiteSettings() {
     window.addEventListener('ostrune_settings_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
+      active = false;
       window.removeEventListener('ostrune_settings_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
@@ -64,10 +68,14 @@ export function useTeamMembers() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getTeamMembers());
 
   useEffect(() => {
-    setTeamMembers(getTeamMembers());
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (active) setTeamMembers(getTeamMembers());
+    });
 
     fetchTeamMembersFromSupabase().then((freshTeam) => {
-      if (freshTeam && freshTeam.length > 0) {
+      if (active && freshTeam && freshTeam.length > 0) {
         setTeamMembers(freshTeam);
       }
     });
@@ -79,6 +87,7 @@ export function useTeamMembers() {
     window.addEventListener('ostrune_team_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
+      active = false;
       window.removeEventListener('ostrune_team_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
@@ -97,15 +106,20 @@ export function useStudentData() {
   const [projects, setProjects] = useState<StudentProject[]>(INITIAL_STUDENT_PROJECTS);
 
   useEffect(() => {
-    setFeedbackVideos(getStudentFeedbackVideos());
-    setProjects(getStudentProjects());
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (!active) return;
+      setFeedbackVideos(getStudentFeedbackVideos());
+      setProjects(getStudentProjects());
+    });
 
     fetchStudentFeedbackFromSupabase().then((fresh) => {
-      if (fresh) setFeedbackVideos(fresh);
+      if (active && fresh) setFeedbackVideos(fresh);
     });
 
     fetchStudentProjectsFromSupabase().then((freshProj) => {
-      if (freshProj) setProjects(freshProj);
+      if (active && freshProj) setProjects(freshProj);
     });
 
     const handleUpdate = () => {
@@ -116,6 +130,7 @@ export function useStudentData() {
     window.addEventListener('ostrune_student_data_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
+      active = false;
       window.removeEventListener('ostrune_student_data_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };

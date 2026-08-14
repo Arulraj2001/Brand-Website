@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ShieldCheck, Globe, Sparkles, Clock, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ShieldCheck, Globe, Sparkles, Clock } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 import HeroMockup from './HeroMockup';
