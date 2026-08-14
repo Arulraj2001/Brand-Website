@@ -1502,7 +1502,20 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
-  if (!isSupabaseConfigured()) return publishedOnly ? INITIAL_BLOG_POSTS.filter((p) => p.is_published) : INITIAL_BLOG_POSTS;
+  let posts: BlogPost[] = [];
+  if (!isSupabaseConfigured()) {
+    posts = INITIAL_BLOG_POSTS;
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('ostrune_blog_posts');
+        if (cached) posts = JSON.parse(cached);
+      } catch (e) {
+        console.warn('localStorage blog read error:', e);
+      }
+    }
+    return publishedOnly ? posts.filter((p) => p.is_published) : posts;
+  }
+
   try {
     const supabase = createClient();
     let query = supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
@@ -1514,12 +1527,21 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
     const { data, error } = await query;
 
     if (error || !data || data.length === 0) {
-      return publishedOnly ? INITIAL_BLOG_POSTS.filter((p) => p.is_published) : INITIAL_BLOG_POSTS;
+      posts = INITIAL_BLOG_POSTS;
+    } else {
+      posts = data as BlogPost[];
     }
-    return data as BlogPost[];
   } catch {
-    return publishedOnly ? INITIAL_BLOG_POSTS.filter((p) => p.is_published) : INITIAL_BLOG_POSTS;
+    posts = INITIAL_BLOG_POSTS;
   }
+
+  if (typeof window !== 'undefined' && posts.length > 0) {
+    try {
+      localStorage.setItem('ostrune_blog_posts', JSON.stringify(posts));
+    } catch {}
+  }
+
+  return publishedOnly ? posts.filter((p) => p.is_published) : posts;
 }
 
 // Helper to fetch single published blog post by slug
@@ -1612,6 +1634,22 @@ const isUUID = (str?: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
 export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_blog_posts');
+      let list: BlogPost[] = cached ? JSON.parse(cached) : INITIAL_BLOG_POSTS;
+      const idx = list.findIndex((p) => p.id === post.id || p.slug === post.slug);
+      if (idx !== -1) {
+        list[idx] = { ...list[idx], ...post };
+      } else {
+        list = [post, ...list];
+      }
+      localStorage.setItem('ostrune_blog_posts', JSON.stringify(list));
+    } catch (e) {
+      console.warn('localStorage blog write warning', e);
+    }
+  }
+
   if (!isSupabaseConfigured()) return post;
   try {
     const supabase = createClient();

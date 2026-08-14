@@ -2499,7 +2499,7 @@ export default function AdminDashboardPage() {
                     type="checkbox"
                     id="is_published"
                     name="is_published"
-                    defaultChecked={editingBlogPost?.is_published ?? false}
+                    defaultChecked={editingBlogPost ? editingBlogPost.is_published : true}
                     className="w-4 h-4 text-[#FF9D00] rounded-sm focus:ring-[#FF9D00]"
                   />
                   <label htmlFor="is_published" className="text-xs font-bold text-[#1C1C1C]">

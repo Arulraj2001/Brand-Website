@@ -26,13 +26,14 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
 
   useEffect(() => {
     async function loadData() {
-      if (initialPosts.length > 0) return;
       const data = await getBlogPosts(true);
-      setPosts(data);
+      if (data && data.length > 0) {
+        setPosts(data);
+      }
       setLoading(false);
     }
     loadData();
-  }, [initialPosts]);
+  }, []);
 
   const handleFilterChange = (cat: string) => {
     setFilter(cat);
