@@ -712,7 +712,7 @@ export default function AdminDashboardPage() {
     addToast('success', 'Global contact settings & social links updated across all pages');
   };
 
-  // Advanced Blog Post Save Handler
+  // Advanced Blog Post Save Handler — Optimistic & Fast UI Response
   const handleSaveBlogPost = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -757,9 +757,17 @@ export default function AdminDashboardPage() {
           ? editingBlogPost.published_at || new Date().toISOString()
           : editingBlogPost.published_at,
       };
+      
+      // Instantly update UI & close modal (0ms latency)
       setBlogPosts((prev) => prev.map((post) => (post.id === editingBlogPost.id ? updated : post)));
-      await saveBlogPostToSupabase(updated);
-      addToast('success', `Blog post "${title}" updated successfully`);
+      setBlogModalOpen(false);
+      setEditingBlogPost(null);
+      addToast('success', `⚡ Article "${title}" ${is_published ? 'published' : 'saved'} successfully!`);
+
+      // Persist to Supabase in background
+      saveBlogPostToSupabase(updated).catch((err) => {
+        console.error('Error saving blog post to Supabase:', err);
+      });
     } else {
       const newPost: BlogPost = {
         id: Math.random().toString(36).substring(2, 9),
@@ -778,24 +786,32 @@ export default function AdminDashboardPage() {
         published_at: is_published ? new Date().toISOString() : undefined,
         created_at: new Date().toISOString(),
       };
-      setBlogPosts((prev) => [newPost, ...prev]);
-      const saved = await saveBlogPostToSupabase(newPost);
-      if (saved && saved.id) {
-        setBlogPosts((prev) => prev.map((p) => (p.slug === slug ? saved : p)));
-      }
-      addToast('success', `Blog post "${title}" created successfully`);
-    }
 
-    setBlogModalOpen(false);
-    setEditingBlogPost(null);
+      // Instantly update UI & close modal (0ms latency)
+      setBlogPosts((prev) => [newPost, ...prev]);
+      setBlogModalOpen(false);
+      setEditingBlogPost(null);
+      addToast('success', `⚡ Article "${title}" ${is_published ? 'published' : 'created'} successfully!`);
+
+      // Persist to Supabase in background
+      saveBlogPostToSupabase(newPost).then((saved) => {
+        if (saved && saved.id) {
+          setBlogPosts((prev) => prev.map((p) => (p.slug === slug ? saved : p)));
+        }
+      }).catch((err) => {
+        console.error('Error saving blog post to Supabase:', err);
+      });
+    }
   };
 
   const handleDeleteBlogPost = async (id: string) => {
     const target = blogPosts.find((p) => p.id === id);
     setBlogPosts((prev) => prev.filter((p) => p.id !== id));
-    await deleteBlogPostFromSupabase(id, target?.slug);
-    addToast('success', 'Blog post deleted');
     setDeleteConfirmBlogPost(null);
+    addToast('success', 'Blog post deleted');
+    deleteBlogPostFromSupabase(id, target?.slug).catch((err) => {
+      console.error('Error deleting blog post from Supabase:', err);
+    });
   };
 
   const handleTogglePublishPost = async (id: string) => {
@@ -809,8 +825,10 @@ export default function AdminDashboardPage() {
     };
 
     setBlogPosts((prev) => prev.map((p) => (p.id === id ? updated : p)));
-    await saveBlogPostToSupabase(updated);
     addToast('success', `Post "${target.title}" ${nextPublished ? 'published' : 'unpublished'}`);
+    saveBlogPostToSupabase(updated).catch((err) => {
+      console.error('Error updating publish status in Supabase:', err);
+    });
   };
 
   // Student Video Feedback Handlers
