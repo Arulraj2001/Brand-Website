@@ -104,14 +104,20 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
               <div className="lg:col-span-7 relative min-h-[300px] lg:min-h-[380px] overflow-hidden bg-[#1C1C1C]">
                 {/* Ambient Blurred Background Fill */}
                 <Image
-                  src={featuredPost.cover_image_url}
+                  src={
+                    featuredPost.cover_image_url ||
+                    `/api/blog-banner?title=${encodeURIComponent(featuredPost.title)}&category=${encodeURIComponent(featuredPost.category)}&excerpt=${encodeURIComponent(featuredPost.excerpt || '')}&city=${encodeURIComponent(featuredPost.city || 'Global')}`
+                  }
                   alt=""
                   fill
                   className="object-cover blur-xl opacity-40 scale-110"
                 />
                 {/* Sharp Foreground Image Fit To Card */}
                 <Image
-                  src={featuredPost.cover_image_url}
+                  src={
+                    featuredPost.cover_image_url ||
+                    `/api/blog-banner?title=${encodeURIComponent(featuredPost.title)}&category=${encodeURIComponent(featuredPost.category)}&excerpt=${encodeURIComponent(featuredPost.excerpt || '')}&city=${encodeURIComponent(featuredPost.city || 'Global')}`
+                  }
                   alt={featuredPost.title}
                   fill
                   priority
@@ -273,7 +279,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                           <Image
                             src={
                               post.cover_image_url ||
-                              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                              `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
                             }
                             alt=""
                             fill
@@ -283,7 +289,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                           <Image
                             src={
                               post.cover_image_url ||
-                              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                              `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
                             }
                             alt={post.title}
                             fill

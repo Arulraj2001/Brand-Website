@@ -215,7 +215,7 @@ export default function BlogPostClientView({
           <Image
             src={
               post.cover_image_url ||
-              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+              `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
             }
             alt=""
             fill
@@ -225,7 +225,7 @@ export default function BlogPostClientView({
           <Image
             src={
               post.cover_image_url ||
-              'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+              `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
             }
             alt={post.title}
             fill

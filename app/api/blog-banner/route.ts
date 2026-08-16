@@ -14,7 +14,7 @@ interface ThemeConfig {
 }
 
 const PALETTES: Record<string, ThemeConfig> = {
-  // Theme 1: Gold & Midnight Blue (Default / Web Dev)
+  // Theme 1: Gold & Midnight Blue
   gold: {
     bgStart: '#0A1128',
     bgMid: '#101B3B',
@@ -25,7 +25,7 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#FF9D00',
     badgeBorder: '#FFD21E',
   },
-  // Theme 2: Cyber Purple & Neon Cyan (App Dev & AI Tech)
+  // Theme 2: Cyber Purple & Neon Cyan
   purple: {
     bgStart: '#12092B',
     bgMid: '#1F1147',
@@ -36,7 +36,7 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#C084FC',
     badgeBorder: '#C084FC',
   },
-  // Theme 3: Emerald Mint & Gold (SEO & Organic Growth)
+  // Theme 3: Emerald Mint & Gold
   emerald: {
     bgStart: '#041B15',
     bgMid: '#0A2E25',
@@ -47,7 +47,7 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#34D399',
     badgeBorder: '#34D399',
   },
-  // Theme 4: Sunset Crimson & Amber Gold (UGC Ads & Video Marketing)
+  // Theme 4: Sunset Crimson & Amber Gold
   crimson: {
     bgStart: '#1A0A0F',
     bgMid: '#2E101B',
@@ -58,7 +58,7 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#FB7185',
     badgeBorder: '#FB7185',
   },
-  // Theme 5: Ocean Sapphire & Electric Cyan (Local Business & Speed)
+  // Theme 5: Ocean Sapphire & Electric Cyan
   ocean: {
     bgStart: '#051923',
     bgMid: '#0A2A3A',
@@ -69,7 +69,7 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#00A6FB',
     badgeBorder: '#00A6FB',
   },
-  // Theme 6: Electric Violet & Magenta (Sales Growth & Lead Gen)
+  // Theme 6: Electric Violet & Magenta
   violet: {
     bgStart: '#1C0620',
     bgMid: '#340C3B',
@@ -80,17 +80,72 @@ const PALETTES: Record<string, ThemeConfig> = {
     metaColor: '#F472B6',
     badgeBorder: '#F472B6',
   },
-};
-
-const CATEGORY_THEME_MAP: Record<string, string> = {
-  web_dev: 'gold',
-  app_dev: 'purple',
-  seo: 'emerald',
-  ugc_ads: 'crimson',
-  website_upgrade: 'ocean',
-  local_business: 'ocean',
-  meta_ads: 'crimson',
-  sales_growth: 'violet',
+  // Theme 7: Deep Indigo & Electric Lime
+  indigo: {
+    bgStart: '#0B0D28',
+    bgMid: '#161950',
+    bgEnd: '#050614',
+    glowColor: '#6366F1',
+    leftStripe: ['#84CC16', '#6366F1', '#A855F7'],
+    subHeadlineColor: '#A5B4FC',
+    metaColor: '#818CF8',
+    badgeBorder: '#818CF8',
+  },
+  // Theme 8: Deep Teal & Solar Yellow
+  teal: {
+    bgStart: '#061D21',
+    bgMid: '#0E363D',
+    bgEnd: '#030F11',
+    glowColor: '#14B8A6',
+    leftStripe: ['#FACC15', '#14B8A6', '#06B6D4'],
+    subHeadlineColor: '#5EEAD4',
+    metaColor: '#2DD4BF',
+    badgeBorder: '#2DD4BF',
+  },
+  // Theme 9: Rose Gold & Sunset Coral
+  rose: {
+    bgStart: '#200814',
+    bgMid: '#3A1024',
+    bgEnd: '#10040A',
+    glowColor: '#FB7185',
+    leftStripe: ['#FB7185', '#F43F5E', '#E11D48'],
+    subHeadlineColor: '#FECDD3',
+    metaColor: '#FDA4AF',
+    badgeBorder: '#FDA4AF',
+  },
+  // Theme 10: Bright Amber & Royal Blue
+  amber: {
+    bgStart: '#1F1404',
+    bgMid: '#382408',
+    bgEnd: '#0F0902',
+    glowColor: '#F59E0B',
+    leftStripe: ['#3B82F6', '#F59E0B', '#EF4444'],
+    subHeadlineColor: '#FDE68A',
+    metaColor: '#FBBF24',
+    badgeBorder: '#FBBF24',
+  },
+  // Theme 11: Neon Cyan & Cyber Purple
+  cyan: {
+    bgStart: '#041B26',
+    bgMid: '#0A3146',
+    bgEnd: '#020D13',
+    glowColor: '#06B6D4',
+    leftStripe: ['#06B6D4', '#8B5CF6', '#F43F5E'],
+    subHeadlineColor: '#67E8F9',
+    metaColor: '#22D3EE',
+    badgeBorder: '#22D3EE',
+  },
+  // Theme 12: Lava Red & Electric Gold
+  lava: {
+    bgStart: '#220907',
+    bgMid: '#3E120D',
+    bgEnd: '#110403',
+    glowColor: '#EF4444',
+    leftStripe: ['#EF4444', '#F59E0B', '#8B5CF6'],
+    subHeadlineColor: '#FCA5A5',
+    metaColor: '#F87171',
+    badgeBorder: '#F87171',
+  },
 };
 
 function selectTheme(queryTheme: string | null, category: string, title: string): ThemeConfig {
@@ -98,16 +153,12 @@ function selectTheme(queryTheme: string | null, category: string, title: string)
     return PALETTES[queryTheme.toLowerCase()];
   }
 
-  const catLower = category.toLowerCase().replace(/ /g, '_');
-  if (CATEGORY_THEME_MAP[catLower] && PALETTES[CATEGORY_THEME_MAP[catLower]]) {
-    return PALETTES[CATEGORY_THEME_MAP[catLower]];
-  }
-
-  // Fallback hash selection based on title
+  // Hash title + category to deterministically assign a unique theme per article title
+  const key = `${title.trim()}_${category.trim()}`.toLowerCase();
   const keys = Object.keys(PALETTES);
   let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = (hash << 5) - hash + title.charCodeAt(i);
+  for (let i = 0; i < key.length; i++) {
+    hash = (hash << 5) - hash + key.charCodeAt(i);
     hash |= 0;
   }
   const idx = Math.abs(hash) % keys.length;
