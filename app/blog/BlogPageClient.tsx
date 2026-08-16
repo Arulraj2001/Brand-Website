@@ -119,11 +119,11 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                   className="object-contain p-4 relative z-10 group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/80 via-transparent to-transparent pointer-events-none z-15" />
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-[4px] bg-[#FF9D00] text-white text-xs font-extrabold uppercase shadow-xs">
+                <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-[4px] bg-[#FF9D00] text-white text-xs font-extrabold uppercase shadow-md">
                     Featured Masterclass
                   </span>
-                  <span className="px-3 py-1 rounded-[4px] bg-[#1C1C1C]/80 text-white text-xs font-semibold backdrop-blur-xs border border-white/20">
+                  <span className="px-3 py-1 rounded-[4px] bg-[#1C1C1C]/90 text-white text-xs font-semibold backdrop-blur-md stroke-1 border border-white/20 shadow-md">
                     {featuredPost.category.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
@@ -293,14 +293,14 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                           <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/70 via-transparent to-transparent opacity-80 pointer-events-none z-15" />
 
                           {/* Category Badge */}
-                          <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                            <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase">
+                          <div className="absolute top-2.5 left-2.5 z-30 flex items-center gap-1.5">
+                            <span className="bg-[#3B82F6] text-white px-2 py-0.5 rounded-[4px] text-[11px] font-bold uppercase shadow-sm">
                               {post.category.replace('_', ' ')}
                             </span>
                           </div>
 
                           {post.city && (
-                            <div className="absolute top-2.5 right-2.5 bg-[#1C1C1C]/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-xs">
+                            <div className="absolute top-2.5 right-2.5 z-30 bg-[#1C1C1C]/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 backdrop-blur-md border border-white/10 shadow-sm">
                               <MapPin size={10} className="text-[#3B82F6]" />
                               {post.city}
                             </div>
