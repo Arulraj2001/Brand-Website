@@ -168,6 +168,52 @@ create policy "Allow full access for authenticated admin on site_settings" on si
 create policy "Allow full access for authenticated admin on team_members" on team_members for all using (auth.role() = 'authenticated');
 create policy "Allow full access for authenticated admin on blog_posts" on blog_posts for all using (auth.role() = 'authenticated');
 
+-- 8. Site Stats Table
+create table if not exists site_stats (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  value numeric not null,
+  suffix text default '',
+  description text default '',
+  sort_order int default 0,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+-- 9. Activity Feed Table
+create table if not exists activity_feed (
+  id uuid primary key default gen_random_uuid(),
+  text text not null,
+  subtext text,
+  badge text,
+  timestamp timestamp with time zone default now(),
+  is_active boolean default true,
+  created_at timestamp with time zone default now()
+);
+
+-- 10. Client Logos Table (Trusted by Logo Wall)
+create table if not exists client_logos (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  logo_url text,
+  link_url text,
+  category text,
+  created_at timestamp with time zone default now()
+);
+
+-- RLS Security Policies for new tables
+alter table site_stats enable row level security;
+alter table activity_feed enable row level security;
+alter table client_logos enable row level security;
+
+create policy "Allow public read on site_stats" on site_stats for select using (true);
+create policy "Allow public read on activity_feed" on activity_feed for select using (is_active = true);
+create policy "Allow public read on client_logos" on client_logos for select using (true);
+
+create policy "Allow full access for authenticated admin on site_stats" on site_stats for all using (auth.role() = 'authenticated');
+create policy "Allow full access for authenticated admin on activity_feed" on activity_feed for all using (auth.role() = 'authenticated');
+create policy "Allow full access for authenticated admin on client_logos" on client_logos for all using (auth.role() = 'authenticated');
+
 -- Storage Bucket Setup & Policies
 insert into storage.buckets (id, name, public)
 values ('portfolio-images', 'portfolio-images', true)
@@ -188,4 +234,3 @@ create policy "Admin upload access on portfolio-images"
 create policy "Admin delete access on portfolio-images"
   on storage.objects for delete
   using (bucket_id = 'portfolio-images' and auth.role() = 'authenticated');
-

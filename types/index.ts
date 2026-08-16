@@ -163,3 +163,34 @@ export interface StudentProject {
   created_at?: string;
 }
 
+export interface SiteStat {
+  id: string;
+  label: string;
+  value: number;
+  suffix?: string;
+  description?: string;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ActivityFeedItem {
+  id: string;
+  text: string;
+  subtext?: string;
+  badge?: string;
+  timestamp?: string;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface ClientLogo {
+  id: string;
+  name: string;
+  logo_url?: string;
+  link_url?: string;
+  category?: string;
+  created_at?: string;
+}
+
+

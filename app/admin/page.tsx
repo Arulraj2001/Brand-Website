@@ -52,7 +52,7 @@ import Button from '@/components/ui/Button';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import ToastContainer, { ToastMessage } from '@/components/admin/Toast';
 import { TableSkeleton, Skeleton } from '@/components/admin/Skeleton';
-import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory, StudentFeedbackVideo, StudentProject, StudentProjectCategory } from '@/types';
+import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory, StudentFeedbackVideo, StudentProject, StudentProjectCategory, SiteStat, ActivityFeedItem, ClientLogo } from '@/types';
 import {
   getPortfolioProjects,
   saveProjectToSupabase,
@@ -68,7 +68,7 @@ import {
   deleteLeadFromSupabase,
   deleteTeamMemberFromSupabase,
 } from '@/lib/supabase/data';
-import { useSiteSettings, useTeamMembers, useStudentData } from '@/lib/useSiteData';
+import { useSiteSettings, useTeamMembers, useStudentData, useSiteStats, useActivityFeed, useClientLogos } from '@/lib/useSiteData';
 import { createClient } from '@/lib/supabase/client';
 
 type AdminTab =
@@ -80,7 +80,10 @@ type AdminTab =
   | 'settings'
   | 'blog'
   | 'media'
-  | 'student_projects';
+  | 'student_projects'
+  | 'site_stats'
+  | 'activity_feed'
+  | 'client_logos';
 type LeadStatus = NonNullable<Lead['status']>;
 
 interface MediaItem {
@@ -198,6 +201,113 @@ export default function AdminDashboardPage() {
   // Site Settings & Team Custom Hooks
   const { settings, saveSettings } = useSiteSettings();
   const { teamMembers, saveTeam } = useTeamMembers();
+
+  // Site Stats, Activity Feed & Client Logos Hooks & States
+  const { stats: siteStatsList, saveStat: saveSiteStat, deleteStat: deleteSiteStat } = useSiteStats();
+  const { activityFeed: activityFeedList, saveActivityItem, deleteActivityItem } = useActivityFeed();
+  const { logos: clientLogosList, saveLogo: saveClientLogo, deleteLogo: deleteClientLogo } = useClientLogos();
+
+  const [statModalOpen, setStatModalOpen] = useState(false);
+  const [editingStat, setEditingStat] = useState<SiteStat | null>(null);
+  const [deleteConfirmStat, setDeleteConfirmStat] = useState<SiteStat | null>(null);
+
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<ActivityFeedItem | null>(null);
+  const [deleteConfirmActivity, setDeleteConfirmActivity] = useState<ActivityFeedItem | null>(null);
+
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
+  const [editingLogo, setEditingLogo] = useState<ClientLogo | null>(null);
+  const [deleteConfirmLogo, setDeleteConfirmLogo] = useState<ClientLogo | null>(null);
+
+  const handleSaveStat = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const label = formData.get('label') as string;
+    const value = parseFloat(formData.get('value') as string) || 0;
+    const suffix = formData.get('suffix') as string;
+    const description = formData.get('description') as string;
+    const sort_order = parseInt(formData.get('sort_order') as string) || 0;
+
+    const item: SiteStat = {
+      id: editingStat ? editingStat.id : createLocalId('stat-'),
+      label,
+      value,
+      suffix,
+      description,
+      sort_order,
+      created_at: editingStat?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    await saveSiteStat(item);
+    addToast('success', `Stat "${label}" saved successfully`);
+    setStatModalOpen(false);
+    setEditingStat(null);
+  };
+
+  const handleDeleteStat = async (id: string) => {
+    await deleteSiteStat(id);
+    addToast('success', 'Stat deleted');
+    setDeleteConfirmStat(null);
+  };
+
+  const handleSaveActivity = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const text = formData.get('text') as string;
+    const subtext = formData.get('subtext') as string;
+    const badge = (formData.get('badge') as string) || 'Just Now';
+    const is_active = formData.get('is_active') === 'on';
+
+    const item: ActivityFeedItem = {
+      id: editingActivity ? editingActivity.id : createLocalId('act-'),
+      text,
+      subtext,
+      badge,
+      is_active,
+      created_at: editingActivity?.created_at || new Date().toISOString(),
+    };
+
+    await saveActivityItem(item);
+    addToast('success', 'Activity feed item saved');
+    setActivityModalOpen(false);
+    setEditingActivity(null);
+  };
+
+  const handleDeleteActivity = async (id: string) => {
+    await deleteActivityItem(id);
+    addToast('success', 'Activity item deleted');
+    setDeleteConfirmActivity(null);
+  };
+
+  const handleSaveLogo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const category = formData.get('category') as string;
+    const link_url = formData.get('link_url') as string;
+    const logo_url = formData.get('logo_url') as string;
+
+    const item: ClientLogo = {
+      id: editingLogo ? editingLogo.id : createLocalId('logo-'),
+      name,
+      category,
+      link_url,
+      logo_url,
+      created_at: editingLogo?.created_at || new Date().toISOString(),
+    };
+
+    await saveClientLogo(item);
+    addToast('success', `Client logo "${name}" saved`);
+    setLogoModalOpen(false);
+    setEditingLogo(null);
+  };
+
+  const handleDeleteLogo = async (id: string) => {
+    await deleteClientLogo(id);
+    addToast('success', 'Client logo deleted');
+    setDeleteConfirmLogo(null);
+  };
 
   // Settings Local Form State
   const [settingsForm, setSettingsForm] = useState<SiteSettings>(settings);
@@ -1066,6 +1176,9 @@ export default function AdminDashboardPage() {
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
     { id: 'leads', label: 'Leads Queue', icon: Users },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
+    { id: 'site_stats', label: 'Site Stats', icon: TrendingUp },
+    { id: 'activity_feed', label: 'Activity Feed', icon: Sparkles },
+    { id: 'client_logos', label: 'Client Logos', icon: ShieldCheck },
     { id: 'student_projects', label: 'Student Projects', icon: GraduationCap },
     { id: 'blog', label: 'Blog Posts', icon: FileText },
     { id: 'media', label: 'Media & Upload', icon: UploadCloud },
@@ -2154,6 +2267,233 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* TAB: SITE STATS MANAGER */}
+        {activeTab === 'site_stats' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs">
+              <div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Site Stats Manager</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Manage real, admin-verified homepage metric counters. If no stats exist, the stats block will hide automatically on public pages.
+                </p>
+              </div>
+
+              <Button
+                onClick={() => { setEditingStat(null); setStatModalOpen(true); }}
+                variant="primary"
+                size="md"
+              >
+                <Plus size={16} />
+                <span>Add New Metric Stat</span>
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {siteStatsList.map((stat) => (
+                <Card key={stat.id} className="p-4 space-y-3 bg-white border border-[#E5E7EB] flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-0.5 rounded">
+                      Sort #{stat.sort_order || 0}
+                    </span>
+                    <div className="font-mono-stats text-3xl font-extrabold text-[#1C1C1C]">
+                      {stat.value}{stat.suffix || ''}
+                    </div>
+                    <p className="text-sm font-bold text-[#1C1C1C]">{stat.label}</p>
+                    {stat.description && (
+                      <p className="text-xs text-[#6B7280]">{stat.description}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E7EB]">
+                    <button
+                      onClick={() => { setEditingStat(stat); setStatModalOpen(true); }}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmStat(stat)}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444]"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {siteStatsList.length === 0 && (
+              <div className="p-12 text-center bg-white border border-[#E5E7EB] rounded-2xl space-y-3">
+                <TrendingUp size={36} className="mx-auto text-[#9CA3AF]" />
+                <h3 className="text-base font-bold text-[#1C1C1C]">No Real Site Stats Logged Yet</h3>
+                <p className="text-xs text-[#6B7280] max-w-md mx-auto">
+                  The homepage stats section is currently hidden from public visitors. Add your first verified client metric stat above to show it on the site.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB: ACTIVITY FEED MANAGER */}
+        {activeTab === 'activity_feed' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs">
+              <div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Live Client Activity Feed Manager</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Log real client inquiries, booking calls, and project updates. If no active feed items exist, the ticker will remain hidden on public pages.
+                </p>
+              </div>
+
+              <Button
+                onClick={() => { setEditingActivity(null); setActivityModalOpen(true); }}
+                variant="primary"
+                size="md"
+              >
+                <Plus size={16} />
+                <span>Log New Client Activity</span>
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {activityFeedList.map((item) => (
+                <div key={item.id} className="p-4 bg-white border border-[#E5E7EB] rounded-xl flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${item.is_active ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'}`} />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-[#1C1C1C]">{item.text}</span>
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20">
+                          {item.badge || 'Just Now'}
+                        </span>
+                      </div>
+                      {item.subtext && (
+                        <p className="text-xs text-[#6B7280] mt-0.5">{item.subtext}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={async () => {
+                        await saveActivityItem({ ...item, is_active: !item.is_active });
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                        item.is_active
+                          ? 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30'
+                          : 'bg-gray-100 text-gray-500 border-gray-200'
+                      }`}
+                    >
+                      {item.is_active ? 'Active (Live)' : 'Inactive'}
+                    </button>
+
+                    <button
+                      onClick={() => { setEditingActivity(item); setActivityModalOpen(true); }}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmActivity(item)}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444]"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {activityFeedList.length === 0 && (
+              <div className="p-12 text-center bg-white border border-[#E5E7EB] rounded-2xl space-y-3">
+                <Sparkles size={36} className="mx-auto text-[#9CA3AF]" />
+                <h3 className="text-base font-bold text-[#1C1C1C]">No Live Client Activity Logged</h3>
+                <p className="text-xs text-[#6B7280] max-w-md mx-auto">
+                  The live activity feed ticker is hidden on the homepage. Log real client consultations and inquiries above to display them live.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB: CLIENT LOGOS MANAGER */}
+        {activeTab === 'client_logos' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs">
+              <div>
+                <h1 className="text-xl font-bold text-[#1C1C1C]">Client Logos Manager (&ldquo;Trusted By&rdquo; Wall)</h1>
+                <p className="text-xs text-[#6B7280]">
+                  Manage real client logos, names, and links. Note: If fewer than 3 real logos exist, the logo wall will hide automatically on public pages.
+                </p>
+              </div>
+
+              <Button
+                onClick={() => { setEditingLogo(null); setLogoModalOpen(true); }}
+                variant="primary"
+                size="md"
+              >
+                <Plus size={16} />
+                <span>Add Real Client Logo</span>
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {clientLogosList.map((logo) => (
+                <Card key={logo.id} className="p-4 space-y-3 bg-white border border-[#E5E7EB] flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-extrabold text-base text-[#1C1C1C]">{logo.name}</span>
+                      {logo.category && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]">
+                          {logo.category}
+                        </span>
+                      )}
+                    </div>
+                    {logo.link_url && (
+                      <a
+                        href={logo.link_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#3B82F6] hover:underline flex items-center gap-1 font-semibold truncate"
+                      >
+                        <span className="truncate">{logo.link_url}</span>
+                        <ExternalLink size={10} className="shrink-0" />
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E7EB]">
+                    <button
+                      onClick={() => { setEditingLogo(logo); setLogoModalOpen(true); }}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C]"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmLogo(logo)}
+                      className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#EF4444] text-[#EF4444]"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {clientLogosList.length < 3 && (
+              <div className="p-4 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl text-xs text-[#1C1C1C] space-y-1">
+                <p className="font-bold flex items-center gap-1.5 text-[#FF9D00]">
+                  <ShieldCheck size={16} />
+                  <span>Logo Wall Status: Hidden on Public Pages</span>
+                </p>
+                <p className="text-[#6B7280]">
+                  Currently you have {clientLogosList.length} real client logo(s). The &ldquo;Trusted By&rdquo; section will remain hidden on public pages until at least 3 real client logos are logged.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -3469,6 +3809,305 @@ export default function AdminDashboardPage() {
               </Button>
               <Button
                 onClick={() => handleDeleteStudentProject(deleteConfirmStudentProj.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* SITE STAT MODAL */}
+      {statModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+              <h3 className="font-bold text-lg text-[#1C1C1C]">
+                {editingStat ? 'Edit Metric Stat' : 'Add New Metric Stat'}
+              </h3>
+              <button onClick={() => setStatModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C]">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStat} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Metric Label *</label>
+                <input
+                  name="label"
+                  required
+                  defaultValue={editingStat?.label || ''}
+                  placeholder="e.g. Global Projects Delivered"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Number Value *</label>
+                  <input
+                    name="value"
+                    type="number"
+                    step="any"
+                    required
+                    defaultValue={editingStat?.value ?? ''}
+                    placeholder="e.g. 80"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Suffix (Optional)</label>
+                  <input
+                    name="suffix"
+                    defaultValue={editingStat?.suffix || ''}
+                    placeholder="e.g. + or %"
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Description (Optional)</label>
+                <input
+                  name="description"
+                  defaultValue={editingStat?.description || ''}
+                  placeholder="e.g. Web platforms & speed overhauls built for clients"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Sort Order</label>
+                <input
+                  name="sort_order"
+                  type="number"
+                  defaultValue={editingStat?.sort_order ?? 0}
+                  placeholder="0"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3">
+                <Button type="button" onClick={() => setStatModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Stat Metric
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* STAT DELETE CONFIRM */}
+      {deleteConfirmStat && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Delete Metric Stat</h3>
+            <p className="text-xs text-[#6B7280]">
+              Delete stat <strong className="text-[#1C1C1C]">{deleteConfirmStat.label}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmStat(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteStat(deleteConfirmStat.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ACTIVITY FEED MODAL */}
+      {activityModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+              <h3 className="font-bold text-lg text-[#1C1C1C]">
+                {editingActivity ? 'Edit Client Activity' : 'Log New Client Activity'}
+              </h3>
+              <button onClick={() => setActivityModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C]">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveActivity} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Activity Title / Action *</label>
+                <input
+                  name="text"
+                  required
+                  defaultValue={editingActivity?.text || ''}
+                  placeholder="e.g. Real Strategy Consultation Booked"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Subtext / Details (Optional)</label>
+                <input
+                  name="subtext"
+                  defaultValue={editingActivity?.subtext || ''}
+                  placeholder="e.g. Next.js Web Software & SEO Audit"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Badge Text</label>
+                <input
+                  name="badge"
+                  defaultValue={editingActivity?.badge || 'Just Now'}
+                  placeholder="e.g. Just Now or Confirmed"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="act_active"
+                  name="is_active"
+                  defaultChecked={editingActivity?.is_active ?? true}
+                  className="rounded border-[#E5E7EB] text-[#FF9D00] focus:ring-[#FF9D00]"
+                />
+                <label htmlFor="act_active" className="text-xs font-bold text-[#1C1C1C]">
+                  Show Live on Homepage Ticker
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3">
+                <Button type="button" onClick={() => setActivityModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Activity Log
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ACTIVITY FEED DELETE CONFIRM */}
+      {deleteConfirmActivity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Delete Activity Log</h3>
+            <p className="text-xs text-[#6B7280]">
+              Delete activity <strong className="text-[#1C1C1C]">{deleteConfirmActivity.text}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmActivity(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteActivity(deleteConfirmActivity.id)}
+                variant="primary"
+                size="sm"
+                className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CLIENT LOGO MODAL */}
+      {logoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+              <h3 className="font-bold text-lg text-[#1C1C1C]">
+                {editingLogo ? 'Edit Client Logo' : 'Add Real Client Logo'}
+              </h3>
+              <button onClick={() => setLogoModalOpen(false)} className="text-[#6B7280] hover:text-[#1C1C1C]">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveLogo} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Client / Company Name *</label>
+                <input
+                  name="name"
+                  required
+                  defaultValue={editingLogo?.name || ''}
+                  placeholder="e.g. VizhiTn"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Category / Tag</label>
+                <input
+                  name="category"
+                  defaultValue={editingLogo?.category || ''}
+                  placeholder="e.g. Civic News Platform"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Website URL (Optional)</label>
+                <input
+                  name="link_url"
+                  type="url"
+                  defaultValue={editingLogo?.link_url || ''}
+                  placeholder="https://vizhitn.in"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C1C1C] mb-1">Logo Image URL (Optional)</label>
+                <input
+                  name="logo_url"
+                  type="url"
+                  defaultValue={editingLogo?.logo_url || ''}
+                  placeholder="https://..."
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3">
+                <Button type="button" onClick={() => setLogoModalOpen(false)} variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Save Client Logo
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CLIENT LOGO DELETE CONFIRM */}
+      {deleteConfirmLogo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1C1C]/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
+            <h3 className="font-bold text-lg text-[#1C1C1C]">Delete Client Logo</h3>
+            <p className="text-xs text-[#6B7280]">
+              Delete client logo <strong className="text-[#1C1C1C]">{deleteConfirmLogo.name}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteConfirmLogo(null)} variant="secondary" size="sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteLogo(deleteConfirmLogo.id)}
                 variant="primary"
                 size="sm"
                 className="bg-[#EF4444] hover:bg-[#dc2626] border-none text-white"

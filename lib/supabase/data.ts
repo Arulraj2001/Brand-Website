@@ -1,4 +1,4 @@
-import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject } from '@/types';
+import { PortfolioProject, Testimonial, Lead, SiteSettings, TeamMember, BlogPost, StudentFeedbackVideo, StudentProject, SiteStat, ActivityFeedItem, ClientLogo } from '@/types';
 import { createClient, isSupabaseConfigured } from './client';
 
 type PortfolioProjectRow = PortfolioProject & { client_city?: string };
@@ -15,17 +15,34 @@ export const INITIAL_SITE_SETTINGS: SiteSettings = {
   twitter_url: 'https://x.com/ostrune',
   instagram_url: 'https://instagram.com/ostrune',
   brand_name: 'Ostrune',
-  trust_logos_text: `NovaPay | FinTech SaaS
-Aether AI | Generative AI
-Lumina Labs | E-Commerce
-Apex Capital | Venture Capital
-Veloce Speed | Speed Overhaul
-Hyperion | Cloud Systems`,
+  trust_logos_text: '',
   stat_counters_text: '',
   hero_feed_title: '',
   hero_feed_subtitle: '',
   hero_feed_badge: '',
 };
+
+export const INITIAL_SITE_STATS: SiteStat[] = [];
+export const INITIAL_ACTIVITY_FEED: ActivityFeedItem[] = [];
+
+export const INITIAL_CLIENT_LOGOS: ClientLogo[] = [
+  {
+    id: 'logo-1',
+    name: 'VizhiTn',
+    category: 'Civic News Platform',
+    link_url: 'https://vizhitn.in',
+    logo_url: '',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'logo-2',
+    name: 'Yourchoiceproperties',
+    category: 'Real Estate Portal',
+    link_url: 'https://yourchoiceproperties.in',
+    logo_url: '',
+    created_at: new Date().toISOString(),
+  },
+];
 
 export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
   {
@@ -60,215 +77,74 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
 export const INITIAL_PORTFOLIO: PortfolioProject[] = [
   {
     id: '1',
-    title: 'FinTech App & High-Converting SaaS Portal',
-    slug: 'cred-pay-fintech-portal',
-    client_name: 'ZetaPay Global',
-    client_location: 'Global',
+    title: 'Civic News & Public Interest Web Portal',
+    slug: 'vizhitn-civic-news-portal',
+    client_name: 'VizhiTn',
+    client_location: 'Tamil Nadu, India',
     client_city: '',
     service_type: 'web_dev',
-    short_description: 'Engineered a web application with 99.9% uptime, sub-second latency, and integrated Stripe/PayPal payment flows.',
-    full_description: 'ZetaPay needed a complete rebuild of their client acquisition platform. We redesigned the UX from the ground up using modern Tailwind CSS micro-animations, fast server-side rendering, and responsive UI components.',
-    challenge_description: 'ZetaPay was losing 42% of mobile visitors due to a sluggish 5.2s initial load time and legacy PHP architecture. Their acquisition funnels suffered from low conversion rates and unoptimized payment checkouts.',
-    solution_description: 'Re-architected the portal into Next.js React with server-side rendering, sub-second edge distribution, real-time database queries, and integrated Stripe/PayPal checkout APIs.',
-    before_metric: '5.2s Load Speed • 38/100 Core Web Vitals • 42% Drop-off Rate',
-    after_metric: '0.8s Load Speed • 99/100 Core Web Vitals • +340% Conversion Surge',
-    project_duration: '14 Days',
-    tech_stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Stripe API', 'Supabase', 'Framer Motion'],
+    short_description: 'Engineered a lightweight civic-news publishing platform optimized for high concurrent traffic and instant page rendering.',
+    full_description: 'VizhiTn is a regional civic-news platform delivering public-interest explainers and local news updates. We re-architected their web portal using modern server-side rendering, sub-second edge distribution, responsive UI components, and accessible typography.',
+    challenge_description: 'VizhiTn needed a reliable news publishing engine capable of serving regional civic-news updates rapidly without server crashes or slow page load times.',
+    solution_description: 'Architected a high-performance publishing platform with streamlined content delivery, server-side caching, structured data schemas, and clean reader-focused typography.',
+    before_metric: 'Slow load speed • Legacy CMS bloat • High bounce rate',
+    after_metric: '0.7s Load Speed • 99/100 Core Web Vitals • Instant Page Rendering',
+    project_duration: '10 Days',
+    tech_stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Vercel CDN'],
     deliverables: [
-      'Sub-Second Next.js Web Application Engine',
-      'Stripe & PayPal One-Click International Checkout',
-      'Real-Time User Auth & Account Dashboard',
-      'Responsive Mobile-First UI Micro-Animations',
-      'Full Technical SEO & JSON-LD Breadcrumb Schema',
+      'Sub-Second Next.js News Web Portal Engine',
+      'High-Speed Content Distribution & Edge Caching',
+      'Structured Technical SEO & Breadcrumb Schemas',
+      'Responsive Mobile-First Typography System',
     ],
-    cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    cover_image_url: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '+340% Qualified Leads | 0.8s Average Page Load | $520K Monthly Transactions',
-    testimonial: 'Ostrune transformed our online acquisition flow completely. The visual depth and speed of the site impressed our investors.',
-    live_url: 'https://zetapay.in',
+    results: '0.7s Load Speed | 99/100 Core Web Vitals | Reliable Civic News Delivery',
+    testimonial: 'Ostrune delivered an exceptionally fast and responsive news web portal for our platform.',
+    live_url: 'https://vizhitn.in',
     is_featured: true,
     created_at: new Date().toISOString(),
   },
   {
     id: '2',
-    title: 'D2C Brand Website Speed & Technical SEO Overhaul',
-    slug: 'nutra-pure-organic-seo',
-    client_name: 'NutraPure Global',
-    client_location: 'Global',
+    title: 'Real Estate Property Listing & Booking Engine',
+    slug: 'yourchoiceproperties-real-estate-portal',
+    client_name: 'Yourchoiceproperties',
+    client_location: 'India',
     client_city: '',
-    service_type: 'website_upgrade',
-    short_description: 'Overhauled a slow legacy e-commerce site to achieve 100/100 Core Web Vitals and top 3 Google rankings across high-intent keywords.',
-    full_description: 'We performed deep technical SEO fixes, structured data integration (JSON-LD), Core Web Vitals page speed optimization, and mobile rendering fixes.',
-    challenge_description: 'NutraPure was burdened with 28 bloated WordPress plugins, uncompressed images, and broken canonical SEO links that pushed high-margin products to Page 4 of Google results.',
-    solution_description: 'Cleaned legacy database bloat, compiled static asset pipelines, generated Organization & Product JSON-LD schemas, and deployed a sub-second headless storefront.',
-    before_metric: '4.8s Mobile Speed • 32/100 PageSpeed • Page 4 Google Rank',
-    after_metric: '0.9s Mobile Speed • 99/100 PageSpeed • Top 3 Organic Rank',
-    project_duration: '10 Days',
-    tech_stack: ['Next.js', 'Technical SEO', 'JSON-LD Schema', 'Tailwind CSS', 'Vercel CDN'],
-    deliverables: [
-      '100/100 Mobile & Desktop Core Web Vitals Optimization',
-      'JSON-LD Product & Organization Schema Wiring',
-      'Unused CSS & JS Script Purging',
-      'WebP & AVIF Automated Asset Compression',
-      'Top 3 Ranking Push for 140+ High-Intent Keywords',
-    ],
-    cover_image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
-    gallery_urls: [
-      'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80'
-    ],
-    results: '4.8x Organic Traffic Surge | Page Speed 99/100 | +220% Organic E-Commerce Sales',
-    testimonial: 'Our site load speed dropped from 4.8s to under 0.9s. Ostrune delivered affordable premium engineering.',
-    live_url: 'https://nutrapure.in',
-    is_featured: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    title: 'UGC Video Ads & High-ROAS Meta Creative Scaling',
-    slug: 'work-space-b2b-lead-gen',
-    client_name: 'WorkSpace International',
-    client_city: '',
-    client_location: 'Global',
-    service_type: 'ugc_ads',
-    short_description: 'Produced scroll-stopping UGC video ad creatives and automated funnel landing pages for corporate client acquisition.',
-    full_description: 'Produced 12 A/B UGC creator hooks, high-converting visual ad sequences, and retargeting campaigns across Meta & LinkedIn.',
-    challenge_description: 'High cost-per-acquisition ($84 CPA) on traditional static image ads and rapid creative fatigue on Meta & Instagram.',
-    solution_description: 'Scripted 12 native creator video hooks, built A/B split testing funnels, and installed Server-Side Conversion API (CAPI) pixel tracking.',
-    before_metric: '$84 Cost Per Acquisition • 1.2x Ad ROAS • 5-Day Creative Fatigue',
-    after_metric: '$24 Cost Per Acquisition • 5.2x Verified ROAS • 30-Day Scale Lifespan',
-    project_duration: '2 Weeks',
-    tech_stack: ['UGC Ad Production', 'Meta CAPI Pixel', 'LinkedIn Ads', 'Figma', 'Framer Motion'],
-    deliverables: [
-      '12 Native A/B UGC Video Ad Creator Hooks',
-      'Server-Side Meta CAPI Pixel Installation',
-      'High-Converting Mobile Funnel Landing Page',
-      'Retargeting Campaign Automation Sequences',
-    ],
-    cover_image_url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
-    gallery_urls: [
-      'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'
-    ],
-    results: '5.2x Verified Ad ROAS | $24 Cost Per Acquisition | $1.2M Pipeline Generated',
-    testimonial: 'We got more high-value client bookings in 30 days with their UGC ads than our local agency delivered in 6 months.',
-    live_url: 'https://workspace.in',
-    is_featured: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    title: 'Local Business Marketing & Google Business Profile Strategy',
-    slug: 'prestige-villas-lead-engine',
-    client_name: 'Skyline Real Estate',
-    client_city: '',
-    client_location: 'Global',
     service_type: 'local_business',
-    short_description: 'Dominated local search maps and built automated consultation booking funnels for luxury property listings.',
-    full_description: 'Built a local SEO strategy, Google Business Profile optimization, and automated booking funnel.',
-    challenge_description: 'Skyline Real Estate was invisible on Google Map searches and lost potential buyers due to manual phone booking workflows.',
-    solution_description: 'Optimized local Google Business Profiles, established local citation maps, and built an automated online consultation booking system.',
-    before_metric: '#14 Map Search Rank • Manual Phone Bookings • Low Conversions',
-    after_metric: '#1 Local Map Rank • 850+ Monthly Consultations • 68% Online Booking Rate',
+    short_description: 'Digital property showcase and automated consultation booking funnel for real estate listings.',
+    full_description: 'Built a full-featured real estate showcase web portal for Yourchoiceproperties, enabling clients to browse listings and schedule property tours seamlessly.',
+    challenge_description: 'Yourchoiceproperties relied on manual phone calls and unoptimized property listing pages that suffered from low inquiry conversion rates.',
+    solution_description: 'Developed a modern property catalog web app with automated inquiry capture, responsive property search filters, and high-speed image delivery.',
+    before_metric: 'Manual phone inquiries • Unoptimized property galleries • High drop-off',
+    after_metric: 'Automated Lead Capture • Sub-Second Property Galleries • Verified Inquiry Surge',
     project_duration: '12 Days',
-    tech_stack: ['Google Map Packs', 'Local SEO', 'CRM Automation', 'React', 'Tailwind CSS'],
+    tech_stack: ['React', 'Next.js', 'Tailwind CSS', 'Supabase DB', 'Local SEO'],
     deliverables: [
-      '#1 Local Google Map Pack Ranking Strategy',
-      'Automated Online Consultation Booking Workflow',
-      'Local Citation & Business Directory Distribution',
-      'Automated Review Generation Email/SMS Sequence',
+      'Property Catalog & Filterable Listing Engine',
+      'Automated Online Inquiry & Booking Workflow',
+      'Sub-Second Property Gallery Optimization',
+      'Local Map & Google Business Profile Integration',
     ],
-    cover_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    cover_image_url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
     gallery_urls: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
     ],
-    results: '850+ Monthly Consultations | 68% Online Booking Rate | #1 Local Map Rank',
-    testimonial: 'The automated consultation booking funnel transformed our sales workflow.',
-    live_url: 'https://prestigevillas.in',
-    is_featured: false,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    title: 'Enterprise SaaS & Web Portal Rebuild for Tech Unicorn',
-    slug: 'nexus-tech-saas-rebuild',
-    client_name: 'NexusFlow Technologies',
-    client_location: 'Global',
-    client_city: '',
-    service_type: 'web_dev',
-    short_description: 'Re-architected legacy enterprise dashboard into a sub-second Next.js web portal with automated customer onboarding.',
-    full_description: 'NexusFlow needed an international-standard web platform to serve global enterprise clients. We engineered a custom Next.js portal with server-side rendering, sub-second latency, and integrated Stripe/PayPal payment flows.',
-    challenge_description: 'Outdated monolith dashboard caused slow customer onboarding times and high churn rates among enterprise clients.',
-    solution_description: 'Engineered a modern sub-second Next.js web portal, implemented automated user authentication, and optimized API data streaming.',
-    before_metric: '6.4s Onboarding Time • High Customer Churn • Clunky Monolith',
-    after_metric: '0.7s Onboarding Speed • +280% Conversions • $450K Annual SaaS Revenue',
-    project_duration: '3 Weeks',
-    tech_stack: ['Next.js', 'TypeScript', 'Supabase DB', 'Tailwind CSS', 'Stripe Billing'],
-    deliverables: [
-      'Sub-Second Next.js Enterprise Web Portal',
-      'Automated User Onboarding & Auth Flow',
-      'Real-Time Analytics & User Role Dashboard',
-      'Stripe Billing & Subscription Integration',
-    ],
-    cover_image_url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80',
-    gallery_urls: [
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
-    ],
-    results: '0.7s Average Page Speed | +280% Global Client Conversions | $450K Annual SaaS Revenue',
-    testimonial: 'Ostrune delivered world-class engineering that allowed us to win international contracts. Exceptional speed and standards.',
-    live_url: 'https://nexusflow.in',
+    results: 'Automated Lead Capture | Sub-Second Property Galleries | Verified Growth',
+    testimonial: 'Our online property inquiries increased immediately after launching the new platform built by Ostrune.',
+    live_url: 'https://yourchoiceproperties.in',
     is_featured: true,
     created_at: new Date().toISOString(),
   }
 ];
 
-export const INITIAL_TESTIMONIALS: Testimonial[] = [
-  {
-    id: '1',
-    client_name: 'David Miller',
-    client_company: 'Founder & CEO, ZetaPay',
-    client_location: 'Global',
-    client_city: '',
-    quote: 'Ostrune delivered a sub-second SaaS portal at a fraction of traditional agency quotes. Responsive, time-zone friendly, and outstanding engineering.',
-    rating: 5,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    client_name: 'Sarah Jenkins',
-    client_company: 'CMO, NutraPure Health',
-    client_location: 'Global',
-    client_city: '',
-    quote: 'Our website speed score jumped from 32 to 99/100. Their old website upgrade service is the best investment we made all year.',
-    rating: 5,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    client_name: 'Marcus Vance',
-    client_company: 'Director, Skyline Properties',
-    client_location: 'Global',
-    client_city: '',
-    quote: 'Their UGC ad creatives doubled our Meta ad ROAS within 2 weeks. Seamless async communication across time zones.',
-    rating: 5,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    client_name: 'Vikram Sharma',
-    client_company: 'Co-Founder, NexusFlow Tech',
-    client_location: 'Global',
-    client_city: '',
-    quote: 'Ostrune engineering gave us exceptional speed, sub-second load times, and top Google rankings. Unmatched ROI.',
-    rating: 5,
-    created_at: new Date().toISOString(),
-  },
-];
+export const INITIAL_TESTIMONIALS: Testimonial[] = [];
 
 export const INITIAL_BLOG_POSTS: BlogPost[] = [];
 
-// Site Settings Helpers
 export function getSiteSettings(): SiteSettings {
   if (typeof window === 'undefined') return INITIAL_SITE_SETTINGS;
   try {
@@ -1174,3 +1050,250 @@ export async function deleteStudentProjectFromSupabase(id: string): Promise<void
   }
 }
 
+// Site Stats Helpers
+export function getSiteStats(): SiteStat[] {
+  if (typeof window === 'undefined') return INITIAL_SITE_STATS;
+  try {
+    const cached = localStorage.getItem('ostrune_site_stats');
+    if (cached) return JSON.parse(cached);
+  } catch {}
+  return INITIAL_SITE_STATS;
+}
+
+export function saveSiteStatsLocal(stats: SiteStat[]): void {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('ostrune_site_stats', JSON.stringify(stats));
+      window.dispatchEvent(new Event('ostrune_stats_updated'));
+    } catch {}
+  }
+}
+
+export async function fetchSiteStatsFromSupabase(): Promise<SiteStat[]> {
+  if (!isSupabaseConfigured()) return getSiteStats();
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('site_stats')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (!error && data) {
+      saveSiteStatsLocal(data as SiteStat[]);
+      return data as SiteStat[];
+    }
+  } catch {}
+  return getSiteStats();
+}
+
+export async function saveSiteStatToSupabase(stat: SiteStat): Promise<SiteStat> {
+  const current = getSiteStats();
+  const index = current.findIndex((s) => s.id === stat.id);
+  let updatedList: SiteStat[];
+  if (index >= 0) {
+    updatedList = [...current];
+    updatedList[index] = stat;
+  } else {
+    updatedList = [...current, stat];
+  }
+  saveSiteStatsLocal(updatedList);
+
+  if (!isSupabaseConfigured()) return stat;
+  try {
+    const supabase = createClient();
+    const payload: Record<string, unknown> = {
+      label: stat.label,
+      value: stat.value,
+      suffix: stat.suffix || '',
+      description: stat.description || '',
+      sort_order: stat.sort_order || 0,
+      updated_at: new Date().toISOString(),
+    };
+    if (isUUID(stat.id)) {
+      payload.id = stat.id;
+    }
+    const { data, error } = await supabase.from('site_stats').upsert(payload).select().single();
+    if (!error && data) return data as SiteStat;
+  } catch (err) {
+    console.error('Error saving site stat to Supabase:', err);
+  }
+  return stat;
+}
+
+export async function deleteSiteStatFromSupabase(id: string): Promise<void> {
+  const current = getSiteStats();
+  const filtered = current.filter((s) => s.id !== id);
+  saveSiteStatsLocal(filtered);
+
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = createClient();
+    await supabase.from('site_stats').delete().eq('id', id);
+  } catch (err) {
+    console.error('Error deleting site stat from Supabase:', err);
+  }
+}
+
+// Activity Feed Helpers
+export function getActivityFeed(): ActivityFeedItem[] {
+  if (typeof window === 'undefined') return INITIAL_ACTIVITY_FEED;
+  try {
+    const cached = localStorage.getItem('ostrune_activity_feed');
+    if (cached) return JSON.parse(cached);
+  } catch {}
+  return INITIAL_ACTIVITY_FEED;
+}
+
+export function saveActivityFeedLocal(items: ActivityFeedItem[]): void {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('ostrune_activity_feed', JSON.stringify(items));
+      window.dispatchEvent(new Event('ostrune_activity_updated'));
+    } catch {}
+  }
+}
+
+export async function fetchActivityFeedFromSupabase(): Promise<ActivityFeedItem[]> {
+  if (!isSupabaseConfigured()) return getActivityFeed();
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('activity_feed')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      saveActivityFeedLocal(data as ActivityFeedItem[]);
+      return data as ActivityFeedItem[];
+    }
+  } catch {}
+  return getActivityFeed();
+}
+
+export async function saveActivityFeedItemToSupabase(item: ActivityFeedItem): Promise<ActivityFeedItem> {
+  const current = getActivityFeed();
+  const index = current.findIndex((a) => a.id === item.id);
+  let updatedList: ActivityFeedItem[];
+  if (index >= 0) {
+    updatedList = [...current];
+    updatedList[index] = item;
+  } else {
+    updatedList = [item, ...current];
+  }
+  saveActivityFeedLocal(updatedList);
+
+  if (!isSupabaseConfigured()) return item;
+  try {
+    const supabase = createClient();
+    const payload: Record<string, unknown> = {
+      text: item.text,
+      subtext: item.subtext || '',
+      badge: item.badge || 'Just Now',
+      is_active: item.is_active ?? true,
+    };
+    if (isUUID(item.id)) {
+      payload.id = item.id;
+    }
+    const { data, error } = await supabase.from('activity_feed').upsert(payload).select().single();
+    if (!error && data) return data as ActivityFeedItem;
+  } catch (err) {
+    console.error('Error saving activity feed item to Supabase:', err);
+  }
+  return item;
+}
+
+export async function deleteActivityFeedItemFromSupabase(id: string): Promise<void> {
+  const current = getActivityFeed();
+  const filtered = current.filter((a) => a.id !== id);
+  saveActivityFeedLocal(filtered);
+
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = createClient();
+    await supabase.from('activity_feed').delete().eq('id', id);
+  } catch (err) {
+    console.error('Error deleting activity feed item from Supabase:', err);
+  }
+}
+
+// Client Logos Helpers
+export function getClientLogos(): ClientLogo[] {
+  if (typeof window === 'undefined') return INITIAL_CLIENT_LOGOS;
+  try {
+    const cached = localStorage.getItem('ostrune_client_logos');
+    if (cached) return JSON.parse(cached);
+  } catch {}
+  return INITIAL_CLIENT_LOGOS;
+}
+
+export function saveClientLogosLocal(logos: ClientLogo[]): void {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('ostrune_client_logos', JSON.stringify(logos));
+      window.dispatchEvent(new Event('ostrune_logos_updated'));
+    } catch {}
+  }
+}
+
+export async function fetchClientLogosFromSupabase(): Promise<ClientLogo[]> {
+  if (!isSupabaseConfigured()) return getClientLogos();
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('client_logos')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      saveClientLogosLocal(data as ClientLogo[]);
+      return data as ClientLogo[];
+    }
+  } catch {}
+  return getClientLogos();
+}
+
+export async function saveClientLogoToSupabase(logo: ClientLogo): Promise<ClientLogo> {
+  const current = getClientLogos();
+  const index = current.findIndex((l) => l.id === logo.id);
+  let updatedList: ClientLogo[];
+  if (index >= 0) {
+    updatedList = [...current];
+    updatedList[index] = logo;
+  } else {
+    updatedList = [...current, logo];
+  }
+  saveClientLogosLocal(updatedList);
+
+  if (!isSupabaseConfigured()) return logo;
+  try {
+    const supabase = createClient();
+    const payload: Record<string, unknown> = {
+      name: logo.name,
+      logo_url: logo.logo_url || '',
+      link_url: logo.link_url || '',
+      category: logo.category || '',
+    };
+    if (isUUID(logo.id)) {
+      payload.id = logo.id;
+    }
+    const { data, error } = await supabase.from('client_logos').upsert(payload).select().single();
+    if (!error && data) return data as ClientLogo;
+  } catch (err) {
+    console.error('Error saving client logo to Supabase:', err);
+  }
+  return logo;
+}
+
+export async function deleteClientLogoFromSupabase(id: string): Promise<void> {
+  const current = getClientLogos();
+  const filtered = current.filter((l) => l.id !== id);
+  saveClientLogosLocal(filtered);
+
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = createClient();
+    await supabase.from('client_logos').delete().eq('id', id);
+  } catch (err) {
+    console.error('Error deleting client logo from Supabase:', err);
+  }
+}

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Mail, Phone, MapPin, Globe, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 import ArusythApexLogo from './ArusythApexLogo';
 import {
@@ -219,14 +219,6 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-3">
             <p>© {new Date().getFullYear()} {activeSettings.brand_name || 'Ostrune'}. All rights reserved.</p>
-            <Link
-              href="/admin/login"
-              className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#FF9D00] hover:bg-white border border-transparent hover:border-[#E5E7EB] transition-colors"
-              title="Admin Portal Login"
-              aria-label="Admin Portal Login"
-            >
-              <ShieldCheck size={16} />
-            </Link>
           </div>
         </div>
       </div>

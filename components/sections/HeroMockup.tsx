@@ -3,10 +3,11 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { TrendingUp, CheckCircle2, Sparkles, Gauge } from 'lucide-react';
-import { useSiteSettings } from '@/lib/useSiteData';
+import { useSiteSettings, useActivityFeed } from '@/lib/useSiteData';
 
 export default function HeroMockup() {
   const { settings } = useSiteSettings();
+  const { activityFeed } = useActivityFeed();
 
   // Mouse Gyroscope 3D Tilt Values
   const mouseX = useMotionValue(0);
@@ -29,9 +30,8 @@ export default function HeroMockup() {
   };
 
   const activeSettings = settings;
-  const feedTitle = activeSettings.hero_feed_title || 'Verified Strategy Consultation Call';
-  const feedSubtitle = activeSettings.hero_feed_subtitle || 'Budget: $1,000–$3,000 • Sub-Second Speed Upgrade';
-  const feedBadge = activeSettings.hero_feed_badge || 'Just Now';
+  const activeItems = (activityFeed || []).filter((item) => item && item.is_active && item.text);
+  const activeItem = activeItems.length > 0 ? activeItems[0] : null;
 
   return (
     <motion.div
@@ -60,35 +60,37 @@ export default function HeroMockup() {
               {activeSettings.brand_name ? `${activeSettings.brand_name.toLowerCase()}.netlify.app/growth-vitals` : 'ostrune.netlify.app/growth-vitals'}
             </span>
           </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] text-[11px] font-extrabold flex items-center gap-1">
-            <Sparkles size={12} className="text-[#FF9D00] animate-spin-slow" />
-            Live Client Feed
-          </span>
+          {activeItem && (
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FFF9E6] border border-[#FFD21E] text-[#1C1C1C] text-[11px] font-extrabold flex items-center gap-1">
+              <Sparkles size={12} className="text-[#FF9D00] animate-spin-slow" />
+              Live Activity Feed
+            </span>
+          )}
         </div>
 
         {/* 3 Metric Cards Grid */}
         <div className="grid grid-cols-3 gap-2.5">
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-3 rounded-xl hover:border-[#3B82F6] transition-colors">
-            <p className="text-[11px] font-bold text-[#6B7280]">Monthly Leads</p>
-            <p className="text-xl font-extrabold text-[#1C1C1C] font-mono-stats mt-0.5">1,480+</p>
+            <p className="text-[11px] font-bold text-[#6B7280]">Web Software</p>
+            <p className="text-xl font-extrabold text-[#1C1C1C] font-mono-stats mt-0.5">Next.js</p>
             <span className="text-[10px] text-[#10B981] font-extrabold flex items-center gap-0.5 mt-1">
-              <TrendingUp size={10} /> +340% YoY
+              <TrendingUp size={10} /> Sub-Second
             </span>
           </div>
 
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-3 rounded-xl hover:border-[#FF9D00] transition-colors">
-            <p className="text-[11px] font-bold text-[#6B7280]">Avg ROAS</p>
-            <p className="text-xl font-extrabold text-[#FF9D00] font-mono-stats mt-0.5">5.2x</p>
+            <p className="text-[11px] font-bold text-[#6B7280]">Speed Score</p>
+            <p className="text-xl font-extrabold text-[#FF9D00] font-mono-stats mt-0.5">100/100</p>
             <span className="text-[10px] text-[#3B82F6] font-extrabold flex items-center gap-0.5 mt-1">
-              Verified Ads
+              Core Vitals
             </span>
           </div>
 
           <div className="bg-[#FFF9E6] border border-[#FFD21E] p-3 rounded-xl hover:border-[#FF9D00] transition-colors">
-            <p className="text-[11px] font-bold text-[#6B7280]">Page Speed</p>
-            <p className="text-xl font-extrabold text-[#10B981] font-mono-stats mt-0.5">0.68s</p>
+            <p className="text-[11px] font-bold text-[#6B7280]">Client Reply</p>
+            <p className="text-xl font-extrabold text-[#10B981] font-mono-stats mt-0.5">&lt; 12h</p>
             <span className="text-[10px] text-[#10B981] font-extrabold flex items-center gap-0.5 mt-1">
-              100/100 Vitals
+              Global SLA
             </span>
           </div>
         </div>
@@ -132,22 +134,27 @@ export default function HeroMockup() {
           </div>
         </div>
 
-        {/* Live Incoming Lead Pill */}
-        <div className="bg-white border border-[#E5E7EB] p-3.5 rounded-xl flex items-center justify-between shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center font-bold shrink-0 border border-[#10B981]/20">
-              <CheckCircle2 size={18} />
+        {/* Real Live Incoming Lead Pill (Rendered ONLY if admin logged active feed items) */}
+        {activeItem && (
+          <div className="bg-white border border-[#E5E7EB] p-3.5 rounded-xl flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center font-bold shrink-0 border border-[#10B981]/20">
+                <CheckCircle2 size={18} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[#1C1C1C]">{activeItem.text}</p>
+                {activeItem.subtext && (
+                  <p className="text-[11px] text-[#6B7280] font-semibold">{activeItem.subtext}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-bold text-[#1C1C1C]">{feedTitle}</p>
-              <p className="text-[11px] text-[#6B7280] font-semibold">{feedSubtitle}</p>
-            </div>
+            <span className="text-[10px] font-extrabold text-[#3B82F6] bg-[#3B82F6]/10 px-2.5 py-1 rounded-full border border-[#3B82F6]/20 shrink-0">
+              {activeItem.badge || 'Verified'}
+            </span>
           </div>
-          <span className="text-[10px] font-extrabold text-[#3B82F6] bg-[#3B82F6]/10 px-2.5 py-1 rounded-full border border-[#3B82F6]/20 shrink-0">
-            {feedBadge}
-          </span>
-        </div>
+        )}
       </div>
     </motion.div>
   );
 }
+

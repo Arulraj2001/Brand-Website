@@ -6,6 +6,9 @@ import {
   TeamMember,
   StudentFeedbackVideo,
   StudentProject,
+  SiteStat,
+  ActivityFeedItem,
+  ClientLogo,
 } from '@/types';
 import {
   getSiteSettings,
@@ -22,6 +25,18 @@ import {
   fetchStudentProjectsFromSupabase,
   saveStudentProjectToSupabase,
   deleteStudentProjectFromSupabase,
+  getSiteStats,
+  fetchSiteStatsFromSupabase,
+  saveSiteStatToSupabase,
+  deleteSiteStatFromSupabase,
+  getActivityFeed,
+  fetchActivityFeedFromSupabase,
+  saveActivityFeedItemToSupabase,
+  deleteActivityFeedItemFromSupabase,
+  getClientLogos,
+  fetchClientLogosFromSupabase,
+  saveClientLogoToSupabase,
+  deleteClientLogoFromSupabase,
   INITIAL_SITE_SETTINGS,
   INITIAL_STUDENT_FEEDBACK_VIDEOS,
   INITIAL_STUDENT_PROJECTS,
@@ -168,3 +183,125 @@ export function useStudentData() {
   };
 }
 
+export function useSiteStats() {
+  const [stats, setStats] = useState<SiteStat[]>(getSiteStats());
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (active) setStats(getSiteStats());
+    });
+
+    fetchSiteStatsFromSupabase().then((fresh) => {
+      if (active && fresh) setStats(fresh);
+    });
+
+    const handleUpdate = () => {
+      setStats(getSiteStats());
+    };
+
+    window.addEventListener('ostrune_stats_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_stats_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const saveStat = async (stat: SiteStat) => {
+    const updated = await saveSiteStatToSupabase(stat);
+    setStats(getSiteStats());
+    return updated;
+  };
+
+  const deleteStat = async (id: string) => {
+    await deleteSiteStatFromSupabase(id);
+    setStats(getSiteStats());
+  };
+
+  return { stats, saveStat, deleteStat };
+}
+
+export function useActivityFeed() {
+  const [activityFeed, setActivityFeed] = useState<ActivityFeedItem[]>(getActivityFeed());
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (active) setActivityFeed(getActivityFeed());
+    });
+
+    fetchActivityFeedFromSupabase().then((fresh) => {
+      if (active && fresh) setActivityFeed(fresh);
+    });
+
+    const handleUpdate = () => {
+      setActivityFeed(getActivityFeed());
+    };
+
+    window.addEventListener('ostrune_activity_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_activity_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const saveActivityItem = async (item: ActivityFeedItem) => {
+    const updated = await saveActivityFeedItemToSupabase(item);
+    setActivityFeed(getActivityFeed());
+    return updated;
+  };
+
+  const deleteActivityItem = async (id: string) => {
+    await deleteActivityFeedItemFromSupabase(id);
+    setActivityFeed(getActivityFeed());
+  };
+
+  return { activityFeed, saveActivityItem, deleteActivityItem };
+}
+
+export function useClientLogos() {
+  const [logos, setLogos] = useState<ClientLogo[]>(getClientLogos());
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (active) setLogos(getClientLogos());
+    });
+
+    fetchClientLogosFromSupabase().then((fresh) => {
+      if (active && fresh) setLogos(fresh);
+    });
+
+    const handleUpdate = () => {
+      setLogos(getClientLogos());
+    };
+
+    window.addEventListener('ostrune_logos_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_logos_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const saveLogo = async (logo: ClientLogo) => {
+    const updated = await saveClientLogoToSupabase(logo);
+    setLogos(getClientLogos());
+    return updated;
+  };
+
+  const deleteLogo = async (id: string) => {
+    await deleteClientLogoFromSupabase(id);
+    setLogos(getClientLogos());
+  };
+
+  return { logos, saveLogo, deleteLogo };
+}
