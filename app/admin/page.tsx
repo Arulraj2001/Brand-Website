@@ -46,6 +46,12 @@ import {
   Video,
   Play,
 } from 'lucide-react';
+import {
+  generateTnTodayPoster,
+  generateTnTodayPosterAsync,
+  fetchAiPhotoFromPrompt,
+  isImagePrompt,
+} from '@/lib/tntodayPosterGenerator';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -164,8 +170,10 @@ export interface StagedImportPost {
   excerpt: string;
   content: string;
   cover_image_prompt: string;
-  coverOption: 'branded' | 'prompt' | 'custom';
+  coverOption: 'banner' | 'square_box' | 'prompt' | 'custom';
   customUrl: string;
+  generatedPosterUrl?: string;
+  is_poster?: boolean;
 }
 
 export default function AdminDashboardPage() {
@@ -552,13 +560,47 @@ export default function AdminDashboardPage() {
 
   // Helper to compute cover image URL for a staged post based on user selection
   const getStagedCoverUrl = (item: StagedImportPost): string => {
-    if (item.coverOption === 'branded') {
-      return `/api/blog-banner?title=${encodeURIComponent(item.title)}&category=${encodeURIComponent(item.category)}&excerpt=${encodeURIComponent(item.excerpt)}&city=${encodeURIComponent(item.city)}`;
+    if (item.coverOption === 'banner') {
+      return (
+        item.generatedPosterUrl ||
+        generateTnTodayPoster({
+          title: item.title,
+          category: item.category,
+          subtitle: item.excerpt,
+          city: item.city,
+          layoutStyle: 'banner',
+        })
+      );
+    }
+    if (item.coverOption === 'square_box') {
+      return (
+        item.generatedPosterUrl ||
+        generateTnTodayPoster({
+          title: item.title,
+          category: item.category,
+          subtitle: item.excerpt,
+          city: item.city,
+          layoutStyle: 'square_box',
+        })
+      );
     }
     if (item.coverOption === 'prompt' && item.cover_image_prompt) {
-      return `https://image.pollinations.ai/prompt/${encodeURIComponent(item.cover_image_prompt)}?width=1200&height=630&nologo=true`;
+      return (
+        item.customUrl ||
+        `https://image.pollinations.ai/prompt/${encodeURIComponent(item.cover_image_prompt)}?width=1200&height=630&nologo=true`
+      );
     }
-    return item.customUrl || `/api/blog-banner?title=${encodeURIComponent(item.title)}&category=${encodeURIComponent(item.category)}&excerpt=${encodeURIComponent(item.excerpt)}&city=${encodeURIComponent(item.city)}`;
+    return (
+      item.customUrl ||
+      item.generatedPosterUrl ||
+      generateTnTodayPoster({
+        title: item.title,
+        category: item.category,
+        subtitle: item.excerpt,
+        city: item.city,
+        layoutStyle: 'banner',
+      })
+    );
   };
 
   // AI JSON Import Parser (Populates Interactive Staged Preview Grid)
@@ -627,8 +669,9 @@ export default function AdminDashboardPage() {
       const excerpt = (item.excerpt as string) || title;
       const city = (item.city as string) || 'Global';
       const author_name = (item.author_name as string) || `${settings.brand_name || 'Ostrune'} Team`;
-      const cover_image_prompt = (item.cover_image_prompt as string) || '';
-      const initialCoverUrl = (item.cover_image_url as string) || '';
+      
+      const initialRawImg = (item.cover_image_url as string) || (item.featured_image as string) || (item.image as string) || '';
+      let cover_image_prompt = (item.cover_image_prompt as string) || (item.prompt_text as string) || '';
 
       let secondaryKw = '';
       if (Array.isArray(item.secondary_keywords)) {
@@ -637,9 +680,34 @@ export default function AdminDashboardPage() {
         secondaryKw = item.secondary_keywords;
       }
 
-      let initialOption: 'branded' | 'prompt' | 'custom' = 'branded';
-      if (initialCoverUrl) {
+      let initialOption: 'banner' | 'square_box' | 'prompt' | 'custom' = 'banner';
+      let generatedPosterUrl = '';
+      let is_poster = false;
+
+      if (isImagePrompt(initialRawImg)) {
+        cover_image_prompt = initialRawImg;
+        generatedPosterUrl = generateTnTodayPoster({
+          title,
+          category,
+          subtitle: excerpt,
+          city,
+          layoutStyle: 'banner',
+        });
+        initialOption = 'banner';
+        is_poster = true;
+      } else if (!initialRawImg) {
+        generatedPosterUrl = generateTnTodayPoster({
+          title,
+          category,
+          subtitle: excerpt,
+          city,
+          layoutStyle: 'banner',
+        });
+        initialOption = 'banner';
+        is_poster = true;
+      } else {
         initialOption = 'custom';
+        generatedPosterUrl = initialRawImg;
       }
 
       staged.push({
@@ -655,7 +723,9 @@ export default function AdminDashboardPage() {
         content,
         cover_image_prompt,
         coverOption: initialOption,
-        customUrl: initialCoverUrl,
+        customUrl: initialRawImg,
+        generatedPosterUrl,
+        is_poster,
       });
     }
 
@@ -3110,44 +3180,99 @@ export default function AdminDashboardPage() {
                                   <p className="text-xs text-[#6B7280] line-clamp-2 mt-1 italic">&quot;{item.excerpt}&quot;</p>
                                 </div>
 
-                                {/* Banner Selector Controls */}
+                                {/* TNToday / Namma TN Style Poster Controls */}
                                 <div className="space-y-1.5 pt-1">
-                                  <label className="block text-[11px] font-extrabold text-[#1C1C1C]">Cover Image Strategy:</label>
-                                  <div className="flex items-center gap-1.5 text-xs">
+                                  <div className="flex items-center justify-between text-[11px]">
+                                    <label className="font-extrabold text-[#1C1C1C]">Cover Image Poster Layout:</label>
+                                    {item.is_poster && (
+                                      <span className="px-1.5 py-0.5 rounded bg-[#FF9D00] text-[#1C1C1C] font-extrabold text-[9px]">
+                                        🎨 Branded Poster
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                                    {/* Button 1: Full Banner */}
                                     <button
                                       type="button"
                                       onClick={() => {
+                                        const poster = generateTnTodayPoster({
+                                          title: item.title,
+                                          category: item.category,
+                                          subtitle: item.excerpt,
+                                          city: item.city,
+                                          layoutStyle: 'banner',
+                                        });
                                         setStagedImportPosts((prev) =>
-                                          prev.map((p) => (p.tempId === item.tempId ? { ...p, coverOption: 'branded' } : p))
+                                          prev.map((p) =>
+                                            p.tempId === item.tempId
+                                              ? { ...p, coverOption: 'banner', generatedPosterUrl: poster, is_poster: true }
+                                              : p
+                                          )
                                         );
                                       }}
                                       className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
-                                        item.coverOption === 'branded'
+                                        item.coverOption === 'banner'
                                           ? 'bg-[#FF9D00] text-white border-[#FF9D00]'
                                           : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
                                       }`}
                                     >
-                                      <Sparkles size={12} /> ⚡ Auto Branded
+                                      🎨 Full Banner
                                     </button>
 
-                                    {item.cover_image_prompt && (
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setStagedImportPosts((prev) =>
-                                            prev.map((p) => (p.tempId === item.tempId ? { ...p, coverOption: 'prompt' } : p))
-                                          );
-                                        }}
-                                        className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
-                                          item.coverOption === 'prompt'
-                                            ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]'
-                                            : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
-                                        }`}
-                                      >
-                                        <Sparkles size={12} /> 🎨 AI Prompt
-                                      </button>
-                                    )}
+                                    {/* Button 2: Square Box */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const poster = generateTnTodayPoster({
+                                          title: item.title,
+                                          category: item.category,
+                                          subtitle: item.excerpt,
+                                          city: item.city,
+                                          layoutStyle: 'square_box',
+                                        });
+                                        setStagedImportPosts((prev) =>
+                                          prev.map((p) =>
+                                            p.tempId === item.tempId
+                                              ? { ...p, coverOption: 'square_box', generatedPosterUrl: poster, is_poster: true }
+                                              : p
+                                          )
+                                        );
+                                      }}
+                                      className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
+                                        item.coverOption === 'square_box'
+                                          ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]'
+                                          : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
+                                      }`}
+                                    >
+                                      🖼️ Square Box
+                                    </button>
 
+                                    {/* Button 3: AI Photo from Prompt */}
+                                    <button
+                                      type="button"
+                                      onClick={async () => {
+                                        addToast('success', `Generating AI photo for article #${idx + 1}...`);
+                                        const aiPhotoUrl = await fetchAiPhotoFromPrompt(item.cover_image_prompt || item.title);
+                                        setStagedImportPosts((prev) =>
+                                          prev.map((p) =>
+                                            p.tempId === item.tempId
+                                              ? { ...p, coverOption: 'prompt', customUrl: aiPhotoUrl, is_poster: false }
+                                              : p
+                                          )
+                                        );
+                                        addToast('success', `AI photo updated for article #${idx + 1}!`);
+                                      }}
+                                      className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
+                                        item.coverOption === 'prompt'
+                                          ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
+                                          : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
+                                      }`}
+                                    >
+                                      ⚡ AI Photo
+                                    </button>
+
+                                    {/* Button 4: Custom / Upload */}
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -3161,7 +3286,7 @@ export default function AdminDashboardPage() {
                                           : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
                                       }`}
                                     >
-                                      <UploadCloud size={12} /> Custom / Upload
+                                      <UploadCloud size={12} /> Custom / File
                                     </button>
                                   </div>
 
@@ -3190,7 +3315,9 @@ export default function AdminDashboardPage() {
                                             if (e.target.files && e.target.files[0]) {
                                               const uploadedUrl = await uploadImageFile(e.target.files[0]);
                                               setStagedImportPosts((prev) =>
-                                                prev.map((p) => (p.tempId === item.tempId ? { ...p, customUrl: uploadedUrl } : p))
+                                                prev.map((p) =>
+                                                  p.tempId === item.tempId ? { ...p, customUrl: uploadedUrl, is_poster: false } : p
+                                                )
                                               );
                                               addToast('success', 'Custom image uploaded!');
                                             }
@@ -3216,7 +3343,13 @@ export default function AdminDashboardPage() {
                                     }}
                                   />
                                   <div className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-bold backdrop-blur-xs">
-                                    {item.coverOption === 'branded' ? '⚡ Auto Branded Banner' : item.coverOption === 'prompt' ? '🎨 AI Pollinations' : '📁 Custom Image'}
+                                    {item.coverOption === 'banner'
+                                      ? '🎨 Full Banner Poster'
+                                      : item.coverOption === 'square_box'
+                                      ? '🖼️ Square Box Poster'
+                                      : item.coverOption === 'prompt'
+                                      ? '⚡ AI Photo'
+                                      : '📁 Custom Image'}
                                   </div>
                                 </div>
                               </div>
