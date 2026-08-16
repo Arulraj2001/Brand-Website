@@ -531,7 +531,7 @@ export default function AdminDashboardPage() {
   };
 
   // AI JSON Import Handler (Claude / GPT / Gemini output)
-  const handleImportJson = () => {
+  const handleImportJson = async () => {
     setBlogImportError('');
 
     let raw = blogImportJson.trim();
@@ -543,9 +543,16 @@ export default function AdminDashboardPage() {
     }
 
     // Isolate JSON object between first { and last }
+    const firstBracket = raw.indexOf('[');
+    const lastBracket = raw.lastIndexOf(']');
     const firstBrace = raw.indexOf('{');
     const lastBrace = raw.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace > firstBrace) {
+
+    const isArrayFormat = firstBracket !== -1 && lastBracket > firstBracket && (firstBrace === -1 || firstBracket < firstBrace);
+
+    if (isArrayFormat) {
+      raw = raw.substring(firstBracket, lastBracket + 1);
+    } else if (firstBrace !== -1 && lastBrace > firstBrace) {
       raw = raw.substring(firstBrace, lastBrace + 1);
     }
 
@@ -616,7 +623,7 @@ export default function AdminDashboardPage() {
       return result;
     };
 
-    let parsed: Record<string, unknown>;
+    let parsed: any;
     try {
       parsed = JSON.parse(raw);                          // Pass 1
     } catch {
@@ -627,10 +634,63 @@ export default function AdminDashboardPage() {
           parsed = extractManually(raw);                 // Pass 3
           addToast('success', '⚡ Auto-fixed AI formatting quirks and imported successfully!');
         } catch {
-          setBlogImportError('Could not parse AI output. Make sure you copied the JSON block containing "title" and "content".');
+          setBlogImportError('Could not parse AI output. Make sure you copied valid JSON block with title and content.');
           return;
         }
       }
+    }
+
+    if (Array.isArray(parsed)) {
+      let importedCount = 0;
+      for (const item of parsed) {
+        if (!item || typeof item !== 'object') continue;
+        const itemTitle = (item.title as string) || '';
+        const itemContent = (item.content as string) || '';
+        if (!itemTitle || !itemContent) continue;
+
+        const itemSlug = (item.slug as string) || itemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const itemCategory = (item.category as BlogCategory) || 'seo';
+        const itemExcerpt = (item.excerpt as string) || itemTitle;
+        const itemCity = (item.city as string) || 'Global';
+        const itemAuthor = (item.author_name as string) || `${settings.brand_name || 'Ostrune'} Team`;
+        const itemPrompt = (item.cover_image_prompt as string) || '';
+        const itemCover = (item.cover_image_url as string) || `/api/blog-banner?title=${encodeURIComponent(itemTitle)}&category=${encodeURIComponent(itemCategory)}&excerpt=${encodeURIComponent(itemExcerpt)}&city=${encodeURIComponent(itemCity)}`;
+
+        let secondaryKw = '';
+        if (Array.isArray(item.secondary_keywords)) {
+          secondaryKw = item.secondary_keywords.join(', ');
+        } else if (typeof item.secondary_keywords === 'string') {
+          secondaryKw = item.secondary_keywords;
+        }
+
+        const newPost: BlogPost = {
+          id: createLocalId('blog-'),
+          title: itemTitle,
+          slug: itemSlug,
+          category: itemCategory,
+          target_keyword: (item.target_keyword as string) || '',
+          secondary_keywords: secondaryKw,
+          city: itemCity,
+          author_name: itemAuthor,
+          cover_image_url: itemCover,
+          cover_image_prompt: itemPrompt,
+          excerpt: itemExcerpt,
+          content: itemContent,
+          is_published: true,
+          created_at: new Date().toISOString(),
+          published_at: new Date().toISOString(),
+        };
+
+        await saveBlogPostToSupabase(newPost);
+        importedCount++;
+      }
+
+      const fresh = await getBlogPosts(false);
+      setBlogPosts(fresh);
+      addToast('success', `🚀 Bulk imported ${importedCount} articles with custom branded banners!`);
+      setBlogStudioTab('write');
+      setBlogImportJson('');
+      return;
     }
 
     const titleVal = (parsed.title as string) || '';
