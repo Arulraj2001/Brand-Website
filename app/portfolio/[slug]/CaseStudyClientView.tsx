@@ -24,6 +24,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import GalleryLightbox from '@/components/ui/GalleryLightbox';
 import { PortfolioProject } from '@/types';
+import { getProjectBySlug } from '@/lib/supabase/data';
 
 interface CaseStudyClientViewProps {
   slug: string;
@@ -38,27 +39,40 @@ export default function CaseStudyClientView({
   const [loading, setLoading] = useState<boolean>(!serverProject);
 
   useEffect(() => {
-    if (serverProject) return;
+    let active = true;
 
-    async function loadProjectFromCache() {
+    async function loadFreshProject() {
       try {
-        const cached = localStorage.getItem('ostrune_portfolio_projects');
-        if (cached) {
-          const parsed: PortfolioProject[] = JSON.parse(cached);
-          const found = parsed.find((p) => p.slug === slug);
-          if (found) {
-            setProject(found);
-          }
+        const fresh = await getProjectBySlug(slug);
+        if (active && fresh) {
+          setProject(fresh);
         }
       } catch (e) {
-        console.warn('Error reading portfolio project from localStorage', e);
+        console.warn('Error loading fresh portfolio project', e);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }
 
-    loadProjectFromCache();
-  }, [slug, serverProject]);
+    loadFreshProject();
+
+    const handleUpdate = async () => {
+      try {
+        const fresh = await getProjectBySlug(slug);
+        if (active && fresh) {
+          setProject(fresh);
+        }
+      } catch {}
+    };
+
+    window.addEventListener('ostrune_portfolio_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_portfolio_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [slug]);
 
   if (loading) {
     return (

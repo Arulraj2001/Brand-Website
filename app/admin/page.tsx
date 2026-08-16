@@ -366,6 +366,7 @@ export default function AdminDashboardPage() {
 
   // Modal Image Inputs State
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
+  const [projectGalleryText, setProjectGalleryText] = useState('');
   const [blogCoverUrl, setBlogCoverUrl] = useState('');
   const [teamProfileUrl, setTeamProfileUrl] = useState('');
 
@@ -669,6 +670,15 @@ export default function AdminDashboardPage() {
     const challenge_description = (formData.get('challenge_description') as string) || '';
     const solution_description = (formData.get('solution_description') as string) || '';
 
+    const gallery_raw = (formData.get('gallery_urls') as string) || projectGalleryText || '';
+    let gallery_urls = gallery_raw
+      .split('\n')
+      .map((g) => g.trim())
+      .filter(Boolean);
+    if (gallery_urls.length === 0 && cover_image_url) {
+      gallery_urls = [cover_image_url];
+    }
+
     if (editingProject) {
       const updatedItem: PortfolioProject = {
         ...editingProject,
@@ -680,6 +690,7 @@ export default function AdminDashboardPage() {
         short_description,
         full_description,
         cover_image_url,
+        gallery_urls,
         results,
         testimonial,
         live_url,
@@ -706,7 +717,7 @@ export default function AdminDashboardPage() {
         short_description,
         full_description,
         cover_image_url,
-        gallery_urls: [cover_image_url],
+        gallery_urls,
         results,
         testimonial,
         live_url,
@@ -1461,7 +1472,7 @@ export default function AdminDashboardPage() {
                 <h1 className="text-xl font-bold text-[#1C1C1C]">Portfolio Manager</h1>
                 <p className="text-xs text-[#6B7280]">Create, edit, or delete global case studies</p>
               </div>
-              <Button onClick={() => { setEditingProject(null); setProjectCoverUrl(''); setProjectModalOpen(true); }} variant="primary" size="sm">
+              <Button onClick={() => { setEditingProject(null); setProjectCoverUrl(''); setProjectGalleryText(''); setProjectModalOpen(true); }} variant="primary" size="sm">
                 <Plus size={14} />
                 <span>Add New Project</span>
               </Button>
@@ -1538,7 +1549,7 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="py-3 px-3 text-right space-x-2">
                           <button
-                            onClick={() => { setEditingProject(p); setProjectCoverUrl(p.cover_image_url); setProjectModalOpen(true); }}
+                            onClick={() => { setEditingProject(p); setProjectCoverUrl(p.cover_image_url); setProjectGalleryText(p.gallery_urls?.join('\n') || p.cover_image_url || ''); setProjectModalOpen(true); }}
                             className="p-1.5 rounded-lg border border-[#E5E7EB] hover:border-[#FF9D00] text-[#1C1C1C] transition-colors"
                           >
                             <Edit2 size={13} />
@@ -3184,6 +3195,43 @@ export default function AdminDashboardPage() {
                       className="hidden"
                     />
                   </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                  Project Screenshots &amp; Analytics Gallery (one URL per line)
+                </label>
+                <div className="space-y-2">
+                  <textarea
+                    name="gallery_urls"
+                    rows={3}
+                    value={projectGalleryText}
+                    onChange={(e) => setProjectGalleryText(e.target.value)}
+                    placeholder={'https://images.unsplash.com/photo-screenshot1.jpg\nhttps://images.unsplash.com/photo-analytics.jpg'}
+                    className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                  />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1.5 cursor-pointer transition-colors shrink-0 min-h-[40px]">
+                      <UploadCloud size={14} className="text-[#FF9D00]" />
+                      <span>Upload Screenshot / Analytics Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const url = await uploadImageFile(e.target.files[0]);
+                            setProjectGalleryText((prev) => (prev ? `${prev}\n${url}` : url));
+                            addToast('success', 'Screenshot uploaded and added to gallery!');
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    <span className="text-[11px] text-[#6B7280]">
+                      Uploaded screenshots render in full-screen Lightbox on case study pages.
+                    </span>
+                  </div>
                 </div>
               </div>
 

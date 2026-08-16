@@ -16,12 +16,29 @@ export default function PortfolioPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
+
     async function loadData() {
       const data = await getPortfolioProjects();
-      setProjects(data);
-      setLoading(false);
+      if (active) {
+        setProjects(data);
+        setLoading(false);
+      }
     }
     loadData();
+
+    const handleUpdate = async () => {
+      const data = await getPortfolioProjects();
+      if (active) setProjects(data);
+    };
+
+    window.addEventListener('ostrune_portfolio_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_portfolio_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, []);
 
   const filteredProjects =

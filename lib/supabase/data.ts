@@ -283,9 +283,27 @@ export async function saveTeamMembersToSupabase(newTeam: TeamMember[]): Promise<
   }
 }
 
+export function getPortfolioProjectsSync(): PortfolioProject[] {
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_portfolio_projects');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {}
+  }
+  return INITIAL_PORTFOLIO;
+}
+
 // Helper to fetch portfolio projects
 export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
-  if (!isSupabaseConfigured()) return INITIAL_PORTFOLIO;
+  let localCache: PortfolioProject[] = getPortfolioProjectsSync();
+
+  if (!isSupabaseConfigured()) return localCache;
+
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -294,21 +312,80 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
       .order('created_at', { ascending: false });
 
     if (error || !data || data.length === 0) {
-      return INITIAL_PORTFOLIO;
+      return localCache;
     }
 
     // Ensure fallback mapping for client_location
-    return (data as PortfolioProjectRow[]).map((p) => ({
+    const fresh = (data as PortfolioProjectRow[]).map((p) => ({
       ...p,
       client_location: p.client_location || p.client_city || 'Global',
     })) as PortfolioProject[];
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(fresh));
+      } catch {}
+    }
+
+    return fresh;
   } catch {
-    return INITIAL_PORTFOLIO;
+    return localCache;
   }
 }
 
 // Helper to fetch single project by slug
 export async function getProjectBySlug(slug: string): Promise<PortfolioProject | null> {
+  if (!slug) return null;
+
+  // 1. Try local cache first on client
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_portfolio_projects');
+      if (cached) {
+        const parsed: PortfolioProject[] = JSON.parse(cached);
+        const found = parsed.find((p) => p.slug === slug);
+        if (found) return found;
+      }
+    } catch {}
+  }
+
+  if (!isSupabaseConfigured()) {
+    return INITIAL_PORTFOLIO.find((p) => p.slug === slug) || null;
+  }
+
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (!error && data) {
+      const p = data as PortfolioProjectRow;
+      const project = {
+        ...p,
+        client_location: p.client_location || p.client_city || 'Global',
+      } as PortfolioProject;
+
+      // Cache locally
+      if (typeof window !== 'undefined') {
+        try {
+          const cached = localStorage.getItem('ostrune_portfolio_projects');
+          let list: PortfolioProject[] = cached ? JSON.parse(cached) : [];
+          const idx = list.findIndex((item) => item.slug === slug);
+          if (idx >= 0) list[idx] = project;
+          else list.unshift(project);
+          localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(list));
+        } catch {}
+      }
+
+      return project;
+    }
+  } catch (e) {
+    console.error('Error fetching project by slug from Supabase:', e);
+  }
+
   const all = await getPortfolioProjects();
   return all.find((p) => p.slug === slug) || null;
 }
@@ -595,7 +672,29 @@ export async function deleteBlogPostFromSupabase(id: string, slug?: string): Pro
 }
 
 export async function saveProjectToSupabase(project: PortfolioProject): Promise<PortfolioProject> {
-  if (!isSupabaseConfigured()) return project;
+  let updatedProject = project;
+
+  // 1. Immediately update local cache and dispatch update event for instant real-time client hydration
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_portfolio_projects');
+      let projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
+      const existingIdx = projectsList.findIndex((p) => p.id === project.id || p.slug === project.slug);
+      if (existingIdx >= 0) {
+        projectsList[existingIdx] = { ...projectsList[existingIdx], ...project };
+      } else {
+        projectsList.unshift(project);
+      }
+      localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(projectsList));
+      window.dispatchEvent(new Event('ostrune_portfolio_updated'));
+      window.dispatchEvent(new Event('storage'));
+    } catch (e) {
+      console.warn('Error updating local portfolio storage', e);
+    }
+  }
+
+  if (!isSupabaseConfigured()) return updatedProject;
+
   try {
     const supabase = createClient();
     const payload: Record<string, unknown> = {
@@ -605,13 +704,13 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
       client_location: project.client_location || project.client_city || 'Global',
       service_type: project.service_type,
       short_description: project.short_description,
-      full_description: project.full_description,
+      full_description: project.full_description || project.short_description,
       cover_image_url: project.cover_image_url,
       gallery_urls: project.gallery_urls || [project.cover_image_url],
       results: project.results,
-      testimonial: project.testimonial,
-      live_url: project.live_url,
-      is_featured: project.is_featured,
+      testimonial: project.testimonial || '',
+      live_url: project.live_url || '',
+      is_featured: project.is_featured || false,
       tech_stack: project.tech_stack || [],
       before_metric: project.before_metric || '',
       after_metric: project.after_metric || '',
@@ -632,19 +731,46 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
       .single();
 
     if (!error && data) {
-      return data as PortfolioProject;
+      updatedProject = data as PortfolioProject;
+      if (typeof window !== 'undefined') {
+        try {
+          const cached = localStorage.getItem('ostrune_portfolio_projects');
+          let projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
+          const idx = projectsList.findIndex((p) => p.slug === updatedProject.slug);
+          if (idx >= 0) projectsList[idx] = updatedProject;
+          else projectsList.unshift(updatedProject);
+          localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(projectsList));
+          window.dispatchEvent(new Event('ostrune_portfolio_updated'));
+          window.dispatchEvent(new Event('storage'));
+        } catch {}
+      }
+    } else if (error) {
+      console.error('Supabase error saving project:', error);
     }
   } catch (err) {
     console.error('Error saving project to Supabase:', err);
   }
-  return project;
+  return updatedProject;
 }
 
 export async function deleteProjectFromSupabase(id: string, slug?: string): Promise<void> {
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_portfolio_projects');
+      if (cached) {
+        let projectsList: PortfolioProject[] = JSON.parse(cached);
+        projectsList = projectsList.filter((p) => p.id !== id && p.slug !== slug);
+        localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(projectsList));
+        window.dispatchEvent(new Event('ostrune_portfolio_updated'));
+        window.dispatchEvent(new Event('storage'));
+      }
+    } catch {}
+  }
+
   if (!isSupabaseConfigured()) return;
   try {
     const supabase = createClient();
-    if (id) await supabase.from('portfolio_projects').delete().eq('id', id);
+    if (id && isUUID(id)) await supabase.from('portfolio_projects').delete().eq('id', id);
     if (slug) await supabase.from('portfolio_projects').delete().eq('slug', slug);
   } catch (err) {
     console.error('Error deleting project from Supabase:', err);
