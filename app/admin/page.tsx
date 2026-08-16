@@ -152,6 +152,22 @@ const INITIAL_LEADS: Lead[] = [
   },
 ];
 
+export interface StagedImportPost {
+  tempId: string;
+  title: string;
+  slug: string;
+  category: BlogCategory;
+  target_keyword: string;
+  secondary_keywords: string;
+  city: string;
+  author_name: string;
+  excerpt: string;
+  content: string;
+  cover_image_prompt: string;
+  coverOption: 'branded' | 'prompt' | 'custom';
+  customUrl: string;
+}
+
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [loading, setLoading] = useState(true);
@@ -161,6 +177,10 @@ export default function AdminDashboardPage() {
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [userEmail, setUserEmail] = useState<string>('admin@ostrune.dev');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Interactive Staged Bulk JSON Import State
+  const [stagedImportPosts, setStagedImportPosts] = useState<StagedImportPost[]>([]);
+  const [isBulkPublishing, setIsBulkPublishing] = useState(false);
 
   // Student Projects & Video Feedback State
   const {
@@ -530,19 +550,30 @@ export default function AdminDashboardPage() {
     setBlogContentText((prev) => `${prev}\n${prefix}sample text${suffix}`);
   };
 
-  // AI JSON Import Handler (Claude / GPT / Gemini output)
-  const handleImportJson = async () => {
+  // Helper to compute cover image URL for a staged post based on user selection
+  const getStagedCoverUrl = (item: StagedImportPost): string => {
+    if (item.coverOption === 'branded') {
+      return `/api/blog-banner?title=${encodeURIComponent(item.title)}&category=${encodeURIComponent(item.category)}&excerpt=${encodeURIComponent(item.excerpt)}&city=${encodeURIComponent(item.city)}`;
+    }
+    if (item.coverOption === 'prompt' && item.cover_image_prompt) {
+      return `https://image.pollinations.ai/prompt/${encodeURIComponent(item.cover_image_prompt)}?width=1200&height=630&nologo=true`;
+    }
+    return item.customUrl || `/api/blog-banner?title=${encodeURIComponent(item.title)}&category=${encodeURIComponent(item.category)}&excerpt=${encodeURIComponent(item.excerpt)}&city=${encodeURIComponent(item.city)}`;
+  };
+
+  // AI JSON Import Parser (Populates Interactive Staged Preview Grid)
+  const handleParseJsonInput = (rawString?: string) => {
     setBlogImportError('');
+    let raw = (rawString !== undefined ? rawString : blogImportJson).trim();
+    if (!raw) {
+      setBlogImportError('Paste your AI JSON output or upload a .json file first.');
+      return;
+    }
 
-    let raw = blogImportJson.trim();
-    if (!raw) { setBlogImportError('Paste your AI JSON output above first.'); return; }
-
-    // Strip markdown code fences if present e.g. ```json ... ```
     if (raw.includes('```')) {
       raw = raw.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
     }
 
-    // Isolate JSON object between first { and last }
     const firstBracket = raw.indexOf('[');
     const lastBracket = raw.lastIndexOf(']');
     const firstBrace = raw.indexOf('{');
@@ -569,168 +600,129 @@ export default function AdminDashboardPage() {
       return out;
     };
 
-    // Pass 3: extract each known field individually — handles unescaped quotes inside strings
-    const extractManually = (str: string): Record<string, unknown> => {
-      const get = (field: string): string => {
-        const m = str.match(new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
-        if (m) {
-          return m[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
-        }
-        return '';
-      };
-
-      // secondary_keywords array or comma-separated string
-      let keywords: string[] = [];
-      const kwBlock = str.match(/"secondary_keywords"\s*:\s*\[([^\]]*)\]/);
-      if (kwBlock) {
-        keywords = [...kwBlock[1].matchAll(/"([^"]*)"/g)].map((m) => m[1]);
-      } else {
-        const kwStrMatch = str.match(/"secondary_keywords"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/);
-        if (kwStrMatch) {
-          keywords = kwStrMatch[1].split(',').map((k) => k.trim());
-        }
-      }
-
-      // content: from "content": " to the last " before closing }
-      let content = '';
-      const contentKeyIdx = str.indexOf('"content"');
-      if (contentKeyIdx !== -1) {
-        const colonIdx = str.indexOf(':', contentKeyIdx);
-        const openQ = str.indexOf('"', colonIdx + 1);
-        const closingBrace = str.lastIndexOf('}');
-        const closeQ = str.lastIndexOf('"', closingBrace - 1);
-        if (openQ !== -1 && closeQ > openQ) {
-          content = str.substring(openQ + 1, closeQ)
-            .replace(/\\n/g, '\n')
-            .replace(/\\"/g, '"');
-        }
-      }
-
-      const result = {
-        title: get('title'),
-        slug: get('slug'),
-        excerpt: get('excerpt'),
-        category: get('category'),
-        target_keyword: get('target_keyword'),
-        city: get('city'),
-        author_name: get('author_name'),
-        cover_image_url: get('cover_image_url'),
-        cover_image_prompt: get('cover_image_prompt'),
-        secondary_keywords: keywords,
-        content,
-      };
-      if (!result.title || !result.content) throw new Error('extraction failed');
-      return result;
-    };
-
     let parsed: any;
     try {
-      parsed = JSON.parse(raw);                          // Pass 1
+      parsed = JSON.parse(raw);
     } catch {
       try {
-        parsed = JSON.parse(sanitizeNewlines(raw));      // Pass 2
+        parsed = JSON.parse(sanitizeNewlines(raw));
       } catch {
-        try {
-          parsed = extractManually(raw);                 // Pass 3
-          addToast('success', '⚡ Auto-fixed AI formatting quirks and imported successfully!');
-        } catch {
-          setBlogImportError('Could not parse AI output. Make sure you copied valid JSON block with title and content.');
-          return;
-        }
+        setBlogImportError('Could not parse JSON. Make sure you copied valid JSON format.');
+        return;
       }
     }
 
-    if (Array.isArray(parsed)) {
-      let importedCount = 0;
-      for (const item of parsed) {
-        if (!item || typeof item !== 'object') continue;
-        const itemTitle = (item.title as string) || '';
-        const itemContent = (item.content as string) || '';
-        if (!itemTitle || !itemContent) continue;
+    const rawItems = Array.isArray(parsed) ? parsed : [parsed];
+    const staged: StagedImportPost[] = [];
 
-        const itemSlug = (item.slug as string) || itemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        const itemCategory = (item.category as BlogCategory) || 'seo';
-        const itemExcerpt = (item.excerpt as string) || itemTitle;
-        const itemCity = (item.city as string) || 'Global';
-        const itemAuthor = (item.author_name as string) || `${settings.brand_name || 'Ostrune'} Team`;
-        const itemPrompt = (item.cover_image_prompt as string) || '';
-        const itemCover = (item.cover_image_url as string) || `/api/blog-banner?title=${encodeURIComponent(itemTitle)}&category=${encodeURIComponent(itemCategory)}&excerpt=${encodeURIComponent(itemExcerpt)}&city=${encodeURIComponent(itemCity)}`;
+    for (let i = 0; i < rawItems.length; i++) {
+      const item = rawItems[i];
+      if (!item || typeof item !== 'object') continue;
+      const title = (item.title as string) || '';
+      const content = (item.content as string) || '';
+      if (!title || !content) continue;
 
-        let secondaryKw = '';
-        if (Array.isArray(item.secondary_keywords)) {
-          secondaryKw = item.secondary_keywords.join(', ');
-        } else if (typeof item.secondary_keywords === 'string') {
-          secondaryKw = item.secondary_keywords;
-        }
+      const slug = (item.slug as string) || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      const category = (item.category as BlogCategory) || 'seo';
+      const excerpt = (item.excerpt as string) || title;
+      const city = (item.city as string) || 'Global';
+      const author_name = (item.author_name as string) || `${settings.brand_name || 'Ostrune'} Team`;
+      const cover_image_prompt = (item.cover_image_prompt as string) || '';
+      const initialCoverUrl = (item.cover_image_url as string) || '';
 
-        const newPost: BlogPost = {
+      let secondaryKw = '';
+      if (Array.isArray(item.secondary_keywords)) {
+        secondaryKw = item.secondary_keywords.join(', ');
+      } else if (typeof item.secondary_keywords === 'string') {
+        secondaryKw = item.secondary_keywords;
+      }
+
+      let initialOption: 'branded' | 'prompt' | 'custom' = 'branded';
+      if (initialCoverUrl) {
+        initialOption = 'custom';
+      }
+
+      staged.push({
+        tempId: `stage-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+        title,
+        slug,
+        category,
+        target_keyword: (item.target_keyword as string) || '',
+        secondary_keywords: secondaryKw,
+        city,
+        author_name,
+        excerpt,
+        content,
+        cover_image_prompt,
+        coverOption: initialOption,
+        customUrl: initialCoverUrl,
+      });
+    }
+
+    if (staged.length === 0) {
+      setBlogImportError('No valid articles with "title" and "content" found in JSON.');
+      return;
+    }
+
+    setStagedImportPosts(staged);
+    addToast('success', `⚡ Loaded ${staged.length} article(s)! Customize cover options below.`);
+  };
+
+  // Upload .json File Handler
+  const handleFileUploadJson = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = (e.target?.result as string) || '';
+      setBlogImportJson(text);
+      handleParseJsonInput(text);
+    };
+    reader.readAsText(file);
+  };
+
+  // Bulk Commit Staged Articles to Supabase
+  const handlePublishStagedPosts = async () => {
+    if (stagedImportPosts.length === 0) return;
+    setIsBulkPublishing(true);
+
+    try {
+      let count = 0;
+      for (const item of stagedImportPosts) {
+        const finalCoverUrl = getStagedCoverUrl(item);
+
+        const finalPost: BlogPost = {
           id: createLocalId('blog-'),
-          title: itemTitle,
-          slug: itemSlug,
-          category: itemCategory,
-          target_keyword: (item.target_keyword as string) || '',
-          secondary_keywords: secondaryKw,
-          city: itemCity,
-          author_name: itemAuthor,
-          cover_image_url: itemCover,
-          cover_image_prompt: itemPrompt,
-          excerpt: itemExcerpt,
-          content: itemContent,
+          title: item.title,
+          slug: item.slug,
+          category: item.category,
+          target_keyword: item.target_keyword,
+          secondary_keywords: item.secondary_keywords,
+          city: item.city,
+          author_name: item.author_name,
+          cover_image_url: finalCoverUrl,
+          cover_image_prompt: item.cover_image_prompt,
+          excerpt: item.excerpt,
+          content: item.content,
           is_published: true,
           created_at: new Date().toISOString(),
           published_at: new Date().toISOString(),
         };
 
-        await saveBlogPostToSupabase(newPost);
-        importedCount++;
+        await saveBlogPostToSupabase(finalPost);
+        count++;
       }
 
       const fresh = await getBlogPosts(false);
       setBlogPosts(fresh);
-      addToast('success', `🚀 Bulk imported ${importedCount} articles with custom branded banners!`);
-      setBlogStudioTab('write');
+      addToast('success', `🚀 Successfully published ${count} blog posts with custom cover banners!`);
+      setStagedImportPosts([]);
       setBlogImportJson('');
-      return;
+      setBlogModalOpen(false);
+    } catch (err) {
+      console.error('Error publishing staged posts', err);
+      addToast('error', 'Failed to publish some articles. Please try again.');
+    } finally {
+      setIsBulkPublishing(false);
     }
-
-    const titleVal = (parsed.title as string) || '';
-    const contentVal = (parsed.content as string) || '';
-
-    if (!titleVal) { setBlogImportError('Missing field: "title" — check your AI JSON output'); return; }
-    if (!contentVal) { setBlogImportError('Missing field: "content" — check your AI JSON output'); return; }
-
-    const slugVal = (parsed.slug as string) || titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-
-    let secondaryKwVal = '';
-    if (Array.isArray(parsed.secondary_keywords)) {
-      secondaryKwVal = (parsed.secondary_keywords as string[]).join(', ');
-    } else if (typeof parsed.secondary_keywords === 'string') {
-      secondaryKwVal = parsed.secondary_keywords;
-    }
-
-    setBlogTitleText(titleVal);
-    setBlogSlugText(slugVal);
-    setBlogContentText(contentVal);
-    setBlogExcerptText((parsed.excerpt as string) || '');
-    setBlogKeywordText((parsed.target_keyword as string) || '');
-    setBlogSecondaryKeywordsText(secondaryKwVal);
-    setBlogCityText((parsed.city as string) || 'Global');
-    if (parsed.category) setBlogCategoryVal(parsed.category as BlogCategory);
-    if (parsed.author_name) setBlogAuthorVal(parsed.author_name as string);
-    const promptText = (parsed.cover_image_prompt as string) || '';
-    if (parsed.cover_image_url) {
-      setBlogCoverUrl(parsed.cover_image_url as string);
-    } else {
-      // Generate dynamic Ostrune News/Blog Branded Banner matching reference template
-      const bannerUrl = `/api/blog-banner?title=${encodeURIComponent(titleVal)}&category=${encodeURIComponent((parsed.category as string) || 'seo')}&excerpt=${encodeURIComponent((parsed.excerpt as string) || titleVal)}&city=${encodeURIComponent((parsed.city as string) || 'Global')}`;
-      setBlogCoverUrl(bannerUrl);
-    }
-
-    if (parsed.cover_image_prompt) setBlogCoverPromptText(parsed.cover_image_prompt as string);
-
-    addToast('success', `✅ Blog imported: "${titleVal}" — cover preview generated!`);
-    setBlogStudioTab('write');
-    setBlogImportJson('');
   };
 
   // Portfolio Save Handler
@@ -2947,73 +2939,315 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
-              {/* TAB 4: CLAUDE JSON IMPORT */}
+              {/* TAB 4: CLAUDE JSON IMPORT & MULTI-CARD PREVIEW STUDIO */}
               {blogStudioTab === 'import' && (
-                <div className="space-y-4">
-                  {/* Instructions banner */}
-                  <div className="p-4 bg-[#F3F0FF] border border-[#8B5CF6]/30 rounded-xl text-xs space-y-2">
-                    <p className="font-bold text-[#6D28D9] flex items-center gap-1.5">📋 How to use Claude Import</p>
-                    <ol className="list-decimal list-inside text-[#4C1D95] space-y-0.5 leading-relaxed">
-                      <li>Open Claude and use the <strong>Master Blog Prompt</strong> — copy it below</li>
-                      <li>Claude returns a ready JSON block — copy the entire JSON output</li>
-                      <li>Paste it in the box below and click <strong>Import &amp; Fill All Fields</strong></li>
-                      <li>Switch to Write / Meta tabs to review, upload cover image, then Save</li>
-                    </ol>
-                  </div>
+                <div className="space-y-5">
+                  {/* Instructions & File Upload Bar */}
+                  <div className="p-4 bg-[#F3F0FF] border border-[#8B5CF6]/30 rounded-xl space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <p className="font-extrabold text-[#6D28D9] flex items-center gap-1.5 text-sm">
+                          <Sparkles size={16} className="text-[#8B5CF6]" /> Interactive AI JSON Import &amp; Banner Studio
+                        </p>
+                        <p className="text-xs text-[#4C1D95]">
+                          Paste your AI JSON output or upload a <strong>.json</strong> file containing 1 or multiple articles. Preview each article with custom banner options before publishing!
+                        </p>
+                      </div>
 
-                  {/* Copy master prompt shortcut */}
-                  <div className="p-3 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl flex items-start justify-between gap-3">
-                    <div className="text-xs">
-                      <p className="font-bold text-[#1C1C1C] mb-0.5">🤖 Need the Claude Prompt?</p>
-                      <p className="text-[#6B7280]">Copy the Master Blog Prompt and paste it directly to Claude — it will write and output the JSON automatically.</p>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {/* Upload .json File Button */}
+                        <label className="px-3.5 py-2 rounded-xl bg-white border border-[#8B5CF6] hover:bg-[#F3F0FF] text-xs font-extrabold text-[#6D28D9] flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs">
+                          <UploadCloud size={15} className="text-[#8B5CF6]" />
+                          <span>Upload .json File</span>
+                          <input
+                            type="file"
+                            accept=".json,application/json"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                handleFileUploadJson(e.target.files[0]);
+                              }
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+
+                        {/* Copy Master Prompt Shortcut */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                            const MASTER_PROMPT = `You are an expert SEO content strategist and professional blog writer for a digital agency.\n\nToday is ${today}.\n\nYour task: Write complete, high-performing blog post(s) for today and return ONLY a valid JSON object or JSON array — no markdown fences, no explanation, no preamble. Just raw JSON.\n\nReturn this exact JSON format:\n[\n  {\n    "title": "SEO-optimized blog title",\n    "slug": "url-friendly-slug",\n    "excerpt": "2-3 sentence meta description",\n    "category": "seo | web_dev | app_dev | website_upgrade | local_business | meta_ads | ugc_ads | sales_growth | general",\n    "target_keyword": "primary keyword",\n    "secondary_keywords": ["keyword2", "keyword3"],\n    "city": "Global",\n    "author_name": "Ostrune Team",\n    "cover_image_url": "",\n    "cover_image_prompt": "Detailed DALL-E image prompt",\n    "content": "## Section Heading\\n\\nContent markdown here..."\n  }\n]`;
+                            navigator.clipboard.writeText(MASTER_PROMPT);
+                            setBlogImportPromptCopied(true);
+                            addToast('success', '📋 Master Prompt copied!');
+                            setTimeout(() => setBlogImportPromptCopied(false), 3000);
+                          }}
+                          className="px-3 py-2 rounded-xl bg-[#8B5CF6] text-white font-extrabold text-xs flex items-center gap-1 hover:bg-[#7C3AED] transition-colors"
+                        >
+                          {blogImportPromptCopied ? <Check size={14} /> : <Copy size={14} />}
+                          <span>{blogImportPromptCopied ? 'Copied!' : 'Copy Prompt'}</span>
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                        const MASTER_PROMPT = `You are an expert SEO content strategist and professional blog writer for a digital agency.\n\nToday is ${today}.\n\nYour task: Write a complete, high-performing blog post for today and return ONLY a valid JSON object — no markdown fences, no explanation, no preamble. Just raw JSON.\n\nAutonomously decide the best:\n- Title type (how-to, listicle, evergreen, trending, question-based, or data-driven — pick whatever ranks best today)\n- Topic (from digital marketing, SEO, web development, paid ads, or business growth)\n- Primary keyword (high-intent, realistic to rank for, not too competitive)\n- 4–6 secondary long-tail keywords\n- Best-fit category (pick exactly one: seo | web_dev | app_dev | website_upgrade | local_business | meta_ads | ugc_ads | sales_growth | general)\n\nCONTENT FORMAT — CRITICAL: Write content in MARKDOWN format only. Do NOT use HTML tags.\n- Use ## for H2 section headings (e.g. ## Why This Matters)\n- Use ### for H3 sub-headings (e.g. ### Step 1: Do This)\n- Use **text** for bold emphasis\n- Use *text* for italic emphasis\n- Use - item for bullet list items (one per line)\n- Use > text for blockquotes\n- Write plain paragraph text as-is, no wrapping tags\n- Minimum 900 words\n- No keyword stuffing — write naturally, like a real expert\n- Include at least 1 blockquote (> ...) with an expert insight or industry stat\n- End with a motivating CTA paragraph\n- No placeholder text — every word must be real, useful content\n\nReturn this exact JSON (all fields required, no extra keys):\n{\n  "title": "SEO-optimized blog title under 60 characters",\n  "slug": "url-friendly-slug-with-hyphens-only",\n  "excerpt": "2-3 sentence compelling meta description under 160 characters",\n  "category": "one_of_the_categories_above",\n  "target_keyword": "your chosen primary keyword",\n  "secondary_keywords": ["keyword2", "keyword3", "keyword4", "keyword5"],\n  "city": "Global",\n  "author_name": "Your Brand Team",\n  "cover_image_url": "",\n  "cover_image_prompt": "Detailed DALL-E image generation prompt for a professional blog cover. Describe subject, mood, lighting, colors, photographic style. No text overlays in image.",\n  "content": "## First Section Heading\n\nParagraph text here. Use markdown throughout.\n\n## Second Section\n\n- Bullet one\n- Bullet two\n\n> Blockquote insight here"\n}`;
-                        navigator.clipboard.writeText(MASTER_PROMPT);
-                        setBlogImportPromptCopied(true);
-                        addToast('success', '📋 Master Claude Prompt copied to clipboard!');
-                        setTimeout(() => setBlogImportPromptCopied(false), 3000);
-                      }}
-                      className="shrink-0 px-3 py-2 rounded-lg bg-[#FF9D00] text-white font-bold text-xs flex items-center gap-1.5 hover:bg-[#e08b00] transition-colors min-h-[44px]"
-                    >
-                      {blogImportPromptCopied ? <Check size={14} /> : <Copy size={14} />}
-                      <span>{blogImportPromptCopied ? 'Copied!' : 'Copy Prompt'}</span>
-                    </button>
                   </div>
 
-                  {/* JSON paste area */}
-                  <div>
-                    <label className="block text-xs font-bold text-[#1C1C1C] mb-1.5">Paste Claude JSON Output Here</label>
-                    <textarea
-                      rows={10}
-                      value={blogImportJson}
-                      onChange={(e) => { setBlogImportJson(e.target.value); setBlogImportError(''); }}
-                      placeholder={'{\n  "title": "...",\n  "slug": "...",\n  "excerpt": "...",\n  "category": "seo",\n  "target_keyword": "...",\n  "secondary_keywords": ["..."],\n  "city": "Global",\n  "author_name": "...",\n  "cover_image_prompt": "...",\n  "content": "<h2>...</h2><p>...</p>"\n}'}
-                      className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] text-xs font-mono text-[#1C1C1C] focus:outline-none focus:border-[#8B5CF6] leading-relaxed bg-[#F9FAFB]"
-                    />
-                    {blogImportError && (
-                      <p className="mt-1.5 text-xs font-semibold text-[#EF4444] flex items-center gap-1">
-                        ⚠️ {blogImportError}
-                      </p>
-                    )}
-                  </div>
+                  {/* JSON Input Area */}
+                  {stagedImportPosts.length === 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-extrabold text-[#1C1C1C]">Paste JSON String or Output Here</label>
+                        <span className="text-[11px] text-[#6B7280]">Supports single post object or multi-post array [ ... ]</span>
+                      </div>
 
-                  {/* Import button */}
-                  <button
-                    type="button"
-                    onClick={handleImportJson}
-                    className="w-full py-3 rounded-xl bg-[#8B5CF6] text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#7C3AED] transition-colors"
-                  >
-                    <CheckCircle2 size={16} />
-                    Import &amp; Fill All Fields
-                  </button>
+                      <textarea
+                        rows={8}
+                        value={blogImportJson}
+                        onChange={(e) => { setBlogImportJson(e.target.value); setBlogImportError(''); }}
+                        placeholder={'[\n  {\n    "title": "What is Technical SEO?",\n    "category": "seo",\n    "excerpt": "...",\n    "content": "..."\n  }\n]'}
+                        className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-xs font-mono text-[#1C1C1C] focus:outline-none focus:border-[#8B5CF6] leading-relaxed bg-[#F9FAFB]"
+                      />
 
-                  <p className="text-center text-[11px] text-[#9CA3AF]">
-                    Post will be saved as <strong>Draft</strong> — publish manually after reviewing content and uploading cover image
-                  </p>
+                      {blogImportError && (
+                        <p className="text-xs font-semibold text-[#EF4444] flex items-center gap-1">
+                          ⚠️ {blogImportError}
+                        </p>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleParseJsonInput()}
+                        className="w-full py-3 rounded-xl bg-[#8B5CF6] text-white font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-[#7C3AED] transition-colors shadow-md"
+                      >
+                        <Sparkles size={16} />
+                        <span>🔍 Parse &amp; Preview All Articles</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* STAGED MULTI-CARD INTERACTIVE PREVIEW STUDIO */}
+                  {stagedImportPosts.length > 0 && (
+                    <div className="space-y-4 pt-2">
+                      {/* Control Bar Header */}
+                      <div className="p-3.5 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20 shadow-sm">
+                        <div>
+                          <p className="font-extrabold text-[#1C1C1C] text-xs sm:text-sm flex items-center gap-1.5">
+                            <Sparkles size={15} className="text-[#FF9D00]" />
+                            <span>Previewing {stagedImportPosts.length} Article(s) Ready to Import</span>
+                          </p>
+                          <p className="text-[11px] text-[#6B7280]">
+                            Select banner mode (Branded Banner, AI Prompt, or Upload File) for each post, then click Publish All.
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => { setStagedImportPosts([]); setBlogImportJson(''); }}
+                            className="px-3 py-1.5 rounded-lg border border-[#E5E7EB] bg-white text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C]"
+                          >
+                            Reset / Cancel
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isBulkPublishing}
+                            onClick={handlePublishStagedPosts}
+                            className="px-4 py-2 rounded-xl bg-[#FF9D00] text-white text-xs font-extrabold flex items-center gap-1.5 hover:bg-[#e08b00] transition-colors shadow-sm disabled:opacity-50 min-h-[40px]"
+                          >
+                            {isBulkPublishing ? (
+                              <>
+                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <span>Publishing Articles...</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 size={15} />
+                                <span>🚀 Publish All {stagedImportPosts.length} Articles</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Staged Cards Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[520px] overflow-y-auto pr-1">
+                        {stagedImportPosts.map((item, idx) => {
+                          const activeCoverUrl = getStagedCoverUrl(item);
+
+                          return (
+                            <div key={item.tempId} className="p-4 bg-white border border-[#E5E7EB] rounded-2xl space-y-3 shadow-xs hover:border-[#FF9D00] transition-all flex flex-col justify-between">
+                              <div className="space-y-2.5">
+                                {/* Header badges */}
+                                <div className="flex items-center justify-between text-xs border-b border-[#F3F4F6] pb-2">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="w-5 h-5 rounded-full bg-[#1C1C1C] text-white font-extrabold text-[10px] flex items-center justify-center">
+                                      #{idx + 1}
+                                    </span>
+                                    <span className="px-2 py-0.5 rounded bg-[#3B82F6] text-white font-extrabold text-[10px] uppercase">
+                                      {item.category.replace('_', ' ')}
+                                    </span>
+                                    {item.target_keyword && (
+                                      <span className="px-2 py-0.5 rounded bg-[#FFF9E6] text-[#FF9D00] font-bold text-[10px] border border-[#FFD21E]/60">
+                                        #{item.target_keyword.replace(/\s+/g, '-')}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setStagedImportPosts((prev) => prev.filter((p) => p.tempId !== item.tempId));
+                                      addToast('success', `Removed article #${idx + 1} from staged batch`);
+                                    }}
+                                    className="text-[11px] font-bold text-[#EF4444] hover:underline"
+                                  >
+                                    Exclude 🗑️
+                                  </button>
+                                </div>
+
+                                {/* Title & Excerpt */}
+                                <div>
+                                  <h4 className="font-extrabold text-[#1C1C1C] text-sm leading-snug line-clamp-2">{item.title}</h4>
+                                  <p className="text-xs text-[#6B7280] line-clamp-2 mt-1 italic">&quot;{item.excerpt}&quot;</p>
+                                </div>
+
+                                {/* Banner Selector Controls */}
+                                <div className="space-y-1.5 pt-1">
+                                  <label className="block text-[11px] font-extrabold text-[#1C1C1C]">Cover Image Strategy:</label>
+                                  <div className="flex items-center gap-1.5 text-xs">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setStagedImportPosts((prev) =>
+                                          prev.map((p) => (p.tempId === item.tempId ? { ...p, coverOption: 'branded' } : p))
+                                        );
+                                      }}
+                                      className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
+                                        item.coverOption === 'branded'
+                                          ? 'bg-[#FF9D00] text-white border-[#FF9D00]'
+                                          : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
+                                      }`}
+                                    >
+                                      <Sparkles size={12} /> ⚡ Auto Branded
+                                    </button>
+
+                                    {item.cover_image_prompt && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setStagedImportPosts((prev) =>
+                                            prev.map((p) => (p.tempId === item.tempId ? { ...p, coverOption: 'prompt' } : p))
+                                          );
+                                        }}
+                                        className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
+                                          item.coverOption === 'prompt'
+                                            ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]'
+                                            : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
+                                        }`}
+                                      >
+                                        <Sparkles size={12} /> 🎨 AI Prompt
+                                      </button>
+                                    )}
+
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setStagedImportPosts((prev) =>
+                                          prev.map((p) => (p.tempId === item.tempId ? { ...p, coverOption: 'custom' } : p))
+                                        );
+                                      }}
+                                      className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] border transition-colors flex items-center gap-1 ${
+                                        item.coverOption === 'custom'
+                                          ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
+                                          : 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB] hover:text-[#1C1C1C]'
+                                      }`}
+                                    >
+                                      <UploadCloud size={12} /> Custom / Upload
+                                    </button>
+                                  </div>
+
+                                  {/* Custom URL & Upload File Input for Custom Mode */}
+                                  {item.coverOption === 'custom' && (
+                                    <div className="flex items-center gap-2 pt-1">
+                                      <input
+                                        type="text"
+                                        value={item.customUrl}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          setStagedImportPosts((prev) =>
+                                            prev.map((p) => (p.tempId === item.tempId ? { ...p, customUrl: val } : p))
+                                          );
+                                        }}
+                                        placeholder="Paste custom image URL..."
+                                        className="flex-1 px-3 py-1.5 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
+                                      />
+                                      <label className="px-2.5 py-1.5 rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] text-[11px] font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer hover:border-[#FF9D00]">
+                                        <UploadCloud size={12} className="text-[#FF9D00]" />
+                                        <span>File</span>
+                                        <input
+                                          type="file"
+                                          accept="image/*"
+                                          onChange={async (e) => {
+                                            if (e.target.files && e.target.files[0]) {
+                                              const uploadedUrl = await uploadImageFile(e.target.files[0]);
+                                              setStagedImportPosts((prev) =>
+                                                prev.map((p) => (p.tempId === item.tempId ? { ...p, customUrl: uploadedUrl } : p))
+                                              );
+                                              addToast('success', 'Custom image uploaded!');
+                                            }
+                                          }}
+                                          className="hidden"
+                                        />
+                                      </label>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Live Image Preview */}
+                              <div className="pt-2">
+                                <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#E5E7EB] bg-black/5">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={activeCoverUrl}
+                                    alt={item.title}
+                                    className="w-full h-full object-cover"
+                                    onError={() => {
+                                      addToast('error', `Image failed to load for article #${idx + 1}`);
+                                    }}
+                                  />
+                                  <div className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-bold backdrop-blur-xs">
+                                    {item.coverOption === 'branded' ? '⚡ Auto Branded Banner' : item.coverOption === 'prompt' ? '🎨 AI Pollinations' : '📁 Custom Image'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Sticky Bottom Action Bar */}
+                      <div className="pt-2 flex justify-end">
+                        <button
+                          type="button"
+                          disabled={isBulkPublishing}
+                          onClick={handlePublishStagedPosts}
+                          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#FF9D00] text-white text-sm font-extrabold flex items-center justify-center gap-2 hover:bg-[#e08b00] transition-colors shadow-md disabled:opacity-50"
+                        >
+                          {isBulkPublishing ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span>Publishing All Articles...</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 size={16} />
+                              <span>🚀 Publish All {stagedImportPosts.length} Articles</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
