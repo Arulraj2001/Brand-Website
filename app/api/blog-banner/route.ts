@@ -226,14 +226,21 @@ export async function GET(req: NextRequest) {
       .join('\n    ')}
   </g>
 
-  <!-- SUB-HEADLINE / EXCERPT (Vibrant Accent Color Text) -->
-  <g>
-    ${excerptLines
-      .map(
-        (line, i) =>
-          `<text x="60" y="${375 + titleLines.length * 15 + i * 32}" fill="${theme.subHeadlineColor}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="600" letter-spacing="0.2">${escapeXml(line)}</text>`
-      )
-      .join('\n    ')}
+  <!-- EXCERPT / EXECUTIVE SUMMARY CARD -->
+  <g transform="translate(60, ${150 + titleLines.length * 56 + 25})">
+    <!-- Executive Summary Badge -->
+    <rect x="0" y="0" width="168" height="26" rx="4" fill="${theme.glowColor}" fill-opacity="0.22" stroke="${theme.badgeBorder}" stroke-opacity="0.5" stroke-width="1" />
+    <text x="12" y="17" fill="${theme.subHeadlineColor}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="800" letter-spacing="1.2">EXECUTIVE SUMMARY</text>
+
+    <!-- Excerpt Text Lines -->
+    <g transform="translate(0, 48)">
+      ${excerptLines
+        .map(
+          (line, i) =>
+            `<text x="0" y="${i * 30}" fill="${theme.subHeadlineColor}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" letter-spacing="0.2">${escapeXml(line)}</text>`
+        )
+        .join('\n      ')}
+    </g>
   </g>
 
   <!-- FOOTER SEPARATOR LINE -->
