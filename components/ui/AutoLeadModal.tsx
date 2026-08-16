@@ -42,7 +42,7 @@ export default function AutoLeadModal() {
       const timer = setTimeout(() => {
         setIsOpen(true);
         sessionStorage.setItem('hasSeenLeadModal', 'true');
-      }, 10000); // 10 Seconds Auto Popup Trigger
+      }, 60000); // 1 Minute (60 Seconds) Auto Popup Trigger
 
       return () => clearTimeout(timer);
     }
