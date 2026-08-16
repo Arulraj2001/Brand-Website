@@ -586,6 +586,8 @@ function cacheBlogPostLocal(post: BlogPost, previousSlug?: string): void {
     }
 
     localStorage.setItem('ostrune_blog_posts', JSON.stringify(list));
+    window.dispatchEvent(new Event('ostrune_blog_updated'));
+    window.dispatchEvent(new Event('storage'));
   } catch (e) {
     console.warn('localStorage blog write warning', e);
   }
@@ -655,6 +657,8 @@ export async function deleteBlogPostFromSupabase(id: string, slug?: string): Pro
         const list: BlogPost[] = JSON.parse(cached);
         const filtered = list.filter((p) => p.id !== id && p.slug !== slug);
         localStorage.setItem('ostrune_blog_posts', JSON.stringify(filtered));
+        window.dispatchEvent(new Event('ostrune_blog_updated'));
+        window.dispatchEvent(new Event('storage'));
       }
     } catch {}
   }

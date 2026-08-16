@@ -381,6 +381,8 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
+    let active = true;
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -390,6 +392,7 @@ export default function AdminDashboardPage() {
           getBlogPosts(false),
           getLeadsFromSupabase(),
         ]);
+        if (!active) return;
         setProjects(projData);
         setTestimonials(testData);
         setBlogPosts(postsData);
@@ -399,17 +402,40 @@ export default function AdminDashboardPage() {
 
         const supabase = createClient();
         const { data } = await supabase.auth.getUser();
-        if (data?.user?.email) {
+        if (active && data?.user?.email) {
           setUserEmail(data.user.email);
         }
       } catch (err) {
         console.error('Data fetch error:', err);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     fetchData();
+
+    const handlePortfolioUpdate = async () => {
+      const fresh = await getPortfolioProjects();
+      if (active) setProjects(fresh);
+    };
+
+    const handleBlogUpdate = async () => {
+      const fresh = await getBlogPosts(false);
+      if (active) setBlogPosts(fresh);
+    };
+
+    window.addEventListener('ostrune_portfolio_updated', handlePortfolioUpdate);
+    window.addEventListener('ostrune_blog_updated', handleBlogUpdate);
+    window.addEventListener('storage', handlePortfolioUpdate);
+    window.addEventListener('storage', handleBlogUpdate);
+
+    return () => {
+      active = false;
+      window.removeEventListener('ostrune_portfolio_updated', handlePortfolioUpdate);
+      window.removeEventListener('ostrune_blog_updated', handleBlogUpdate);
+      window.removeEventListener('storage', handlePortfolioUpdate);
+      window.removeEventListener('storage', handleBlogUpdate);
+    };
   }, []);
 
   const handleSignOut = async () => {
