@@ -36,7 +36,7 @@ export interface PosterTheme {
 }
 
 export const CATEGORY_EMOJIS: Record<string, { label: string; emoji: string }> = {
-  seo: { label: 'SEO & Growth', emoji: '🚀' },
+  seo: { label: 'SEO & Organic Growth', emoji: '🚀' },
   web_dev: { label: 'Web Engineering', emoji: '💻' },
   app_dev: { label: 'App Development', emoji: '📱' },
   website_upgrade: { label: 'Platform Upgrade', emoji: '⚡' },
@@ -44,6 +44,13 @@ export const CATEGORY_EMOJIS: Record<string, { label: string; emoji: string }> =
   meta_ads: { label: 'Paid Meta Ads', emoji: '🎯' },
   ugc_ads: { label: 'UGC Video Marketing', emoji: '🎬' },
   sales_growth: { label: 'Sales & Conversion', emoji: '📈' },
+  ai_automation: { label: 'AI & Automation', emoji: '🤖' },
+  cybersecurity: { label: 'Security & Cloud', emoji: '🛡️' },
+  ecommerce: { label: 'E-Commerce Stores', emoji: '🛒' },
+  brand_design: { label: 'UI/UX & Branding', emoji: '🎨' },
+  content_marketing: { label: 'Content Strategy', emoji: '📝' },
+  saas_growth: { label: 'SaaS & B2B Tech', emoji: '⚡' },
+  analytics_data: { label: 'Data Analytics & CRO', emoji: '📊' },
   general: { label: 'Agency Insights', emoji: '💎' },
 };
 
@@ -128,6 +135,76 @@ export const CATEGORY_THEMES: Record<string, PosterTheme> = {
     stampColor: '#F59E0B',
     verifiedColor: '#10B981',
   },
+  ai_automation: {
+    bgGrad: ['#0F0C29', '#24243E', '#302B63', '#0F0C29'],
+    ribbonGold: '#38BDF8',
+    ribbonAccent: '#A855F7',
+    badgeBg: 'rgba(168, 85, 247, 0.25)',
+    badgeBorder: 'rgba(192, 132, 252, 0.5)',
+    subheadColor: '#38BDF8',
+    stampColor: '#C084FC',
+    verifiedColor: '#10B981',
+  },
+  cybersecurity: {
+    bgGrad: ['#0B1021', '#111827', '#1F2937', '#1E40AF'],
+    ribbonGold: '#60A5FA',
+    ribbonAccent: '#3B82F6',
+    badgeBg: 'rgba(59, 130, 246, 0.25)',
+    badgeBorder: 'rgba(147, 197, 253, 0.5)',
+    subheadColor: '#93C5FD',
+    stampColor: '#60A5FA',
+    verifiedColor: '#10B981',
+  },
+  ecommerce: {
+    bgGrad: ['#1A0C00', '#381A00', '#7C2D12', '#F59E0B'],
+    ribbonGold: '#F59E0B',
+    ribbonAccent: '#FB923C',
+    badgeBg: 'rgba(245, 158, 11, 0.25)',
+    badgeBorder: 'rgba(253, 211, 77, 0.5)',
+    subheadColor: '#FDE047',
+    stampColor: '#F59E0B',
+    verifiedColor: '#10B981',
+  },
+  brand_design: {
+    bgGrad: ['#200418', '#4A0E34', '#831843', '#EC4899'],
+    ribbonGold: '#F472B6',
+    ribbonAccent: '#EC4899',
+    badgeBg: 'rgba(236, 72, 153, 0.25)',
+    badgeBorder: 'rgba(249, 168, 212, 0.5)',
+    subheadColor: '#FBCFE8',
+    stampColor: '#F472B6',
+    verifiedColor: '#10B981',
+  },
+  content_marketing: {
+    bgGrad: ['#06191D', '#0F3942', '#134E4A', '#2DD4BF'],
+    ribbonGold: '#2DD4BF',
+    ribbonAccent: '#14B8A6',
+    badgeBg: 'rgba(45, 212, 191, 0.25)',
+    badgeBorder: 'rgba(153, 246, 228, 0.5)',
+    subheadColor: '#99F6E4',
+    stampColor: '#2DD4BF',
+    verifiedColor: '#10B981',
+  },
+  saas_growth: {
+    bgGrad: ['#090D2A', '#131A4A', '#1D2671', '#C33764'],
+    ribbonGold: '#FF9D00',
+    ribbonAccent: '#C33764',
+    badgeBg: 'rgba(195, 55, 100, 0.25)',
+    badgeBorder: 'rgba(244, 114, 182, 0.5)',
+    subheadColor: '#FBCFE8',
+    stampColor: '#FF9D00',
+    verifiedColor: '#10B981',
+  },
+  analytics_data: {
+    bgGrad: ['#041D17', '#0A3B30', '#065F46', '#34D399'],
+    ribbonGold: '#34D399',
+    ribbonAccent: '#10B981',
+    badgeBg: 'rgba(52, 211, 153, 0.25)',
+    badgeBorder: 'rgba(167, 243, 208, 0.5)',
+    subheadColor: '#A7F3D0',
+    stampColor: '#34D399',
+    verifiedColor: '#10B981',
+  },
   general: {
     bgGrad: ['#0F172A', '#1E293B', '#334155', '#64748B'],
     ribbonGold: '#FF9D00',
@@ -139,6 +216,32 @@ export const CATEGORY_THEMES: Record<string, PosterTheme> = {
     verifiedColor: '#10B981',
   },
 };
+
+/**
+ * Intelligently detects appropriate emblem emoji from prompt description or title text
+ */
+export function detectPromptEmoji(text?: string): string {
+  if (!text) return '';
+  const lower = text.toLowerCase();
+
+  if (/robot|ai|machine|gpt|claude|agent|autom|neural|bot|llm/i.test(lower)) return '🤖';
+  if (/security|cyber|shield|firewall|protect|auth|pass|hack|crypto/i.test(lower)) return '🛡️';
+  if (/cloud|server|host|aws|infra|devops|docker|kubernetes/i.test(lower)) return '☁️';
+  if (/shop|store|e-?commerce|cart|stripe|pay|checkout|buy/i.test(lower)) return '🛒';
+  if (/chart|analytic|metric|roi|conversion|cro|data|stat/i.test(lower)) return '📊';
+  if (/design|ui|ux|figma|brand|logo|paint|art|graphic/i.test(lower)) return '🎨';
+  if (/video|reel|tiktok|youtube|ugc|film|movie|camera/i.test(lower)) return '🎬';
+  if (/write|copy|content|article|blog|post|edit|text/i.test(lower)) return '📝';
+  if (/phone|mobile|app|ios|android|flutter|native/i.test(lower)) return '📱';
+  if (/code|web|dev|react|next|node|tech|soft|api/i.test(lower)) return '💻';
+  if (/target|ad|ads|campaign|meta|facebook|ppc|pixel/i.test(lower)) return '🎯';
+  if (/local|store|shop|city|near|map|place/i.test(lower)) return '🏪';
+  if (/grow|sale|lead|funnel|revenue|profit|scale|deal/i.test(lower)) return '📈';
+  if (/speed|fast|perf|vitals|upgrade|boost|bolt|flash/i.test(lower)) return '⚡';
+  if (/seo|rank|google|search|organic|traffic|keyword/i.test(lower)) return '🚀';
+
+  return '';
+}
 
 /**
  * Text word wrap helper for Canvas context
@@ -414,7 +517,9 @@ export function generateTnTodayPoster({
       ctx.fill();
       ctx.restore();
 
-      // Large 3D Graphic Emblem
+      // Large 3D Graphic Emblem (intelligently matches prompt keywords or category)
+      const promptEmoji = detectPromptEmoji(subtitle || title);
+      const displayEmoji = promptEmoji || catObj.emoji;
       ctx.save();
       ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
       ctx.shadowBlur = 28;
@@ -422,7 +527,7 @@ export function generateTnTodayPoster({
       ctx.font = "150px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(catObj.emoji, boxX + boxW / 2, boxY + boxH / 2 + 10);
+      ctx.fillText(displayEmoji, boxX + boxW / 2, boxY + boxH / 2 + 10);
       ctx.restore();
     }
     ctx.restore();

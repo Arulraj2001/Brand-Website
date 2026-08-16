@@ -17,6 +17,13 @@ export type BlogCategory =
   | 'meta_ads'
   | 'ugc_ads'
   | 'sales_growth'
+  | 'ai_automation'
+  | 'cybersecurity'
+  | 'ecommerce'
+  | 'brand_design'
+  | 'content_marketing'
+  | 'saas_growth'
+  | 'analytics_data'
   | 'general';
 
 export interface BlogPost {
