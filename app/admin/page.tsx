@@ -660,20 +660,10 @@ export default function AdminDashboardPage() {
     const promptText = (parsed.cover_image_prompt as string) || '';
     if (parsed.cover_image_url) {
       setBlogCoverUrl(parsed.cover_image_url as string);
-    } else if (promptText) {
-      const aiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=1200&height=630&nologo=true`;
-      setBlogCoverUrl(aiUrl);
     } else {
-      const fallbackMap: Record<string, string> = {
-        web_dev: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-        seo: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-        ugc_ads: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
-        app_dev: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80',
-        website_upgrade: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
-        sales_growth: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
-      };
-      const catKey = (parsed.category as string) || 'seo';
-      setBlogCoverUrl(fallbackMap[catKey] || fallbackMap.seo);
+      // Generate dynamic Ostrune News/Blog Branded Banner matching reference template
+      const bannerUrl = `/api/blog-banner?title=${encodeURIComponent(titleVal)}&category=${encodeURIComponent((parsed.category as string) || 'seo')}&excerpt=${encodeURIComponent((parsed.excerpt as string) || titleVal)}&city=${encodeURIComponent((parsed.city as string) || 'Global')}`;
+      setBlogCoverUrl(bannerUrl);
     }
 
     if (parsed.cover_image_prompt) setBlogCoverPromptText(parsed.cover_image_prompt as string);
@@ -2779,6 +2769,18 @@ export default function AdminDashboardPage() {
                           className="hidden"
                         />
                       </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const bannerUrl = `/api/blog-banner?title=${encodeURIComponent(blogTitleText || 'Article Title')}&category=${encodeURIComponent(blogCategoryVal || 'INSIGHTS')}&excerpt=${encodeURIComponent(blogExcerptText || 'Ostrune Digital Agency Article')}&city=${encodeURIComponent(blogCityText || 'Global')}`;
+                          setBlogCoverUrl(bannerUrl);
+                          addToast('success', '🎨 Ostrune Branded News Banner generated!');
+                        }}
+                        className="px-3 py-2 rounded-lg bg-[#FFF9E6] border border-[#FFD21E] hover:bg-[#FFE499] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 transition-colors shrink-0 min-h-[44px]"
+                      >
+                        <Sparkles size={14} className="text-[#FF9D00]" />
+                        <span>Branded Banner</span>
+                      </button>
                     </div>
 
                     {/* Live Image Poster/Banner Preview */}
