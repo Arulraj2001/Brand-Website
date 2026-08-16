@@ -118,22 +118,88 @@ export default function BlogPostClientView({
       })
     : 'Recent';
 
+  // Extract FAQ items for FAQPage Schema
+  const faqItems: { question: string; answer: string }[] = [];
+  if (post.content) {
+    const lines = post.content.split('\n');
+    let currentQ = '';
+    let currentA: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      const headingMatch = line.match(/^#{2,4}\s+(.+)/);
+      const boldQuestionMatch = line.match(/^\*\*(?:Q:\s*|)(.+\?)\*\*/);
+
+      const isQuestion =
+        (headingMatch && headingMatch[1].trim().endsWith('?')) ||
+        boldQuestionMatch;
+
+      if (isQuestion) {
+        if (currentQ && currentA.length > 0) {
+          faqItems.push({ question: currentQ, answer: currentA.join(' ').trim() });
+        }
+        currentQ = (boldQuestionMatch ? boldQuestionMatch[1] : headingMatch ? headingMatch[1] : line)
+          .replace(/^\*\*(Q:\s*)?|\*\*$/g, '')
+          .trim();
+        currentA = [];
+      } else if (currentQ && line && !line.startsWith('#')) {
+        const cleanLine = line.replace(/^\*\*(A:\s*)?|\*\*$/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim();
+        if (cleanLine) currentA.push(cleanLine);
+      }
+    }
+    if (currentQ && currentA.length > 0) {
+      faqItems.push({ question: currentQ, answer: currentA.join(' ').trim() });
+    }
+  }
+
+  // Cover image alt text under 125 chars derived from prompt or title
+  const coverAltText = (
+    post.cover_image_prompt && post.cover_image_prompt.length < 125
+      ? post.cover_image_prompt
+      : `${post.title} - ${post.category.replace('_', ' ')} guide by Ostrune`
+  ).slice(0, 124);
+
+  // Article JSON-LD Schema
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt,
-    image: post.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    image: post.cover_image_url || `https://ostrune.netlify.app/api/blog-banner?title=${encodeURIComponent(post.title)}`,
     datePublished: post.published_at || post.created_at,
+    dateModified: post.created_at || post.published_at,
     author: {
-      '@type': 'Person',
+      '@type': 'Organization',
       name: post.author_name || 'Ostrune Team',
+      url: 'https://ostrune.netlify.app/about',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Ostrune',
+      url: 'https://ostrune.netlify.app',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://ostrune.netlify.app/logo.png',
+      },
     },
   };
+
+  // FAQPage JSON-LD Schema
+  const faqJsonLd =
+    faqItems.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqItems.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
@@ -141,6 +207,12 @@ export default function BlogPostClientView({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <article className="max-w-6xl mx-auto px-4 space-y-8">
         {/* Back Link */}
@@ -196,9 +268,9 @@ export default function BlogPostClientView({
           </h1>
 
           <div className="flex items-center gap-4 text-xs font-semibold text-[#6B7280] pt-1">
-            <span className="flex items-center gap-1">
-              <User size={13} className="text-[#FF9D00]" /> {post.author_name}
-            </span>
+            <Link href="/about" className="flex items-center gap-1 hover:text-[#FF9D00] transition-colors">
+              <User size={13} className="text-[#FF9D00]" /> <span>{post.author_name || 'Ostrune Team'}</span>
+            </Link>
             <span>•</span>
             <span className="flex items-center gap-1">
               <Calendar size={13} /> {formattedDate}
@@ -210,14 +282,14 @@ export default function BlogPostClientView({
           </div>
         </div>
 
-        {/* Hero Cover Image */}
+        {/* Hero Cover Image with Alt Text */}
         <div className="relative h-64 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-[#1C1C1C]">
           <Image
             src={
               post.cover_image_url ||
               `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
             }
-            alt=""
+            alt={coverAltText}
             fill
             sizes="(max-width: 768px) 100vw, 90vw"
             className="object-cover blur-xl opacity-40 scale-110"
@@ -227,7 +299,7 @@ export default function BlogPostClientView({
               post.cover_image_url ||
               `/api/blog-banner?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category)}&excerpt=${encodeURIComponent(post.excerpt || '')}&city=${encodeURIComponent(post.city || 'Global')}`
             }
-            alt={post.title}
+            alt={coverAltText}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 90vw"

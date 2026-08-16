@@ -83,15 +83,15 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
             Technical Insights & <GradientText>Search Dominance Guides</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
-            Actionable strategies on sub-second web speed, old website overhauls, high-ROAS UGC video ads, and global SEO positioning.
+            In-depth technical guides on Next.js web performance, old website refactoring, high-ROAS ad funnels, and organic search architecture.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-[#6B7280] pt-1">
             <span className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
-              <TrendingUp size={13} className="text-[#10B981]" /> Verified Growth Case Studies
+              <TrendingUp size={13} className="text-[#10B981]" /> Actionable Technical Blueprints
             </span>
             <span className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
-              <ShieldCheck size={13} className="text-[#3B82F6]" /> Written by Senior Engineers
+              <ShieldCheck size={13} className="text-[#3B82F6]" /> Engineering & Growth Insights
             </span>
           </div>
         </div>
@@ -208,17 +208,19 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
             )}
           </div>
 
-          {/* Filter Pills */}
+          {/* Standardized Filter Pills (Mapped 1:1 to Canonical Slugs) */}
           <div className="flex flex-wrap justify-center items-center gap-2">
             {[
               { id: 'all', label: 'All Articles' },
               { id: 'seo', label: 'SEO' },
-              { id: 'website_upgrade', label: 'Speed & SEO Upgrade' },
-              { id: 'web_dev', label: 'Web Engineering' },
-              { id: 'ugc_ads', label: 'UGC Ads' },
+              { id: 'web_dev', label: 'Web Dev' },
+              { id: 'app_dev', label: 'App Dev' },
+              { id: 'website_upgrade', label: 'Website Upgrade' },
               { id: 'local_business', label: 'Local Business' },
               { id: 'meta_ads', label: 'Meta Ads' },
+              { id: 'ugc_ads', label: 'UGC Ads' },
               { id: 'sales_growth', label: 'Sales Growth' },
+              { id: 'general', label: 'General' },
             ].map((item) => (
               <button
                 key={item.id}
