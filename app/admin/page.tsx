@@ -631,10 +631,28 @@ export default function AdminDashboardPage() {
     setBlogCityText((parsed.city as string) || 'Global');
     if (parsed.category) setBlogCategoryVal(parsed.category as BlogCategory);
     if (parsed.author_name) setBlogAuthorVal(parsed.author_name as string);
-    if (parsed.cover_image_url) setBlogCoverUrl(parsed.cover_image_url as string);
+    const promptText = (parsed.cover_image_prompt as string) || '';
+    if (parsed.cover_image_url) {
+      setBlogCoverUrl(parsed.cover_image_url as string);
+    } else if (promptText) {
+      const aiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=1200&height=630&nologo=true`;
+      setBlogCoverUrl(aiUrl);
+    } else {
+      const fallbackMap: Record<string, string> = {
+        web_dev: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+        seo: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+        ugc_ads: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+        app_dev: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80',
+        website_upgrade: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+        sales_growth: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
+      };
+      const catKey = (parsed.category as string) || 'seo';
+      setBlogCoverUrl(fallbackMap[catKey] || fallbackMap.seo);
+    }
+
     if (parsed.cover_image_prompt) setBlogCoverPromptText(parsed.cover_image_prompt as string);
 
-    addToast('success', `✅ Blog imported: "${titleVal}" — all fields filled successfully!`);
+    addToast('success', `✅ Blog imported: "${titleVal}" — cover preview generated!`);
     setBlogStudioTab('write');
     setBlogImportJson('');
   };
@@ -2736,22 +2754,62 @@ export default function AdminDashboardPage() {
                         />
                       </label>
                     </div>
+
+                    {/* Live Image Poster/Banner Preview */}
+                    {blogCoverUrl && (
+                      <div className="mt-2.5 p-2 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl space-y-1.5">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-[#6B7280]">
+                          <span className="flex items-center gap-1">
+                            <Sparkles size={12} className="text-[#FF9D00]" /> Live Cover Banner Preview
+                          </span>
+                          <span className="text-[10px] text-[#9CA3AF]">
+                            {blogCoverUrl.includes('pollinations.ai') ? '⚡ Auto AI Generated' : 'Custom Image / File'}
+                          </span>
+                        </div>
+                        <div className="relative w-full h-36 sm:h-44 rounded-lg overflow-hidden border border-[#E5E7EB] bg-black/5">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={blogCoverUrl}
+                            alt="Blog Cover Banner Preview"
+                            className="w-full h-full object-cover"
+                            onError={() => {
+                              addToast('error', 'Image URL failed to load. Try another URL or file.');
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-[#1C1C1C]">AI Cover Image Prompt (DALL-E / Midjourney)</label>
-                      <button
-                        type="button"
-                        disabled={!blogCoverPromptText}
-                        onClick={() => {
-                          navigator.clipboard.writeText(blogCoverPromptText);
-                          addToast('success', 'AI Image Prompt copied to clipboard!');
-                        }}
-                        className="text-[11px] font-bold text-[#8B5CF6] hover:underline flex items-center gap-1 disabled:opacity-40 disabled:pointer-events-none"
-                      >
-                        <Copy size={12} /> Copy Prompt
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {blogCoverPromptText && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const aiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(blogCoverPromptText)}?width=1200&height=630&nologo=true&seed=${Date.now()}`;
+                              setBlogCoverUrl(aiUrl);
+                              addToast('success', '⚡ New AI Cover Banner generated!');
+                            }}
+                            className="text-[11px] font-extrabold text-[#FF9D00] hover:underline flex items-center gap-1"
+                          >
+                            <Sparkles size={12} /> Auto Generate Image
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          disabled={!blogCoverPromptText}
+                          onClick={() => {
+                            navigator.clipboard.writeText(blogCoverPromptText);
+                            addToast('success', 'AI Image Prompt copied to clipboard!');
+                          }}
+                          className="text-[11px] font-bold text-[#8B5CF6] hover:underline flex items-center gap-1 disabled:opacity-40 disabled:pointer-events-none"
+                        >
+                          <Copy size={12} /> Copy Prompt
+                        </button>
+                      </div>
                     </div>
                     <textarea
                       name="cover_image_prompt"
