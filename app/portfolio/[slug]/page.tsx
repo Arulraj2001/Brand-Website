@@ -24,13 +24,18 @@ export async function generateMetadata({ params }: CaseStudyProps) {
   }
 
   const location = project.client_location || project.client_city || 'Global';
+  const siteUrl = 'https://ostrune.netlify.app';
 
   return {
     title: `${project.title} | ${project.client_name} (${location})`,
     description: `${project.short_description} Results: ${project.results}`,
+    alternates: {
+      canonical: `${siteUrl}/portfolio/${project.slug}`,
+    },
     openGraph: {
       title: `${project.title} - ${project.client_name}`,
       description: project.short_description,
+      url: `${siteUrl}/portfolio/${project.slug}`,
       images: [{ url: project.cover_image_url }],
     },
   };

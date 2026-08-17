@@ -1,4 +1,5 @@
 import React from 'react';
+import { notFound } from 'next/navigation';
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
 import type { BlogPost } from '@/types';
 import BlogPostClientView from './BlogPostClientView';
@@ -21,9 +22,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   const post = await getBlogPostBySlug(slug);
 
   if (!post || !post.is_published) {
-    return {
-      title: 'Article | Ostrune Blog',
-    };
+    notFound();
   }
 
   const siteUrl = 'https://ostrune.netlify.app';

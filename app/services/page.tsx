@@ -23,6 +23,9 @@ import BenchmarkImpactBadge from '@/components/ui/BenchmarkImpactBadge';
 export const metadata = {
   title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
   description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
+  alternates: {
+    canonical: 'https://ostrune.netlify.app/services',
+  },
 };
 
 const SERVICES = [

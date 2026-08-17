@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   },
   description:
     'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+  alternates: {
+    canonical: 'https://ostrune.netlify.app',
+  },
 };
 
 export const revalidate = 60; // Refresh data every minute
