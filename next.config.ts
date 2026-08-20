@@ -18,6 +18,30 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/portfolio/realstate-website',
+        destination: '/portfolio/real-estate-website',
+        permanent: true,
+      },
+      {
+        source: '/portfolio/Full-stack-web-app',
+        destination: '/portfolio/full-stack-web-app',
+        permanent: true,
+      },
+      {
+        source: '/portfolio/yourchoiceproperties-real-estate-portal',
+        destination: '/portfolio/real-estate-website',
+        permanent: true,
+      },
+      {
+        source: '/portfolio/Yourchoiceproperties-real-estate-portal',
+        destination: '/portfolio/real-estate-website',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

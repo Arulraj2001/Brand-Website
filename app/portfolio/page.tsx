@@ -1,9 +1,10 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { getPortfolioProjects } from '@/lib/supabase/data';
 import PortfolioClient from './PortfolioClient';
 
 export const metadata: Metadata = {
-  title: 'Portfolio & Case Studies | Ostrune',
+  title: 'Portfolio & Case Studies | Web Development & SEO',
   description:
     'Explore verified client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune.',
   alternates: {
@@ -26,6 +27,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PortfolioPage() {
-  return <PortfolioClient />;
+export const revalidate = 60; // Refresh cache every minute
+
+export default async function PortfolioPage() {
+  const projects = await getPortfolioProjects();
+
+  return <PortfolioClient initialProjects={projects} />;
 }

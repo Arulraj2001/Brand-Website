@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import AboutClient from './AboutClient';
 
 export const metadata: Metadata = {
-  title: 'About Ostrune | Web Development & SEO Agency',
+  title: 'About Us | Web Development & SEO Agency',
   description:
     'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.',
   alternates: {

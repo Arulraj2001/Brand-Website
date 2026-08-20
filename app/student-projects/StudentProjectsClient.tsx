@@ -517,9 +517,12 @@ export default function StudentProjectsClient() {
               style={{ animationPlayState: (isMarqueePaused || isHovered) ? 'paused' : 'running' }}
             >
               {marqueeVideos.map((video, idx) => {
+                const isDuplicateTrackItem = idx >= filteredVideos.length;
                 return (
                   <div
                     key={`${video.id}-${idx}`}
+                    aria-hidden={isDuplicateTrackItem ? 'true' : undefined}
+                    tabIndex={isDuplicateTrackItem ? -1 : undefined}
                     className="w-[320px] md:w-[350px] shrink-0 bg-white border border-[#E5E7EB] hover:border-[#FFD21E] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col group cursor-pointer"
                     onClick={() => setActiveVideoModal(video)}
                   >

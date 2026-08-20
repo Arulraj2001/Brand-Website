@@ -16,7 +16,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   seo: {
     category: 'seo',
     serviceTitle: 'SEO Optimization',
-    serviceUrl: '/services#seo',
+    serviceUrl: '/services/seo-optimization',
     auditTitle: 'Get a Free Organic SEO & Keyword Audit',
     auditBadge: 'FREE SEO AUDIT',
     auditDescription:
@@ -29,7 +29,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   web_dev: {
     category: 'web_dev',
     serviceTitle: 'Website Development',
-    serviceUrl: '/services#web-dev',
+    serviceUrl: '/services/website-development',
     auditTitle: 'Get a Free Website Architecture & UX Audit',
     auditBadge: 'FREE WEBSITE AUDIT',
     auditDescription:
@@ -42,7 +42,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   app_dev: {
     category: 'app_dev',
     serviceTitle: 'App Development',
-    serviceUrl: '/services#app-dev',
+    serviceUrl: '/services/app-development',
     auditTitle: 'Get a Free Web & Mobile App Strategy Review',
     auditBadge: 'FREE APP AUDIT',
     auditDescription:
@@ -55,7 +55,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   website_upgrade: {
     category: 'website_upgrade',
     serviceTitle: 'Old Website Upgrade & Speed Overhaul',
-    serviceUrl: '/services#website-upgrade',
+    serviceUrl: '/services/website-speed-upgrade',
     auditTitle: 'Get a Free Core Web Vitals & Speed Audit',
     auditBadge: 'FREE SPEED AUDIT',
     auditDescription:
@@ -68,7 +68,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   local_business: {
     category: 'local_business',
     serviceTitle: 'Local Business Marketing',
-    serviceUrl: '/services#local-business',
+    serviceUrl: '/services/local-business-marketing',
     auditTitle: 'Get a Free Local Map Pack & Citation Audit',
     auditBadge: 'FREE LOCAL AUDIT',
     auditDescription:
@@ -81,7 +81,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   meta_ads: {
     category: 'meta_ads',
     serviceTitle: 'Meta & LinkedIn Ads',
-    serviceUrl: '/services#meta-ads',
+    serviceUrl: '/services/meta-ads',
     auditTitle: 'Get a Free Meta Ads & Conversion Pixel Audit',
     auditBadge: 'FREE ADS AUDIT',
     auditDescription:
@@ -94,7 +94,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   ugc_ads: {
     category: 'ugc_ads',
     serviceTitle: 'UGC Video Ads for E-Commerce',
-    serviceUrl: '/services#ugc-ads',
+    serviceUrl: '/services/ugc-video-ads',
     auditTitle: 'Get a Free UGC Video Ad Creative Strategy Audit',
     auditBadge: 'FREE UGC AD AUDIT',
     auditDescription:
@@ -107,7 +107,7 @@ export const CATEGORY_CTA_CONFIG: Record<BlogCategory, BlogCtaInfo> = {
   sales_growth: {
     category: 'sales_growth',
     serviceTitle: 'Sales Growth & CRO',
-    serviceUrl: '/services#sales-growth',
+    serviceUrl: '/services/sales-growth-cro',
     auditTitle: 'Get a Free Conversion Rate Optimization Audit',
     auditBadge: 'FREE CRO AUDIT',
     auditDescription:

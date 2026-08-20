@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Our Portfolio | Web Development & SEO Case Studies',
+  title: 'Portfolio & Case Studies | Web Development & SEO',
   description:
     "Explore Ostrune's portfolio of web development, technical SEO, UGC video ads, and digital growth projects for clients worldwide.",
   alternates: { canonical: '/portfolio' },

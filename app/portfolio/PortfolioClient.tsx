@@ -10,10 +10,14 @@ import Card from '@/components/ui/Card';
 import { PortfolioProject } from '@/types';
 import { getPortfolioProjects } from '@/lib/supabase/data';
 
-export default function PortfolioClient() {
-  const [projects, setProjects] = useState<PortfolioProject[]>([]);
+interface PortfolioClientProps {
+  initialProjects?: PortfolioProject[];
+}
+
+export default function PortfolioClient({ initialProjects = [] }: PortfolioClientProps) {
+  const [projects, setProjects] = useState<PortfolioProject[]>(initialProjects);
   const [filter, setFilter] = useState<string>('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialProjects.length === 0);
 
   useEffect(() => {
     let active = true;

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Engineering Blog | Web Dev, SEO & Growth Insights',
+  title: 'Technical SEO, Web Dev & Growth Guides | Engineering Blog',
   description:
     'Read Ostrune\'s engineering blog for actionable insights on web development, technical SEO, performance optimization, and digital growth strategies.',
   alternates: { canonical: '/blog' },

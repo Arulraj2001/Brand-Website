@@ -26,11 +26,11 @@ const baseUrl = 'https://ostrune.netlify.app';
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Ostrune — Web Development & SEO Agency India',
+    default: 'Ostrune — Web Development, SEO & Performance Growth Agency',
     template: '%s | Ostrune',
   },
   description:
-    'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+    'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
   authors: [{ name: 'Ostrune' }],
   creator: 'Ostrune',
   publisher: 'Ostrune',
@@ -52,11 +52,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_IN',
+    locale: 'en_US',
     url: baseUrl,
-    title: 'Ostrune — Web Development & SEO Agency India',
+    title: 'Ostrune — Web Development, SEO & Performance Growth Agency',
     description:
-      'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+      'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
     siteName: 'Ostrune',
     images: [
       {
@@ -64,21 +64,21 @@ export const metadata: Metadata = {
         secureUrl: `${baseUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Ostrune — Web Development & SEO Agency India',
+        alt: 'Ostrune — Web Development, SEO & Performance Growth Agency',
         type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ostrune — Web Development & SEO Agency India',
+    title: 'Ostrune — Web Development, SEO & Performance Growth Agency',
     description:
-      'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+      'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
     creator: '@ostrune',
     images: [
       {
         url: `${baseUrl}/og-image.jpg`,
-        alt: 'Ostrune — Web Development & SEO Agency India',
+        alt: 'Ostrune — Web Development, SEO & Performance Growth Agency',
       },
     ],
   },
@@ -123,7 +123,8 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Ostrune',
-    description: 'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+    description:
+      'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
     url: baseUrl,
     logo: {
       '@type': 'ImageObject',
@@ -131,8 +132,25 @@ export default function RootLayout({
       width: 512,
       height: 512,
     },
-    telephone: '+91 8637474067',
-    email: 'arulraj8637@gmail.com',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+91 8637474067',
+      contactType: 'customer service',
+      email: 'arulraj8637@gmail.com',
+      availableLanguage: ['English', 'Tamil'],
+    },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Tiruvannamalai',
+      addressLocality: 'Tiruvannamalai',
+      addressRegion: 'Tamil Nadu',
+      addressCountry: 'India',
+    },
+    sameAs: [
+      'https://www.linkedin.com',
+      'https://twitter.com/ostrune',
+      'https://www.instagram.com',
+    ],
   };
 
   const jsonLdWebSite = {

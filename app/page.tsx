@@ -13,10 +13,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Ostrune — Web Development & SEO Agency India',
+    absolute: 'Ostrune — Web Development, SEO & Performance Growth Agency',
   },
   description:
-    'We build fast websites, run SEO & Meta Ads that get real clients for Indian businesses. Free site audit — reply guaranteed in 12 hours.',
+    'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
   alternates: {
     canonical: 'https://ostrune.netlify.app',
   },

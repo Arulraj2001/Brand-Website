@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: CaseStudyProps) {
 
   if (!project) {
     return {
-      title: 'Case Study | Ostrune Portfolio',
+      title: 'Case Study | Client Project',
     };
   }
 

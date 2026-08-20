@@ -7,18 +7,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface GalleryLightboxProps {
   images: string[];
+  projectTitle?: string;
 }
 
-export default function GalleryLightbox({ images }: GalleryLightboxProps) {
+export default function GalleryLightbox({ images, projectTitle }: GalleryLightboxProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  if (!images || images.length === 0) return null;
+  const realScreenshots = (images || []).filter(
+    (url) => Boolean(url) && !url.includes('images.unsplash.com')
+  );
+
+  if (realScreenshots.length === 0) return null;
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-extrabold text-[#0F1222]">Project Screenshots & Analytics Gallery</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {images.map((url, idx) => (
+        {realScreenshots.map((url, idx) => (
           <div
             key={idx}
             onClick={() => setSelectedImage(url)}
@@ -26,7 +31,7 @@ export default function GalleryLightbox({ images }: GalleryLightboxProps) {
           >
             <Image
               src={url}
-              alt={`Gallery screenshot ${idx + 1}`}
+              alt={`${projectTitle || 'Project'} Screenshot ${idx + 1}`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
             />

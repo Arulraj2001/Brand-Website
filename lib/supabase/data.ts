@@ -47,30 +47,12 @@ export const INITIAL_CLIENT_LOGOS: ClientLogo[] = [
 export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
   {
     id: 't1',
-    name: 'Aarav Mehta',
-    role: 'Co-Founder & Chief Software Architect',
-    location: 'Global Remote',
-    badge: 'EX-FAANG ARCHITECT',
-    bio: 'Pioneered sub-second web application architecture & enterprise database systems for global startups.',
-    profile_image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 't2',
-    name: 'Riya Sen',
-    role: 'Head of Paid Growth & UGC Ads',
-    location: 'Global Remote',
-    badge: '$1.5M+ AD SPEND',
-    bio: 'Specializes in CAPI pixel setups, high-converting UGC video hooks, and 5.2x ROAS acquisition funnels.',
-    profile_image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 't3',
-    name: 'Karan Verma',
-    role: 'Director of Technical SEO & Speed Upgrades',
-    location: 'Global Remote',
-    badge: '140+ RANK 1 KEYWORDS',
-    bio: 'Architected structured JSON-LD schemas and 100/100 Core Web Vitals speed optimization engines.',
-    profile_image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    name: 'Arulraj S',
+    role: 'Software Developer | Founder',
+    location: 'Tiruvannamalai, Tamilnadu, India',
+    badge: 'FOUNDER',
+    bio: '',
+    profile_image_url: '',
   },
 ];
 
@@ -231,7 +213,13 @@ export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return INITIAL_TEAM_MEMBERS;
   try {
     const cached = localStorage.getItem('ostrune_team_members');
-    if (cached) return JSON.parse(cached);
+    if (cached) {
+      if (cached.includes('Aarav Mehta') || cached.includes('EX-FAANG') || cached.includes('unsplash.com')) {
+        localStorage.removeItem('ostrune_team_members');
+        return INITIAL_TEAM_MEMBERS;
+      }
+      return JSON.parse(cached);
+    }
   } catch {}
   return INITIAL_TEAM_MEMBERS;
 }
@@ -283,6 +271,48 @@ export async function saveTeamMembersToSupabase(newTeam: TeamMember[]): Promise<
   }
 }
 
+export function normalizeProject(project: PortfolioProject): PortfolioProject {
+  if (!project) return project;
+  let rawSlug = project.slug || '';
+  let slug = rawSlug;
+  if (rawSlug === 'realstate-website' || rawSlug === 'yourchoiceproperties-real-estate-portal') {
+    slug = 'real-estate-website';
+  } else if (rawSlug === 'Full-stack-web-app') {
+    slug = 'full-stack-web-app';
+  } else {
+    slug = rawSlug.toLowerCase();
+  }
+
+  let title = (project.title || '').replace(/Realstate/gi, 'Real Estate');
+  let fullDesc = (project.full_description || '').replace(/Realstate/gi, 'Real Estate');
+  let shortDesc = (project.short_description || '').replace(/Realstate/gi, 'Real Estate');
+
+  let beforeMetric = project.before_metric || '';
+  if (
+    !beforeMetric ||
+    beforeMetric.toLowerCase().includes('old page speed') ||
+    beforeMetric.toLowerCase().includes('old lighthouse') ||
+    beforeMetric.toLowerCase().includes('placeholder')
+  ) {
+    beforeMetric = 'Manual phone inquiries • Unoptimized property galleries • High drop-off';
+  }
+
+  const galleryUrls = (project.gallery_urls || []).filter(
+    (url) => Boolean(url) && !url.includes('images.unsplash.com')
+  );
+
+  return {
+    ...project,
+    title,
+    slug,
+    short_description: shortDesc,
+    full_description: fullDesc,
+    before_metric: beforeMetric,
+    gallery_urls: galleryUrls,
+    client_location: project.client_location || project.client_city || 'Global',
+  };
+}
+
 export function getPortfolioProjectsSync(): PortfolioProject[] {
   if (typeof window !== 'undefined') {
     try {
@@ -290,12 +320,12 @@ export function getPortfolioProjectsSync(): PortfolioProject[] {
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          return parsed.map(normalizeProject);
         }
       }
     } catch {}
   }
-  return INITIAL_PORTFOLIO;
+  return INITIAL_PORTFOLIO.map(normalizeProject);
 }
 
 // Helper to fetch portfolio projects
@@ -315,11 +345,7 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
       return localCache;
     }
 
-    // Ensure fallback mapping for client_location
-    const fresh = (data as PortfolioProjectRow[]).map((p) => ({
-      ...p,
-      client_location: p.client_location || p.client_city || 'Global',
-    })) as PortfolioProject[];
+    const fresh = (data as PortfolioProjectRow[]).map(normalizeProject);
 
     if (typeof window !== 'undefined') {
       try {
@@ -334,60 +360,37 @@ export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
 }
 
 // Helper to fetch single project by slug
-export async function getProjectBySlug(slug: string): Promise<PortfolioProject | null> {
-  if (!slug) return null;
+export async function getProjectBySlug(rawSlug: string): Promise<PortfolioProject | null> {
+  if (!rawSlug) return null;
+  const targetSlug =
+    rawSlug === 'realstate-website'
+      ? 'real-estate-website'
+      : rawSlug === 'Full-stack-web-app'
+      ? 'full-stack-web-app'
+      : rawSlug.toLowerCase();
 
-  // 1. Try local cache first on client
-  if (typeof window !== 'undefined') {
-    try {
-      const cached = localStorage.getItem('ostrune_portfolio_projects');
-      if (cached) {
-        const parsed: PortfolioProject[] = JSON.parse(cached);
-        const found = parsed.find((p) => p.slug === slug);
-        if (found) return found;
-      }
-    } catch {}
-  }
+  const all = await getPortfolioProjects();
+  const found = all.find((p) => p.slug === targetSlug || p.slug === rawSlug);
+  if (found) return found;
 
-  if (!isSupabaseConfigured()) {
-    return INITIAL_PORTFOLIO.find((p) => p.slug === slug) || null;
-  }
+  if (!isSupabaseConfigured()) return null;
 
   try {
     const supabase = createClient();
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('portfolio_projects')
       .select('*')
-      .eq('slug', slug)
-      .single();
+      .or(`slug.eq.${targetSlug},slug.eq.${rawSlug},slug.eq.realstate-website,slug.eq.Full-stack-web-app`)
+      .limit(1)
+      .maybeSingle();
 
-    if (!error && data) {
-      const p = data as PortfolioProjectRow;
-      const project = {
-        ...p,
-        client_location: p.client_location || p.client_city || 'Global',
-      } as PortfolioProject;
-
-      // Cache locally
-      if (typeof window !== 'undefined') {
-        try {
-          const cached = localStorage.getItem('ostrune_portfolio_projects');
-          let list: PortfolioProject[] = cached ? JSON.parse(cached) : [];
-          const idx = list.findIndex((item) => item.slug === slug);
-          if (idx >= 0) list[idx] = project;
-          else list.unshift(project);
-          localStorage.setItem('ostrune_portfolio_projects', JSON.stringify(list));
-        } catch {}
-      }
-
-      return project;
+    if (data) {
+      return normalizeProject(data as PortfolioProjectRow);
     }
   } catch (e) {
     console.error('Error fetching project by slug from Supabase:', e);
   }
-
-  const all = await getPortfolioProjects();
-  return all.find((p) => p.slug === slug) || null;
+  return null;
 }
 
 // Helper to fetch testimonials
@@ -856,60 +859,7 @@ export async function deleteTeamMemberFromSupabase(id: string): Promise<void> {
 // STUDENT PROJECTS & VIDEO FEEDBACK (MSME Learnithm)
 // ----------------------------------------------------
 
-export const INITIAL_STUDENT_FEEDBACK_VIDEOS: StudentFeedbackVideo[] = [
-  {
-    id: 'sv-1',
-    student_name: 'Ananya Sharma',
-    degree_branch: 'MCA Final Year',
-    project_title: 'AI Based Health Diagnostic System using Deep Learning',
-    project_category: 'deep_learning',
-    video_url: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
-    thumbnail_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
-    rating: 5,
-    quote: 'Learnithm made my final year MCA project effortless! The Deep Learning CNN model accuracy was 98.4%, and the MSME certificate + IEEE report documentation helped me clear my viva with top grades!',
-    is_featured: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'sv-2',
-    student_name: 'Rahul Verma',
-    degree_branch: 'BCA Final Year',
-    project_title: 'Smart E-Commerce Portal with Custom Domain Hosting',
-    project_category: 'web_dev',
-    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    thumbnail_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-    rating: 5,
-    quote: 'Got complete source code, PPT presentation, and custom domain deployment from Learnithm. Over 80+ of my college seniors recommended them, and now I see why!',
-    is_featured: true,
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 'sv-3',
-    student_name: 'Priya Patel',
-    degree_branch: 'B.Sc CS',
-    project_title: 'Predictive Stock & Crypto Analytics using Machine Learning',
-    project_category: 'machine_learning',
-    video_url: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
-    thumbnail_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80',
-    rating: 5,
-    quote: 'Awesome guidance for Machine Learning algorithms! The project report followed my university format perfectly and the MSME registered Learnithm certificate gave a huge boost to my resume.',
-    is_featured: true,
-    created_at: new Date(Date.now() - 172800000).toISOString(),
-  },
-  {
-    id: 'sv-4',
-    student_name: 'Vikram Singh',
-    degree_branch: 'M.Sc CS',
-    project_title: 'Real-Time Facial Recognition & Security System',
-    project_category: 'deep_learning',
-    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    thumbnail_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80',
-    rating: 5,
-    quote: 'The viva preparation sessions and detailed documentation were top-notch. Learnithm provided custom domain hosting and full source code walk-throughs!',
-    is_featured: true,
-    created_at: new Date(Date.now() - 259200000).toISOString(),
-  },
-];
+export const INITIAL_STUDENT_FEEDBACK_VIDEOS: StudentFeedbackVideo[] = [];
 
 export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
   {
@@ -917,14 +867,14 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
     title: 'AI Medical Diagnosis & X-Ray Analysis System',
     category: 'deep_learning',
     degree: 'MCA / M.Sc CS',
-    description: 'Deep Learning Convolutional Neural Network (CNN) trained on PyTorch/TensorFlow for classifying lung pathologies with 98% accuracy. Includes Flask API & React dashboard.',
+    description: 'Deep Learning Convolutional Neural Network (CNN) trained on PyTorch/TensorFlow for classifying lung pathologies. Includes Flask API & React dashboard.',
     tech_stack: ['Python', 'TensorFlow', 'PyTorch', 'Flask', 'React'],
     has_documentation: true,
     has_presentation: true,
     has_certificate: true,
     has_custom_domain: true,
     demo_url: 'https://med-ai-demo.learnithm.in',
-    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+    image_url: '',
     created_at: new Date().toISOString(),
   },
   {
@@ -939,7 +889,7 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
     has_certificate: true,
     has_custom_domain: true,
     demo_url: 'https://lms-portal.learnithm.in',
-    image_url: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=800&q=80',
+    image_url: '',
     created_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
@@ -954,7 +904,7 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
     has_certificate: true,
     has_custom_domain: true,
     demo_url: 'https://churn-ml.learnithm.in',
-    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    image_url: '',
     created_at: new Date(Date.now() - 172800000).toISOString(),
   },
   {
@@ -969,7 +919,7 @@ export const INITIAL_STUDENT_PROJECTS: StudentProject[] = [
     has_certificate: true,
     has_custom_domain: true,
     demo_url: 'https://yolo-vision.learnithm.in',
-    image_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80',
+    image_url: '',
     created_at: new Date(Date.now() - 259200000).toISOString(),
   },
 ];
@@ -978,7 +928,13 @@ export function getStudentFeedbackVideos(): StudentFeedbackVideo[] {
   if (typeof window === 'undefined') return INITIAL_STUDENT_FEEDBACK_VIDEOS;
   try {
     const cached = localStorage.getItem('ostrune_student_feedback');
-    if (cached) return JSON.parse(cached);
+    if (cached) {
+      if (cached.includes('Ananya Sharma') || cached.includes('98.4%') || cached.includes('unsplash.com')) {
+        localStorage.removeItem('ostrune_student_feedback');
+        return INITIAL_STUDENT_FEEDBACK_VIDEOS;
+      }
+      return JSON.parse(cached);
+    }
   } catch (err) {
     console.error('Error reading student feedback from localStorage:', err);
   }

@@ -1,7 +1,7 @@
 import LoginPageClient from './LoginPageClient';
 
 export const metadata = {
-  title: 'Admin Login | Ostrune',
+  title: 'Admin Login',
   robots: {
     index: false,
     follow: false,

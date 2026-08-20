@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Admin Portal | Ostrune',
+  title: 'Admin Portal',
   robots: {
     index: false,
     follow: false,

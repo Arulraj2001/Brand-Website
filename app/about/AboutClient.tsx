@@ -112,9 +112,9 @@ export default function AboutClient() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
           {teamMembers.map((member) => (
-            <Card key={member.id} className="space-y-4 p-6 bg-white border border-[#E5E7EB] hover:border-[#FF9D00] group transition-all">
+            <Card key={member.id} className="w-full sm:w-[340px] space-y-4 p-6 bg-white border border-[#E5E7EB] hover:border-[#FF9D00] group transition-all">
               <div className="flex items-start justify-between gap-3">
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] shrink-0">
                   {member.profile_image_url ? (
@@ -126,13 +126,13 @@ export default function AboutClient() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[#FF9D00] bg-[#FFF9E6]">
-                      <User size={24} />
+                      <User size={28} />
                     </div>
                   )}
                 </div>
 
-                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] border border-[#E5E7EB]">
-                  {member.badge || 'ENGINEER'}
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] border border-[#E5E7EB]">
+                  {member.badge || 'FOUNDER'}
                 </span>
               </div>
 
@@ -147,9 +147,11 @@ export default function AboutClient() {
                 </div>
               </div>
 
-              <p className="text-xs text-[#6B7280] leading-relaxed border-t border-[#E5E7EB] pt-3">
-                {member.bio}
-              </p>
+              {member.bio && (
+                <p className="text-xs text-[#6B7280] leading-relaxed border-t border-[#E5E7EB] pt-3">
+                  {member.bio}
+                </p>
+              )}
             </Card>
           ))}
         </div>

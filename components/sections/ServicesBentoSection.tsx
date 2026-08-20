@@ -108,7 +108,7 @@ export default function ServicesBentoSection() {
         'Modern High-Converting Redesign',
       ],
       linkText: 'Fix My Slow Website',
-      linkHref: '/services#website-upgrade',
+      linkHref: '/services/website-speed-upgrade',
       tag: 'Speed & SEO Upgrade',
     },
     {
@@ -127,7 +127,7 @@ export default function ServicesBentoSection() {
         '5.2x Verified ROAS Results',
       ],
       linkText: 'View UGC Ads',
-      linkHref: '/services#ugc-ads',
+      linkHref: '/services/ugc-video-ads',
       tag: 'High-ROAS Hooks',
     },
     {
@@ -139,7 +139,7 @@ export default function ServicesBentoSection() {
       title: 'Website Development',
       description:
         'Custom business sites, landing pages, and e-commerce portals built with zero plugin bloat.',
-      linkHref: '/services#web-dev',
+      linkHref: '/services/website-development',
     },
     {
       id: 'app-dev',
@@ -150,7 +150,7 @@ export default function ServicesBentoSection() {
       title: 'App Development',
       description:
         'Scalable web applications and iOS / Android mobile apps with real-time database backends.',
-      linkHref: '/services#app-dev',
+      linkHref: '/services/app-development',
     },
     {
       id: 'seo',
@@ -161,7 +161,7 @@ export default function ServicesBentoSection() {
       title: 'SEO Optimization',
       description:
         'Rank top 3 on Google for commercial intent buyer queries across English-speaking global markets.',
-      linkHref: '/services#seo',
+      linkHref: '/services/seo-optimization',
     },
     {
       id: 'local-business',
@@ -172,7 +172,7 @@ export default function ServicesBentoSection() {
       title: 'Local Business Marketing',
       description:
         'Google Business Profile optimization, local map packs, and localized ads for brick & mortar clients.',
-      linkHref: '/services#local-business',
+      linkHref: '/services/local-business-marketing',
     },
     {
       id: 'meta-ads',
@@ -183,7 +183,7 @@ export default function ServicesBentoSection() {
       title: 'Meta & LinkedIn Ads',
       description:
         'Full Facebook & Instagram ad management, conversion tracking API (CAPI), and scalable ad copy.',
-      linkHref: '/services#meta-ads',
+      linkHref: '/services/meta-ads',
     },
     {
       id: 'sales-growth',
@@ -194,7 +194,7 @@ export default function ServicesBentoSection() {
       title: 'Sales Growth & Lead Gen',
       description:
         'High-converting lead funnels, landing page CRO, and automated consultation booking workflows.',
-      linkHref: '/services#sales-growth',
+      linkHref: '/services/sales-growth-cro',
     },
   ];
 

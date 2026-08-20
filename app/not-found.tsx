@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import GradientText from '@/components/ui/GradientText';
 
 export const metadata = {
-  title: '404 - Page Not Found | Ostrune',
+  title: '404 - Page Not Found',
   description: 'The requested page could not be found.',
 };
 

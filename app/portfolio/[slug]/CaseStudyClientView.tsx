@@ -120,8 +120,37 @@ export default function CaseStudyClientView({
   const techStack = project.tech_stack || [];
   const deliverables = project.deliverables || [];
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://ostrune.netlify.app',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Portfolio',
+        item: 'https://ostrune.netlify.app/portfolio',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: project.title,
+        item: `https://ostrune.netlify.app/portfolio/${project.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="max-w-5xl mx-auto px-4 space-y-10">
         {/* Back Link */}
         <Link
@@ -317,7 +346,7 @@ export default function CaseStudyClientView({
         )}
 
         {/* Gallery Component */}
-        <GalleryLightbox images={project.gallery_urls || []} />
+        <GalleryLightbox images={project.gallery_urls || []} projectTitle={project.title} />
 
         {/* Client Testimonial Block */}
         {project.testimonial && (

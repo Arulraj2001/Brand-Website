@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   const postUrl = `${siteUrl}/blog/${post.slug}`;
 
   return {
-    title: `${post.title} | Ostrune`,
+    title: post.title,
     description: post.excerpt || `Read ${post.title} on Ostrune.`,
     alternates: {
       canonical: postUrl,

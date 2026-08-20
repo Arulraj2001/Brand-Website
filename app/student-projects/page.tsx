@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import StudentProjectsClient from './StudentProjectsClient';
 
 export const metadata: Metadata = {
-  title: 'Final Year CS Projects, IEEE Reports & MSME Certifications | Ostrune',
+  title: 'Final Year CS Projects, IEEE Reports & MSME Certifications',
   description:
     'Complete final year project guidance for BCA, MCA, B.Sc CS, M.Sc CS, B.Tech CS & IT branches under MSME registered Learnithm. 80+ students cleared their Viva.',
   alternates: {

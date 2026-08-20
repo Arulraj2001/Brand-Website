@@ -153,32 +153,32 @@ export default function Footer() {
             <h4 className="text-[#1C1C1C] font-bold text-sm">Growth Solutions</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/services#website-upgrade" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/website-speed-upgrade" className="hover:text-[#FF9D00] transition-colors">
                   Old Website Upgrade
                 </Link>
               </li>
               <li>
-                <Link href="/services#ugc-ads" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/ugc-video-ads" className="hover:text-[#FF9D00] transition-colors">
                   UGC Video Ads
                 </Link>
               </li>
               <li>
-                <Link href="/services#web-dev" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/website-development" className="hover:text-[#FF9D00] transition-colors">
                   Website Development
                 </Link>
               </li>
               <li>
-                <Link href="/services#app-dev" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/app-development" className="hover:text-[#FF9D00] transition-colors">
                   App Development
                 </Link>
               </li>
               <li>
-                <Link href="/services#seo" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/seo-optimization" className="hover:text-[#FF9D00] transition-colors">
                   SEO Optimization
                 </Link>
               </li>
               <li>
-                <Link href="/services#local-business" className="hover:text-[#FF9D00] transition-colors">
+                <Link href="/services/local-business-marketing" className="hover:text-[#FF9D00] transition-colors">
                   Local Business Marketing
                 </Link>
               </li>
