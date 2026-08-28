@@ -864,7 +864,10 @@ export default function AdminDashboardPage() {
       addToast('success', `Project "${title}" updated successfully`);
     } else {
       const newProj: PortfolioProject = {
-        id: createLocalId('project-'),
+        id:
+          typeof globalThis.crypto?.randomUUID === 'function'
+            ? globalThis.crypto.randomUUID()
+            : createLocalId('project-'),
         title,
         slug,
         client_name,

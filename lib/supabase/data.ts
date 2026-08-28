@@ -704,9 +704,51 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
 
   try {
     const supabase = createClient();
+
+    // Enforce a unique slug so a new project is NEVER silently written over an existing one
+    let slug =
+      (project.slug || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '') ||
+      (project.title || 'project')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '') ||
+      'project';
+
+    try {
+      const { data: dupes } = await supabase
+        .from('portfolio_projects')
+        .select('id')
+        .eq('slug', slug)
+        .neq('id', isUUID(project.id) ? project.id : '__new__');
+      if (dupes && dupes.length > 0) {
+        let candidate = slug;
+        let counter = 2;
+        for (;;) {
+          candidate = `${slug}-${counter}`;
+          const { data: taken } = await supabase
+            .from('portfolio_projects')
+            .select('id')
+            .eq('slug', candidate)
+            .maybeSingle();
+          if (!taken) {
+            break;
+          }
+          counter += 1;
+        }
+        slug = candidate;
+      }
+    } catch (e) {
+      console.warn('Slug uniqueness check failed', e);
+    }
+
     const payload: Record<string, unknown> = {
       title: project.title,
-      slug: project.slug,
+      slug,
       client_name: project.client_name,
       client_location: project.client_location || project.client_city || 'Global',
       service_type: project.service_type,
@@ -729,11 +771,18 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
 
     if (isUUID(project.id)) {
       payload.id = project.id;
+    } else if (typeof globalThis.crypto?.randomUUID === 'function') {
+      // New project with no stable id: assign a real UUID so it is never confused with another row
+      const newId = globalThis.crypto.randomUUID();
+      payload.id = newId;
+      updatedProject = { ...updatedProject, id: newId, slug };
+    } else {
+      updatedProject = { ...updatedProject, slug };
     }
 
     const { data, error } = await supabase
       .from('portfolio_projects')
-      .upsert(payload, { onConflict: 'slug' })
+      .upsert(payload, { onConflict: 'id' })
       .select()
       .single();
 

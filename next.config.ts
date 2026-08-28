@@ -26,11 +26,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/portfolio/Full-stack-web-app',
-        destination: '/portfolio/full-stack-web-app',
-        permanent: true,
-      },
-      {
         source: '/portfolio/yourchoiceproperties-real-estate-portal',
         destination: '/portfolio/real-estate-website',
         permanent: true,
