@@ -5,8 +5,10 @@ import type { BlogPost } from '@/types';
 import BlogPostClientView from './BlogPostClientView';
 
 export const dynamicParams = true;
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+// ISR: pre-render all blog posts at build, cache at the edge, revalidate in background.
+// Kills the 3-5s on every request by avoiding a per-request serverless + Supabase round trip.
+export const revalidate = 300;
+export const dynamic = 'auto';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;

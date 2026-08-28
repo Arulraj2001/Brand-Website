@@ -27,8 +27,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 0; // Fetch fresh published posts on every page load
-export const dynamic = 'force-dynamic';
+// ISR: pre-render at build, cache at the edge, revalidate in background.
+// Refresh new published posts in the background every 5 minutes instead of every request.
+export const revalidate = 300;
+export const dynamic = 'auto';
 
 export default async function BlogPage() {
   const posts = await getBlogPosts(true);
