@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Source_Sans_3, Source_Code_Pro } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/ui/Navbar';
@@ -22,6 +23,7 @@ const sourceCode = Source_Code_Pro({
 });
 
 const baseUrl = 'https://ostrune.netlify.app';
+const GA_TRACKING_ID = 'G-54KHWP0NR5';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -179,6 +181,24 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-white text-[#1C1C1C] selection:bg-[#FFD21E] selection:text-[#1C1C1C]">
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
         <CurrencyProvider>
           <Navbar />
           <main className="flex-1 overflow-x-hidden">{children}</main>
