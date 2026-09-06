@@ -1,13 +1,14 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://ostrune.netlify.app';
+  const baseUrl = getSiteUrl();
 
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/api/'],
+      disallow: ['/admin/', '/api/', '/private/', '/_next/'],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };

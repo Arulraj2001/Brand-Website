@@ -1,5 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import JsonLd from '@/components/JsonLd';
+import { webPageSchema } from '@/lib/schema';
+import { seoRobots, getOgImageUrl, getSiteUrl, getSiteName } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -39,7 +42,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     };
   }
 
-  const siteUrl = 'https://ostrune.netlify.app';
+  const siteUrl = getSiteUrl();
   const canonicalUrl = `${siteUrl}/services/${service.slug}`;
 
   return {
@@ -53,20 +56,22 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
       description: service.metaDescription,
       url: canonicalUrl,
       type: 'website',
+      siteName: getSiteName(),
       images: [
         {
-          url: `${siteUrl}/og-image.jpg`,
+          url: getOgImageUrl({ title: service.metaTitle, description: service.metaDescription, type: 'service' }),
           width: 1200,
           height: 630,
           alt: `${service.title} - Ostrune`,
         },
       ],
     },
+    robots: seoRobots(),
     twitter: {
       card: 'summary_large_image',
       title: service.metaTitle,
       description: service.metaDescription,
-      images: [`${siteUrl}/og-image.jpg`],
+      images: [getOgImageUrl({ title: service.metaTitle, description: service.metaDescription, type: 'service' })],
     },
   };
 }
@@ -80,7 +85,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   }
 
   const Icon = service.icon;
-  const siteUrl = 'https://ostrune.netlify.app';
+  const siteUrl = getSiteUrl();
 
   const breadcrumbLd = {
     '@context': 'https://schema.org',
@@ -137,6 +142,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <JsonLd data={[webPageSchema({ url: `${siteUrl}/services/${service.slug}`, name: service.title, description: service.metaDescription })]} />
       {/* JSON-LD Schemas */}
       <script
         type="application/ld+json"

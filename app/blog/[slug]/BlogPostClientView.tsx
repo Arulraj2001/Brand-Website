@@ -19,6 +19,7 @@ import RichArticleContent from '@/components/blog/RichArticleContent';
 import BlogEndCta from '@/components/blog/BlogEndCta';
 import { BlogPost } from '@/types';
 import { getBlogPosts } from '@/lib/supabase/data';
+import { getSiteUrl } from '@/lib/seo';
 
 interface BlogPostClientViewProps {
   slug: string;
@@ -31,6 +32,7 @@ export default function BlogPostClientView({
   serverPost,
   serverRelated,
 }: BlogPostClientViewProps) {
+  const siteUrl = getSiteUrl();
   const [post, setPost] = useState<BlogPost | null>(serverPost);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>(serverRelated);
   const [loading, setLoading] = useState<boolean>(!serverPost);
@@ -165,21 +167,21 @@ export default function BlogPostClientView({
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt,
-    image: post.cover_image_url || `https://ostrune.netlify.app/api/blog-banner?title=${encodeURIComponent(post.title)}`,
+    image: post.cover_image_url || `${siteUrl}/api/blog-banner?title=${encodeURIComponent(post.title)}`,
     datePublished: post.published_at || post.created_at,
     dateModified: post.created_at || post.published_at,
     author: {
       '@type': 'Organization',
       name: post.author_name || 'Ostrune Team',
-      url: 'https://ostrune.netlify.app/about',
+      url: `${siteUrl}/about`,
     },
     publisher: {
       '@type': 'Organization',
       name: 'Ostrune',
-      url: 'https://ostrune.netlify.app',
+      url: siteUrl,
       logo: {
         '@type': 'ImageObject',
-        url: 'https://ostrune.netlify.app/logo.png',
+        url: `${siteUrl}/logo.png`,
       },
     },
   };
@@ -209,19 +211,19 @@ export default function BlogPostClientView({
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://ostrune.netlify.app',
+        item: siteUrl,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Blog',
-        item: 'https://ostrune.netlify.app/blog',
+        item: `${siteUrl}/blog`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: post.title,
-        item: `https://ostrune.netlify.app/blog/${post.slug}`,
+        item: `${siteUrl}/blog/${post.slug}`,
       },
     ],
   };

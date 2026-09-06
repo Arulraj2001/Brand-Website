@@ -2,6 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
 import type { BlogPost } from '@/types';
+import { seoRobots, getSiteUrl, getOgImageUrl, getSiteName } from '@/lib/seo';
 import BlogPostClientView from './BlogPostClientView';
 
 export const dynamicParams = true;
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  const siteUrl = 'https://ostrune.netlify.app';
+  const siteUrl = getSiteUrl();
   const postUrl = `${siteUrl}/blog/${post.slug}`;
 
   return {
@@ -43,17 +44,19 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
       type: 'article',
       publishedTime: post.published_at || post.created_at,
       authors: [post.author_name || 'Ostrune'],
+      siteName: getSiteName(),
       images: [
         {
           url:
             post.cover_image_url ||
-            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+            getOgImageUrl({ title: post.title, description: post.excerpt || '', type: 'article' }),
           width: 1200,
           height: 630,
           alt: post.title,
         },
       ],
     },
+    robots: seoRobots(),
     twitter: {
       card: 'summary_large_image',
       title: post.title,
@@ -62,7 +65,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
         {
           url:
             post.cover_image_url ||
-            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+            getOgImageUrl({ title: post.title, description: post.excerpt || '', type: 'article' }),
           alt: post.title,
           width: 1200,
           height: 630,

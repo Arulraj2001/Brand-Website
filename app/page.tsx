@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import HeroSection from '@/components/sections/HeroSection';
 import LogoMarquee from '@/components/ui/LogoMarquee';
 import ServicesBentoSection from '@/components/sections/ServicesBentoSection';
@@ -8,28 +9,61 @@ import ProcessTimeline from '@/components/ui/ProcessTimeline';
 import TestimonialsCarousel from '@/components/sections/TestimonialsCarousel';
 import FinalCtaSection from '@/components/sections/FinalCtaSection';
 import { getPortfolioProjects, getTestimonials } from '@/lib/supabase/data';
+import JsonLd from '@/components/JsonLd';
+import { webPageSchema, breadcrumbListSchema } from '@/lib/schema';
+import {
+  getDefaultTagline,
+  getSiteUrl,
+  getSiteName,
+  getOgImageUrl,
+  ogImageEntry,
+  seoRobots,
+  twitterMeta,
+} from '@/lib/seo';
 
-import type { Metadata } from 'next';
+const homeUrl = getSiteUrl();
+const siteName = getSiteName();
+const tagline = getDefaultTagline();
+const homeTitle = `${siteName} — Web Development, SEO & Performance Growth Agency`;
+const homeOgUrl = getOgImageUrl({ title: homeTitle, description: tagline, type: 'website' });
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Ostrune — Web Development, SEO & Performance Growth Agency',
+    absolute: homeTitle,
   },
-  description:
-    'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.',
+  description: tagline,
   alternates: {
-    canonical: 'https://ostrune.netlify.app',
+    canonical: homeUrl,
   },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: homeUrl,
+    title: homeTitle,
+    description: tagline,
+    siteName,
+    images: [ogImageEntry({ title: homeTitle, description: tagline, type: 'website' })],
+  },
+  twitter: twitterMeta(homeTitle, tagline, homeOgUrl),
+  robots: seoRobots(),
 };
 
 export const revalidate = 60; // Refresh data every minute
 
 export default async function HomePage() {
+  const homeSchema = [
+    webPageSchema({ url: homeUrl, name: homeTitle, description: tagline }),
+    breadcrumbListSchema([
+      { name: 'Home', item: homeUrl },
+    ]),
+  ];
+
   const projects = await getPortfolioProjects();
   const testimonials = await getTestimonials();
 
   return (
     <div className="flex flex-col min-h-screen">
+      <JsonLd data={homeSchema} />
       {/* 1. HERO SECTION */}
       <HeroSection />
 
@@ -57,6 +91,7 @@ export default async function HomePage() {
             </h2>
             <p className="text-sm text-[#6B7280]">
               A disciplined four-stage pipeline built for seamless time-zone overlap, rapid delivery, and transparent progress updates.
+
             </p>
           </div>
 

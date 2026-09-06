@@ -25,6 +25,7 @@ import Card from '@/components/ui/Card';
 import GalleryLightbox from '@/components/ui/GalleryLightbox';
 import { PortfolioProject } from '@/types';
 import { getProjectBySlug } from '@/lib/supabase/data';
+import { getSiteUrl } from '@/lib/seo';
 
 interface CaseStudyClientViewProps {
   slug: string;
@@ -35,6 +36,7 @@ export default function CaseStudyClientView({
   slug,
   serverProject,
 }: CaseStudyClientViewProps) {
+  const siteUrl = getSiteUrl();
   const [project, setProject] = useState<PortfolioProject | null>(serverProject);
   const [loading, setLoading] = useState<boolean>(!serverProject);
 
@@ -128,19 +130,19 @@ export default function CaseStudyClientView({
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://ostrune.netlify.app',
+        item: siteUrl,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Portfolio',
-        item: 'https://ostrune.netlify.app/portfolio',
+        item: `${siteUrl}/portfolio`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: project.title,
-        item: `https://ostrune.netlify.app/portfolio/${project.slug}`,
+        item: `${siteUrl}/portfolio/${project.slug}`,
       },
     ],
   };

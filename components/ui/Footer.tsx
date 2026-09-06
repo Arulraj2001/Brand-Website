@@ -12,8 +12,10 @@ import {
   InstagramIcon,
 } from './SocialIcons';
 import { useSiteSettings } from '@/lib/useSiteData';
+import { getSiteUrl } from '@/lib/seo';
 
 export default function Footer() {
+  const siteUrl = getSiteUrl();
   const pathname = usePathname();
   const { settings } = useSiteSettings();
 
@@ -28,9 +30,9 @@ export default function Footer() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: activeSettings.brand_name || 'Ostrune',
-    image: 'https://ostrune.netlify.app/logo.png',
-    '@id': 'https://ostrune.netlify.app',
-    url: 'https://ostrune.netlify.app',
+    image: `${siteUrl}/logo.png`,
+    '@id': siteUrl,
+    url: siteUrl,
     telephone: activeSettings.phone || '+91 8637474067',
     email: activeSettings.email || 'arulraj8637@gmail.com',
     priceRange: '₹₹',

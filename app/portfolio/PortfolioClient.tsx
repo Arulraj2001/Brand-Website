@@ -9,12 +9,14 @@ import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import { PortfolioProject } from '@/types';
 import { getPortfolioProjects } from '@/lib/supabase/data';
+import { getSiteUrl } from '@/lib/seo';
 
 interface PortfolioClientProps {
   initialProjects?: PortfolioProject[];
 }
 
 export default function PortfolioClient({ initialProjects = [] }: PortfolioClientProps) {
+  const siteUrl = getSiteUrl();
   const [projects, setProjects] = useState<PortfolioProject[]>(initialProjects);
   const [filter, setFilter] = useState<string>('all');
   const [loading, setLoading] = useState(initialProjects.length === 0);
@@ -58,13 +60,13 @@ export default function PortfolioClient({ initialProjects = [] }: PortfolioClien
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://ostrune.netlify.app',
+        item: siteUrl,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Portfolio',
-        item: 'https://ostrune.netlify.app/portfolio',
+        item: `${siteUrl}/portfolio`,
       },
     ],
   };

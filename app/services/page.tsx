@@ -22,29 +22,41 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import BenchmarkImpactBadge from '@/components/ui/BenchmarkImpactBadge';
 import type { Metadata } from 'next';
+import JsonLd from '@/components/JsonLd';
+import { webPageSchema } from '@/lib/schema';
+import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades',
   description:
     'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
   alternates: {
-    canonical: 'https://ostrune.netlify.app/services',
+    canonical: `${getSiteUrl()}/services`,
   },
   openGraph: {
     title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
     description:
       'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
-    url: 'https://ostrune.netlify.app/services',
+    url: `${getSiteUrl()}/services`,
     type: 'website',
+    siteName: getSiteName(),
     images: [
       {
-        url: 'https://ostrune.netlify.app/og-image.jpg',
+        url: getOgImageUrl({ title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.', type: 'page' }),
         width: 1200,
         height: 630,
         alt: 'Ostrune Services',
       },
     ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
+    description:
+      'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.',
+    images: [getOgImageUrl({ title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.', type: 'page' })],
+  },
+  robots: seoRobots(),
 };
 
 const SERVICES = [
@@ -155,6 +167,11 @@ const SERVICES = [
 ];
 
 export default function ServicesPage() {
+  const servicesIndexSchema = [webPageSchema({
+    url: `${getSiteUrl()}/services`,
+    name: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades',
+    description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.',
+  })];
   const faqJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -196,6 +213,7 @@ export default function ServicesPage() {
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+      <JsonLd data={servicesIndexSchema} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
