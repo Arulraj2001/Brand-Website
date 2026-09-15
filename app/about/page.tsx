@@ -1,27 +1,32 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import JsonLd from '@/components/JsonLd';
-import { webPageSchema, breadcrumbListSchema } from '@/lib/schema';
+import { breadcrumbListSchema } from '@/lib/schema';
 import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 import AboutClient from './AboutClient';
 
+const aboutTitle = 'About Ostrune | Global Web Engineering & Growth Agency';
+const aboutDescription =
+  'Discover Ostrune\'s engineering ethos: zero-plugin modern tech, sub-second web architecture, verified client ROAS, and transparent global delivery.';
+
 export const metadata: Metadata = {
-  title: 'About Us | Web Development & SEO Agency',
-  description:
-    'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.',
+  title: {
+    absolute: aboutTitle,
+  },
+  description: aboutDescription,
   alternates: {
     canonical: `${getSiteUrl()}/about`,
   },
   openGraph: {
-    title: 'About Ostrune | Web Development & SEO Agency',
+    title: 'About Ostrune | Global Web Engineering & Performance Agency',
     description:
-      'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.',
+      'Learn about Ostrune\'s engineering ethos: zero-plugin modern stacks, sub-second web architecture, verified client ROAS, and transparent global delivery.',
     url: `${getSiteUrl()}/about`,
     type: 'website',
     siteName: getSiteName(),
     images: [
       {
-        url: getOgImageUrl({ title: 'Ostrune — Web Development & SEO Agency', description: 'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.', type: 'page' }),
+        url: getOgImageUrl({ title: 'About Ostrune — Global Web Engineering & Performance Agency', description: 'Learn about Ostrune\'s engineering ethos: zero-plugin modern stacks, sub-second web architecture, verified client ROAS, and transparent global delivery.', type: 'page' }),
         width: 1200,
         height: 630,
         alt: 'About Ostrune',
@@ -30,20 +35,38 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Ostrune | Web Development & SEO Agency',
+    title: 'About Ostrune | Global Web Engineering & Performance Agency',
     description:
-      'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.',
-    images: [getOgImageUrl({ title: 'Ostrune — Web Development & SEO Agency', description: 'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startups and enterprises worldwide at affordable rates.', type: 'page' })],
+      'Learn about Ostrune\'s engineering ethos: zero-plugin modern stacks, sub-second web architecture, verified client ROAS, and transparent global delivery.',
+    images: [getOgImageUrl({ title: 'About Ostrune — Global Web Engineering & Performance Agency', description: 'Learn about Ostrune\'s engineering ethos: zero-plugin modern stacks, sub-second web architecture, verified client ROAS, and transparent global delivery.', type: 'page' })],
   },
   robots: seoRobots(),
 };
 
 export default function AboutPage() {
+  const siteUrl = getSiteUrl();
   const aboutSchema = [
-    webPageSchema({ url: `${getSiteUrl()}/about`, name: 'About Ostrune | Web Development & SEO Agency', description: 'Ostrune delivers high-quality web software, old website speed overhauls, technical SEO, and high-ROAS UGC video ads for startupsand enterprises worldwide at affordable rates.' }),
+    {
+      '@context': 'https://schema.org',
+      '@type': 'AboutPage',
+      name: 'About Ostrune | Global Web Engineering & Performance Agency',
+      url: `${siteUrl}/about`,
+      description:
+        'Learn about Ostrune\'s engineering ethos: zero-plugin modern stacks, sub-second web architecture, verified client ROAS, and transparent global delivery.',
+      mainEntity: {
+        '@type': 'Organization',
+        name: 'Ostrune',
+        url: siteUrl,
+        founder: {
+          '@type': 'Person',
+          name: 'Arulraj',
+          jobTitle: 'Lead Software & Growth Engineer',
+        },
+      },
+    },
     breadcrumbListSchema([
-      { name: 'Home', item: getSiteUrl() },
-      { name: 'About Us', item: `${getSiteUrl()}/about` },
+      { name: 'Home', item: siteUrl },
+      { name: 'About Us', item: `${siteUrl}/about` },
     ]),
   ];
   return (

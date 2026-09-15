@@ -137,6 +137,103 @@ function buildGlobalSchema(): JsonLdObject[] {
         addressRegion: 'Tamil Nadu',
         addressCountry: 'India',
       },
+      knowsAbout: [
+        'Next.js Web Development',
+        'Website Speed Optimization',
+        'Core Web Vitals',
+        'Technical SEO',
+        'React Native App Development',
+        'Supabase PostgreSQL Architecture',
+        'UGC Video Ads Production',
+        'Meta Conversions API (CAPI)',
+        'Conversion Rate Optimization (CRO)',
+      ],
+      areaServed: [
+        'United States',
+        'United Kingdom',
+        'Canada',
+        'Australia',
+        'Germany',
+        'India',
+        'Worldwide',
+      ],
+      hasOfferCatalog: {
+        name: 'Digital Engineering & Growth Services',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Website Speed & SEO Upgrade',
+              url: `${baseUrl}/services/website-speed-upgrade`,
+              description: 'Sub-second Core Web Vitals optimization and legacy site overhauls.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'UGC Video Ads for E-Commerce',
+              url: `${baseUrl}/services/ugc-video-ads`,
+              description: 'High-converting user-generated video ad creatives for TikTok and Meta.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Custom Website Development',
+              url: `${baseUrl}/services/website-development`,
+              description: 'Next.js business websites, landing pages, and e-commerce portals.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'App Development',
+              url: `${baseUrl}/services/app-development`,
+              description: 'Cross-platform React Native and Next.js web and mobile apps.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Technical SEO Optimization',
+              url: `${baseUrl}/services/seo-optimization`,
+              description: 'Commercial keyword mapping, structured JSON-LD schemas, and ranking growth.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Local Business Marketing',
+              url: `${baseUrl}/services/local-business-marketing`,
+              description: 'Google Map 3-pack optimization, citation building, and review funnels.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Meta & LinkedIn Ads',
+              url: `${baseUrl}/services/meta-ads`,
+              description: 'Full-funnel paid advertising with server-side CAPI pixel setup.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Sales Growth & CRO',
+              url: `${baseUrl}/services/sales-growth-cro`,
+              description: 'Interactive qualification funnels, CRM routing, and 12-hour response alerts.',
+            },
+          },
+        ],
+      },
       contactPoint: {
         telephone: '+91 8637474067',
         contactType: 'customer service',

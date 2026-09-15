@@ -305,7 +305,7 @@ export default function ServicesBentoSection() {
                     Speed & SEO Upgrade
                   </span>
                   <Link
-                    href="/services#website-upgrade"
+                    href="/services/website-speed-upgrade"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF9D00] hover:underline"
                   >
                     <span>Fix My Slow Website</span>
@@ -365,7 +365,7 @@ export default function ServicesBentoSection() {
 
                 <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
                   <span className="font-mono-stats font-bold text-[#FF9D00] text-xs">High-ROAS Hooks</span>
-                  <Link href="/services#ugc-ads" className="text-[#FF9D00] font-bold text-xs hover:underline flex items-center gap-1">
+                  <Link href="/services/ugc-video-ads" className="text-[#FF9D00] font-bold text-xs hover:underline flex items-center gap-1">
                     <span>View UGC Ads</span>
                     <ArrowUpRight size={13} />
                   </Link>

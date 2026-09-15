@@ -17,7 +17,7 @@ export function getSiteUrl(): string {
 }
 
 export function getDefaultTagline(): string {
-  return 'We build fast websites and run SEO & Meta Ads that get real clients for growing businesses worldwide. Free site audit — reply guaranteed in 12 hours.';
+  return 'We build sub-second Next.js websites and run high-ROAS SEO and Meta ad funnels for growing businesses worldwide. Guaranteed 12h reply across all time zones.';
 }
 
 export interface OgUrlOptions {

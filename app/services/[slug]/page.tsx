@@ -37,16 +37,16 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   const service = getServiceBySlug(slug);
 
   if (!service) {
-    return {
-      title: 'Service Not Found',
-    };
+    notFound();
   }
 
   const siteUrl = getSiteUrl();
   const canonicalUrl = `${siteUrl}/services/${service.slug}`;
 
   return {
-    title: service.metaTitle,
+    title: {
+      absolute: service.metaTitle,
+    },
     description: service.metaDescription,
     alternates: {
       canonical: canonicalUrl,

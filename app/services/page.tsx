@@ -26,23 +26,28 @@ import JsonLd from '@/components/JsonLd';
 import { webPageSchema } from '@/lib/schema';
 import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 
+const servicesTitle = 'Web Development, SEO, UGC Ads & Speed Upgrades | Ostrune';
+const servicesDescription =
+  'Explore Ostrune\'s 8 core digital capabilities: custom web apps, legacy site overhauls, technical SEO, UGC video ads, and Meta ad management worldwide.';
+
 export const metadata: Metadata = {
-  title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades',
-  description:
-    'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
+  title: {
+    absolute: servicesTitle,
+  },
+  description: servicesDescription,
   alternates: {
     canonical: `${getSiteUrl()}/services`,
   },
   openGraph: {
-    title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
+    title: 'Web Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
     description:
-      'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads, and SEO dominance.',
+      'Explore Ostrune\'s 8 core digital capabilities: custom web apps, legacy site overhauls, technical SEO, UGC video ads, and Meta ad management worldwide.',
     url: `${getSiteUrl()}/services`,
     type: 'website',
     siteName: getSiteName(),
     images: [
       {
-        url: getOgImageUrl({ title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.', type: 'page' }),
+        url: getOgImageUrl({ title: 'Web Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Explore Ostrune\'s 8 core digital capabilities: custom web apps, legacy site overhauls, technical SEO, UGC video ads, and Meta ad management worldwide.', type: 'page' }),
         width: 1200,
         height: 630,
         alt: 'Ostrune Services',
@@ -51,10 +56,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
+    title: 'Web Development, SEO, UGC Ads & Speed Upgrades | Ostrune',
     description:
-      'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.',
-    images: [getOgImageUrl({ title: 'Affordable Web & App Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Full-service digital agency for international clients worldwide. High quality, competitive rates, sub-second web speed, UGC video ads,and SEO dominance.', type: 'page' })],
+      'Explore Ostrune\'s 8 core digital capabilities: custom web apps, legacy site overhauls, technical SEO, UGC video ads, and Meta ad management worldwide.',
+    images: [getOgImageUrl({ title: 'Web Development, SEO, UGC Ads & Speed Upgrades | Ostrune', description: 'Explore Ostrune\'s 8 core digital capabilities: custom web apps, legacy site overhauls, technical SEO, UGC video ads, and Meta ad management worldwide.', type: 'page' })],
   },
   robots: seoRobots(),
 };

@@ -38,10 +38,10 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     icon: Gauge,
     badge: 'HIGH DEMAND INTERNATIONAL SERVICE',
     title: 'Old Website Upgrade / Speed & SEO Overhaul',
-    h1: 'Website Speed & SEO Upgrade Services',
-    metaTitle: 'Website Speed & SEO Upgrade Services | Fix a Slow Website',
+    h1: 'Website Speed & Core Web Vitals Optimization Services',
+    metaTitle: 'Website Speed & Core Web Vitals Optimization | Ostrune',
     metaDescription:
-      'Transform your sluggish legacy website into a sub-second, 100/100 Core Web Vitals sales engine. Fix slow mobile loads, plugin bloat, and ranking drops.',
+      'Transform your slow legacy website into a sub-second sales engine. Guaranteed 90+ mobile Core Web Vitals, zero plugin bloat, and ranking recovery.',
     tagline:
       'Transform your sluggish legacy website into a sub-second, 100/100 Core Web Vitals sales engine.',
     painPoints: [
@@ -85,9 +85,9 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     badge: 'HIGH ROAS CREATIVE ENGINE',
     title: 'UGC Video Ads for E-Commerce & DTC',
     h1: 'UGC Video Ads Agency for E-Commerce & DTC Brands',
-    metaTitle: 'UGC Video Ads Agency | TikTok & Meta Ad Creatives',
+    metaTitle: 'UGC Video Ads Agency for E-Commerce & DTC | Ostrune',
     metaDescription:
-      'High-converting user-generated video ad hooks produced by real creators for E-Commerce & DTC brands. Achieve 3.5x–5.2x verified ROAS.',
+      'High-converting native UGC video ad hooks produced by vetted creators for TikTok & Meta. Achieve 3.5x–5.2x verified ROAS and stop thumb scrolling.',
     tagline:
       'Authentic user-generated video ad hooks that beat expensive studio commercials on Meta & TikTok.',
     painPoints: [
@@ -130,10 +130,10 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     icon: Code2,
     badge: 'CORE ENGINEERING',
     title: 'Website Development',
-    h1: 'Affordable Custom Website Development Services',
-    metaTitle: 'Website Development Agency | Custom Sites & E-Commerce',
+    h1: 'Custom Next.js Website Development Services',
+    metaTitle: 'Custom Next.js Website Development Services | Ostrune',
     metaDescription:
-      'Custom business websites, high-converting landing pages, and e-commerce portals built with zero plugin bloat and sub-second speed.',
+      'Custom business websites and high-converting e-commerce portals engineered with Next.js, zero plugin bloat, and sub-second load times worldwide.',
     tagline:
       'Custom business websites, high-converting landing pages, and e-commerce portals built with modern architecture.',
     painPoints: [
@@ -177,9 +177,9 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     badge: 'WEB & MOBILE APPS',
     title: 'App Development',
     h1: 'Custom Web & Mobile App Development Company',
-    metaTitle: 'Custom App Development Company | Web & Mobile Apps',
+    metaTitle: 'Custom Web & Mobile App Development Company | Ostrune',
     metaDescription:
-      'Scalable web applications and iOS / Android mobile apps built with modern real-time databases and enterprise security.',
+      'Scalable cross-platform web and mobile apps built with React Native, Next.js, and Supabase PostgreSQL. Sub-second performance and store approvals.',
     tagline:
       'Scalable web applications and iOS / Android mobile apps built with modern cloud databases.',
     painPoints: [
@@ -222,10 +222,10 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     icon: Search,
     badge: 'ORGANIC DOMINANCE',
     title: 'SEO Optimization',
-    h1: 'Search Engine Optimization (SEO) & Ranking Services',
-    metaTitle: 'Technical SEO Optimization Services | Search Rankings',
+    h1: 'Technical SEO & Search Engine Ranking Optimization',
+    metaTitle: 'Technical SEO Optimization & Ranking Services | Ostrune',
     metaDescription:
-      'Capture top 3 commercial search rankings across English-speaking global markets with structured JSON-LD schema and keyword strategy.',
+      'Capture top 3 Google rankings for commercial buyer keywords with structured JSON-LD schema, speed optimization, and authoritative content silos.',
     tagline:
       'Capture top 3 commercial search rankings across English-speaking global markets.',
     painPoints: [
@@ -269,9 +269,9 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     badge: 'LOCAL MAP PACKS',
     title: 'Local Business Marketing',
     h1: 'Local Business Marketing & Google Map Pack SEO',
-    metaTitle: 'Local Business Marketing & Google Map Pack SEO',
+    metaTitle: 'Local Business Marketing & Google Map Pack SEO | Ostrune',
     metaDescription:
-      'Dominate local Google Map packs and capture local customer consultation inquiries with automated review workflows.',
+      'Dominate local Google Map 3-packs, synchronize consistent directory citations, and automate 5-star customer reviews to capture local consultation leads.',
     tagline:
       'Dominate local Google Map packs and capture local customer inquiries for brick-and-mortar businesses.',
     painPoints: [
@@ -314,10 +314,10 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     icon: Target,
     badge: 'PERFORMANCE ADS',
     title: 'Meta & LinkedIn Ads',
-    h1: 'Meta & LinkedIn Performance Ad Management',
-    metaTitle: 'Meta & LinkedIn Ads Agency | Facebook Ad Management',
+    h1: 'Meta & LinkedIn Performance Advertising Agency',
+    metaTitle: 'Meta & LinkedIn Ads Agency | Performance Growth | Ostrune',
     metaDescription:
-      'Full-funnel Facebook, Instagram & LinkedIn ad management with Server-Side CAPI tracking setup for verified ROAS growth.',
+      'Full-funnel Meta and LinkedIn ad management with server-side Conversion API (CAPI) pixel tracking. Overcome iOS privacy drops and maximize verified ROAS.',
     tagline:
       'Full-funnel Facebook, Instagram & LinkedIn ad management for verified revenue growth.',
     painPoints: [
@@ -360,10 +360,10 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     icon: Zap,
     badge: 'CRO & LEAD FUNNELS',
     title: 'Sales Growth & Conversion Rate Optimization (CRO)',
-    h1: 'Conversion Rate Optimization & Lead Funnel Engineering',
-    metaTitle: 'Conversion Rate Optimization (CRO) & Lead Funnels',
+    h1: 'Conversion Rate Optimization (CRO) & Lead Funnels',
+    metaTitle: 'Conversion Rate Optimization (CRO) & Lead Funnels | Ostrune',
     metaDescription:
-      'Turn site visitors into qualified consultation bookings with interactive lead funnels, automated CRM routing, and instant alerts.',
+      'Turn cold visitors into qualified consultation bookings with interactive lead funnels, automated CRM routing, and guaranteed 12-hour response alerts.',
     tagline:
       'Turn cold site visitors into qualified consultation bookings with interactive funnels.',
     painPoints: [

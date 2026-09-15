@@ -6,23 +6,28 @@ import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 import { getPortfolioProjects } from '@/lib/supabase/data';
 import PortfolioClient from './PortfolioClient';
 
+const portfolioTitle = 'Client Portfolio & Verified Web Case Studies | Ostrune';
+const portfolioDescription =
+  'Explore real client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune for global businesses.';
+
 export const metadata: Metadata = {
-  title: 'Portfolio & Case Studies | Web Development & SEO',
-  description:
-    'Explore verified client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune.',
+  title: {
+    absolute: portfolioTitle,
+  },
+  description: portfolioDescription,
   alternates: {
     canonical: `${getSiteUrl()}/portfolio`,
   },
   openGraph: {
-    title: 'Portfolio & Case Studies | Ostrune',
+    title: 'Client Portfolio & Verified Web Case Studies | Ostrune',
     description:
-      'Explore verified client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune.',
+      'Explore real client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune for global businesses.',
     url: `${getSiteUrl()}/portfolio`,
     type: 'website',
     siteName: getSiteName(),
     images: [
       {
-        url: getOgImageUrl({ title: 'Portfolio & Case Studies | Web Development & SEO', description: 'Explore verified client case studies: sub-second web platforms, speed overhauls,and high-ROAS ad campaigns engineered by Ostrune.', type: 'page' }),
+        url: getOgImageUrl({ title: 'Client Portfolio & Verified Web Case Studies | Ostrune', description: 'Explore real client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune for global businesses.', type: 'page' }),
         width: 1200,
         height: 630,
         alt: 'Ostrune Portfolio & Case Studies',
@@ -31,10 +36,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Portfolio & Case Studies | Ostrune',
+    title: 'Client Portfolio & Verified Web Case Studies | Ostrune',
     description:
-      'Explore verified client case studies: sub-second web platforms, speed overhauls,and high-ROAS ad campaigns engineered by Ostrune.',
-    images: [getOgImageUrl({ title: 'Portfolio & Case Studies | Web Development & SEO', description: 'Explore verified client case studies: sub-second web platforms, speed overhauls,and high-ROAS ad campaigns engineered by Ostrune.', type: 'page' })],
+      'Explore real client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune for global businesses.',
+    images: [getOgImageUrl({ title: 'Client Portfolio & Verified Web Case Studies | Ostrune', description: 'Explore real client case studies: sub-second web platforms, speed overhauls, and high-ROAS ad campaigns engineered by Ostrune for global businesses.', type: 'page' })],
   },
   robots: seoRobots(),
 };

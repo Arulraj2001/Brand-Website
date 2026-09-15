@@ -8,10 +8,10 @@ import GradientText from '@/components/ui/GradientText';
 import HeroMockup from './HeroMockup';
 
 const ROTATING_WORDS = [
-  'Digital Growth',
+  'SEO Growth',
   'Sub-Second Speed',
   'High-ROAS UGC Ads',
-  'Top 3 Google SEO',
+  'Google Rankings',
 ];
 
 export default function HeroSection() {
@@ -58,7 +58,7 @@ export default function HeroSection() {
             {/* Top Brand Tag Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF9E6] text-[#1C1C1C] text-xs font-bold border border-[#FFD21E] shadow-2xs">
               <Sparkles size={14} className="text-[#FF9D00] animate-pulse" />
-              <span>Affordable Premium Web Engineering & Growth Services</span>
+              <span>Full-Stack Web Engineering & Growth Marketing</span>
               <span className="text-[#1C1C1C]/40">•</span>
               <span className="flex items-center gap-1 font-semibold text-[#3B82F6]">
                 <Globe size={12} /> Serving Clients Worldwide
@@ -67,7 +67,7 @@ export default function HeroSection() {
 
             {/* Dynamic H1 Headline with Rotating Word Flip */}
             <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-[#1C1C1C] tracking-[-0.02em] leading-[1.12]">
-              Affordable Web Engineering &{' '}
+              Custom Web Engineering &{' '}
               <span className="inline-block min-w-[280px] sm:min-w-[320px] text-left">
                 <AnimatePresence mode="wait">
                   <motion.span
@@ -86,7 +86,7 @@ export default function HeroSection() {
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-[#6B7280] leading-[1.6] max-w-2xl font-medium">
-              High-impact web engineering, sub-second speed upgrades, high-ROAS UGC video ads, and SEO dominance for ambitious brands worldwide. Guaranteed 12-hour reply times across all global time zones.
+              Sub-second Next.js web applications, Core Web Vitals speed upgrades, high-ROAS UGC video ads, and technical SEO architecture for ambitious brands worldwide. Guaranteed 12-hour reply across all global time zones.
             </p>
 
             {/* CTA Group */}
