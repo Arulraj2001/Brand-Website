@@ -58,6 +58,7 @@ import Button from '@/components/ui/Button';
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon';
 import ToastContainer, { ToastMessage } from '@/components/admin/Toast';
 import { TableSkeleton, Skeleton } from '@/components/admin/Skeleton';
+import ImageCropModal, { CropResult } from '@/components/admin/ImageCropModal';
 import { PortfolioProject, Testimonial, Lead, ServiceType, SiteSettings, TeamMember, BlogPost, BlogCategory, StudentFeedbackVideo, StudentProject, StudentProjectCategory, SiteStat, ActivityFeedItem, ClientLogo } from '@/types';
 import {
   getPortfolioProjects,
@@ -110,6 +111,14 @@ function createLocalId(prefix = ''): string {
 
 function getBatchSequenceTimestamp(offsetIndex = 0): string {
   return new Date(Date.now() - offsetIndex * 1000).toISOString();
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
 const INITIAL_LEADS: Lead[] = [
@@ -403,6 +412,11 @@ export default function AdminDashboardPage() {
   const [projectCoverUrl, setProjectCoverUrl] = useState('');
   const [projectGalleryText, setProjectGalleryText] = useState('');
   const [blogCoverUrl, setBlogCoverUrl] = useState('');
+
+  // Interactive Image Crop & Auto-Compression State
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
+  const [cropTargetCallback, setCropTargetCallback] = useState<((url: string) => void) | null>(null);
   const [teamProfileUrl, setTeamProfileUrl] = useState('');
 
   const router = useRouter();
@@ -536,7 +550,27 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleInitiateImageCrop = (file: File, onDone: (url: string) => void) => {
+    setCropRawFile(file);
+    setCropTargetCallback(() => onDone);
+    setCropModalOpen(true);
+  };
 
+  const handleCropModalConfirm = async (result: CropResult) => {
+    try {
+      const uploadedUrl = await uploadImageFile(result.file);
+      if (cropTargetCallback) {
+        cropTargetCallback(uploadedUrl);
+      }
+      addToast(
+        'success',
+        `⚡ Compressed from ${formatBytes(result.originalSizeBytes)} to ${formatBytes(result.compressedSizeBytes)} (${result.reductionPercentage}% smaller) and uploaded!`
+      );
+    } catch (e) {
+      console.error('Error uploading cropped image:', e);
+      addToast('error', 'Failed to upload compressed image.');
+    }
+  };
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -2898,17 +2932,22 @@ export default function AdminDashboardPage() {
                         placeholder="https://images.unsplash.com/photo-..."
                         className="flex-1 px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                       />
-                      <label className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]">
+                      <label
+                        className="px-3 py-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#FF9D00] text-xs font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[44px]"
+                        title="Upload, crop to 16:9 card ratio, and auto-compress to lightweight WebP"
+                      >
                         <UploadCloud size={14} className="text-[#FF9D00]" />
-                        <span>Upload File</span>
+                        <span>Upload &amp; Crop</span>
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={async (e) => {
+                          onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
-                              const url = await uploadImageFile(e.target.files[0]);
-                              setBlogCoverUrl(url);
-                              addToast('success', 'File uploaded and URL inserted!');
+                              const file = e.target.files[0];
+                              handleInitiateImageCrop(file, (url) => {
+                                setBlogCoverUrl(url);
+                              });
+                              e.target.value = '';
                             }
                           }}
                           className="hidden"
@@ -3328,21 +3367,26 @@ export default function AdminDashboardPage() {
                                         placeholder="Paste custom image URL..."
                                         className="flex-1 px-3 py-1.5 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00]"
                                       />
-                                      <label className="px-2.5 py-1.5 rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] text-[11px] font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer hover:border-[#FF9D00]">
+                                      <label
+                                        className="px-2.5 py-1.5 rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] text-[11px] font-bold text-[#1C1C1C] flex items-center gap-1 cursor-pointer hover:border-[#FF9D00]"
+                                        title="Upload, crop to 16:9 card ratio, and auto-compress"
+                                      >
                                         <UploadCloud size={12} className="text-[#FF9D00]" />
-                                        <span>File</span>
+                                        <span>File &amp; Crop</span>
                                         <input
                                           type="file"
                                           accept="image/*"
-                                          onChange={async (e) => {
+                                          onChange={(e) => {
                                             if (e.target.files && e.target.files[0]) {
-                                              const uploadedUrl = await uploadImageFile(e.target.files[0]);
-                                              setStagedImportPosts((prev) =>
-                                                prev.map((p) =>
-                                                  p.tempId === item.tempId ? { ...p, customUrl: uploadedUrl, is_poster: false } : p
-                                                )
-                                              );
-                                              addToast('success', 'Custom image uploaded!');
+                                              const file = e.target.files[0];
+                                              handleInitiateImageCrop(file, (uploadedUrl) => {
+                                                setStagedImportPosts((prev) =>
+                                                  prev.map((p) =>
+                                                    p.tempId === item.tempId ? { ...p, customUrl: uploadedUrl, is_poster: false } : p
+                                                  )
+                                                );
+                                              });
+                                              e.target.value = '';
                                             }
                                           }}
                                           className="hidden"
@@ -3461,6 +3505,17 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* INTERACTIVE IMAGE CROP & AUTO-COMPRESSION MODAL */}
+      <ImageCropModal
+        isOpen={cropModalOpen}
+        rawFile={cropRawFile}
+        onClose={() => {
+          setCropModalOpen(false);
+          setCropRawFile(null);
+        }}
+        onConfirm={handleCropModalConfirm}
+      />
 
       {/* LEAD DELETE CONFIRM */}
       {deleteConfirmLead && (

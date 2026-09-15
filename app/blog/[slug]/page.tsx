@@ -77,11 +77,11 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 
 export default async function BlogPostDetailPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const allPublished = await getBlogPosts(true);
+  const post = allPublished.find((p) => p.slug === slug) || (await getBlogPostBySlug(slug));
 
   let finalRelated: BlogPost[] = [];
   if (post) {
-    const allPublished = await getBlogPosts(true);
     const relatedPosts = allPublished
       .filter((p) => p.slug !== post.slug && p.category === post.category)
       .slice(0, 3);

@@ -435,8 +435,14 @@ export function sortBlogPostsRecentFirst(posts: BlogPost[]): BlogPost[] {
   });
 }
 
+let serverBlogCache: { posts: BlogPost[]; timestamp: number; publishedOnly: boolean } | null = null;
+
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
+  if (typeof window === 'undefined' && serverBlogCache && serverBlogCache.publishedOnly === publishedOnly && (Date.now() - serverBlogCache.timestamp < 30000)) {
+    return serverBlogCache.posts;
+  }
+
   let localPosts: BlogPost[] = INITIAL_BLOG_POSTS;
   if (typeof window !== 'undefined') {
     try {
@@ -454,7 +460,11 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
 
   if (!isSupabaseConfigured()) {
     const sorted = sortBlogPostsRecentFirst(localPosts);
-    return publishedOnly ? sorted.filter((p) => p.is_published) : sorted;
+    const fallbackResult = publishedOnly ? sorted.filter((p) => p.is_published) : sorted;
+    if (typeof window === 'undefined') {
+      serverBlogCache = { posts: fallbackResult, timestamp: Date.now(), publishedOnly };
+    }
+    return fallbackResult;
   }
 
   let dbPosts: BlogPost[] = [];
@@ -506,7 +516,11 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
     } catch {}
   }
 
-  return publishedOnly ? combined.filter((p) => p.is_published) : combined;
+  const finalResult = publishedOnly ? combined.filter((p) => p.is_published) : combined;
+  if (typeof window === 'undefined') {
+    serverBlogCache = { posts: finalResult, timestamp: Date.now(), publishedOnly };
+  }
+  return finalResult;
 }
 
 // Helper to fetch single published blog post by slug
