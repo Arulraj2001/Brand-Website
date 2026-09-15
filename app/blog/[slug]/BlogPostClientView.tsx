@@ -169,7 +169,7 @@ export default function BlogPostClientView({
     description: post.excerpt,
     image: post.cover_image_url || `${siteUrl}/api/blog-banner?title=${encodeURIComponent(post.title)}`,
     datePublished: post.published_at || post.created_at,
-    dateModified: post.created_at || post.published_at,
+    dateModified: post.published_at || post.created_at,
     author: {
       '@type': 'Organization',
       name: post.author_name || 'Ostrune Team',

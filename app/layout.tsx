@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Source_Sans_3, Source_Code_Pro } from 'next/font/google';
 import './globals.css';
@@ -35,6 +35,13 @@ const defaultTagline = getDefaultTagline();
 const GA_TRACKING_ID = 'G-54KHWP0NR5';
 
 const defaultTitle = `${siteName} — Web Development, SEO & Performance Growth Agency`;
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#FF9D00',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -140,8 +147,7 @@ function buildGlobalSchema(): JsonLdObject[] {
     webSiteSchema({
       url: baseUrl,
       name: siteName,
-      // NOTE: the site has no /search route yet — update this target when one lands.
-      searchUrl: `${baseUrl}/search?q={search_term_string}`,
+      searchUrl: `${baseUrl}/blog?q={search_term_string}`,
     }),
   ];
 }

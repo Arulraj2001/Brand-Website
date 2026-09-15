@@ -64,8 +64,8 @@ export default function RichArticleContent({
   const tocItems: TocItem[] = [];
   const lines = content.split('\n');
   lines.forEach((line) => {
-    if (line.startsWith('## ')) {
-      const text = line.replace('## ', '').trim();
+    if (line.startsWith('## ') || line.startsWith('# ')) {
+      const text = line.replace(/^#{1,2}\s+/, '').trim();
       const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
       tocItems.push({ id, text, level: 2 });
     }
@@ -88,21 +88,9 @@ export default function RichArticleContent({
         continue;
       }
 
-      // H1 Header
-      if (line.startsWith('# ')) {
-        const text = line.replace('# ', '').trim();
-        rawBlocks.push(
-          <h1 key={`h1-${keyIndex++}`} className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] pb-2 border-b-2 border-[#FFD21E] mt-8 mb-4">
-            {text}
-          </h1>
-        );
-        i++;
-        continue;
-      }
-
-      // H2 Header with ID anchor
-      if (line.startsWith('## ')) {
-        const text = line.replace('## ', '').trim();
+      // Headings: Normalize both # and ## to H2 to guarantee strictly ONE H1 per page (the article title)
+      if (line.startsWith('# ') || line.startsWith('## ')) {
+        const text = line.replace(/^#{1,2}\s+/, '').trim();
         const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         rawBlocks.push(
           <h2 id={id} key={`h2-${keyIndex++}`} className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] pt-6 pb-2 mt-8 border-b border-[#E5E7EB] flex items-center gap-2 group scroll-mt-28">

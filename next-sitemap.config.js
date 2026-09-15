@@ -16,7 +16,7 @@ module.exports = {
   robotsTxtOptions: {
     policies: [
       { userAgent: '*', allow: '/' },
-      { userAgent: '*', disallow: ['/admin/', '/api/', '/private/', '/_next/'] },
+      { userAgent: '*', disallow: ['/admin/', '/api/', '/private/'] },
     ],
   },
   // Per-route priority / change-frequency hints applied by next-sitemap.

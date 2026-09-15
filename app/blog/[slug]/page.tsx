@@ -5,10 +5,6 @@ import { seoRobots, getSiteUrl, getOgImageUrl, getSiteName } from '@/lib/seo';
 import BlogPostClientView from './BlogPostClientView';
 
 export const dynamicParams = true;
-// ISR: pre-render all blog posts at build, cache at the edge, revalidate in background.
-// Kills latency by serving from cache and revalidating asynchronously.
-export const revalidate = 300;
-export const dynamic = 'auto';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;

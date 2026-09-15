@@ -377,12 +377,12 @@ export async function getProjectBySlug(rawSlug: string): Promise<PortfolioProjec
 
   try {
     const supabase = createClient();
-    const { data } = await supabase
-      .from('portfolio_projects')
-      .select('*')
-      .or(`slug.eq.${targetSlug},slug.eq.${rawSlug},slug.eq.realstate-website,slug.eq.Full-stack-web-app`)
-      .limit(1)
-      .maybeSingle();
+    const query =
+      targetSlug === rawSlug
+        ? supabase.from('portfolio_projects').select('*').eq('slug', targetSlug)
+        : supabase.from('portfolio_projects').select('*').or(`slug.eq.${targetSlug},slug.eq.${rawSlug}`);
+
+    const { data } = await query.limit(1).maybeSingle();
 
     if (data) {
       return normalizeProject(data as PortfolioProjectRow);

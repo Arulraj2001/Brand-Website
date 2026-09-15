@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { cache } from 'react';
+import { notFound } from 'next/navigation';
 import { getProjectBySlug, getPortfolioProjects } from '@/lib/supabase/data';
 import { seoRobots, getSiteUrl, getOgImageUrl, getSiteName } from '@/lib/seo';
 import CaseStudyClientView from './CaseStudyClientView';
@@ -9,6 +10,10 @@ interface CaseStudyProps {
   params: Promise<{ slug: string }>;
 }
 
+const getCachedProject = cache(async (slug: string) => {
+  return getProjectBySlug(slug);
+});
+
 export async function generateStaticParams() {
   const projects = await getPortfolioProjects();
   return projects.map((p) => ({ slug: p.slug }));
@@ -16,12 +21,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: CaseStudyProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getCachedProject(slug);
 
   if (!project) {
-    return {
-      title: 'Case Study | Client Project',
-    };
+    notFound();
   }
 
   const location = project.client_location || project.client_city || 'Global';
@@ -57,7 +60,11 @@ export async function generateMetadata({ params }: CaseStudyProps) {
 
 export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getCachedProject(slug);
+
+  if (!project) {
+    notFound();
+  }
 
   return (
     <CaseStudyClientView
@@ -66,3 +73,4 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyProps) {
     />
   );
 }
+
