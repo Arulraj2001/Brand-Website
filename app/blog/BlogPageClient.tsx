@@ -33,14 +33,35 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
   const [loading, setLoading] = useState(initialPosts.length === 0);
 
   useEffect(() => {
+    if (initialPosts && initialPosts.length > 0) {
+      return;
+    }
+
+    let isMounted = true;
     async function loadData() {
       const data = await getBlogPosts(true);
-      if (data) {
-        setPosts(data);
+      if (isMounted) {
+        if (data) {
+          setPosts(data);
+        }
+        setLoading(false);
       }
-      setLoading(false);
     }
     loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [initialPosts]);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      getBlogPosts(true).then((data) => {
+        if (data) setPosts(data);
+      });
+    };
+    window.addEventListener('ostrune_blog_updated', handleUpdate);
+    return () => window.removeEventListener('ostrune_blog_updated', handleUpdate);
   }, []);
 
   const handleFilterChange = (cat: string) => {
@@ -177,7 +198,9 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                   </div>
 
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors leading-tight">
-                    {featuredPost.title}
+                    <Link href={`/blog/${featuredPost.slug}`} prefetch={true}>
+                      {featuredPost.title}
+                    </Link>
                   </h2>
 
                   <p className="text-xs sm:text-sm text-[#6B7280] leading-relaxed line-clamp-3">
@@ -202,7 +225,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                     </div>
                   </div>
 
-                  <Button href={`/blog/${featuredPost.slug}`} variant="primary" size="sm">
+                  <Button href={`/blog/${featuredPost.slug}`} prefetch={true} variant="primary" size="sm">
                     <span>Read Article</span>
                     <ArrowUpRight size={14} />
                   </Button>
@@ -380,7 +403,9 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                             </div>
 
                             <h3 className="font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors text-base line-clamp-2 leading-snug">
-                              {post.title}
+                              <Link href={`/blog/${post.slug}`} prefetch={true}>
+                                {post.title}
+                              </Link>
                             </h3>
 
                             <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed">
@@ -401,6 +426,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
                             </span>
                             <Link
                               href={`/blog/${post.slug}`}
+                              prefetch={true}
                               className="inline-flex items-center gap-1 text-xs font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors min-h-[44px]"
                             >
                               <span>Read Article</span>

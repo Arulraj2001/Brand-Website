@@ -436,6 +436,8 @@ export function sortBlogPostsRecentFirst(posts: BlogPost[]): BlogPost[] {
 }
 
 let serverBlogCache: { posts: BlogPost[]; timestamp: number; publishedOnly: boolean } | null = null;
+const singlePostMemoryCache = new Map<string, { post: BlogPost; timestamp: number }>();
+
 
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
@@ -523,14 +525,144 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
   return finalResult;
 }
 
-// Helper to fetch single published blog post by slug
+// Helper to fetch single published blog post by slug using direct indexed single-row lookup
 export async function getBlogPostBySlug(
   slug: string,
   options: { includeDrafts?: boolean } = {}
 ): Promise<BlogPost | null> {
-  const all = await getBlogPosts(!options.includeDrafts);
-  return all.find((p) => p.slug === slug) || null;
+  if (!slug) return null;
+
+  // 1. In-memory server cache lookup (fastest: 0.1ms)
+  if (typeof window === 'undefined') {
+    const cachedSingle = singlePostMemoryCache.get(slug);
+    if (cachedSingle && Date.now() - cachedSingle.timestamp < 60000) {
+      if (options.includeDrafts || cachedSingle.post.is_published) {
+        return cachedSingle.post;
+      }
+    }
+    // Also check serverBlogCache if available
+    if (serverBlogCache && Date.now() - serverBlogCache.timestamp < 60000) {
+      const fromAll = serverBlogCache.posts.find((p) => p.slug === slug);
+      if (fromAll) {
+        if (options.includeDrafts || fromAll.is_published) {
+          singlePostMemoryCache.set(slug, { post: fromAll, timestamp: Date.now() });
+          return fromAll;
+        }
+      }
+    }
+  }
+
+  // 2. Client-side localStorage check
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('ostrune_blog_posts');
+      if (cached) {
+        const list: BlogPost[] = JSON.parse(cached);
+        const localFound = list.find((p) => p.slug === slug);
+        if (localFound && (options.includeDrafts || localFound.is_published)) {
+          return localFound;
+        }
+      }
+    } catch {}
+  }
+
+  // 3. Fallback to INITIAL_BLOG_POSTS if Supabase not configured
+  if (!isSupabaseConfigured()) {
+    const localFallback = INITIAL_BLOG_POSTS.find((p) => p.slug === slug) || null;
+    return localFallback && (options.includeDrafts || localFallback.is_published) ? localFallback : null;
+  }
+
+  // 4. Targeted single-row indexed query to Supabase (fetches only the 1 row needed in ~20ms)
+  try {
+    const supabase = createClient();
+    let query = supabase.from('blog_posts').select('*').eq('slug', slug);
+    if (!options.includeDrafts) {
+      query = query.eq('is_published', true);
+    }
+    const { data, error } = await query.maybeSingle();
+    if (!error && data) {
+      const post = data as BlogPost;
+      if (typeof window === 'undefined') {
+        singlePostMemoryCache.set(slug, { post, timestamp: Date.now() });
+      }
+      return post;
+    }
+  } catch (err) {
+    console.warn('Supabase fetch blog post by slug error:', err);
+  }
+
+  // 5. Final fallback check against INITIAL_BLOG_POSTS
+  const fallback = INITIAL_BLOG_POSTS.find((p) => p.slug === slug) || null;
+  return fallback && (options.includeDrafts || fallback.is_published) ? fallback : null;
 }
+
+// Helper to fetch 3 related blog posts for detail view with minimal card payload
+export async function getRelatedBlogPosts(
+  currentSlug: string,
+  category?: string,
+  limit = 3
+): Promise<BlogPost[]> {
+  // 1. If serverBlogCache is warm, slice from it directly (0ms)
+  if (typeof window === 'undefined' && serverBlogCache && Date.now() - serverBlogCache.timestamp < 60000) {
+    const candidates = serverBlogCache.posts.filter((p) => p.slug !== currentSlug && p.is_published);
+    const sameCat = category ? candidates.filter((p) => p.category === category) : [];
+    const chosen =
+      sameCat.length >= limit
+        ? sameCat.slice(0, limit)
+        : [...sameCat, ...candidates.filter((p) => p.category !== category)].slice(0, limit);
+    if (chosen.length > 0) return chosen;
+  }
+
+  // 2. Query Supabase with minimal columns (excludes heavy `content` column!)
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createClient();
+      const selectColumns =
+        'id, title, slug, excerpt, cover_image_url, category, target_keyword, city, author_name, is_published, published_at, created_at';
+
+      let query = supabase
+        .from('blog_posts')
+        .select(selectColumns)
+        .eq('is_published', true)
+        .neq('slug', currentSlug);
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .limit(limit);
+
+      if (!error && data && data.length > 0) {
+        return data as BlogPost[];
+      }
+
+      // If no same-category posts found, fetch any recent published posts
+      if (category) {
+        const { data: fallbackData } = await supabase
+          .from('blog_posts')
+          .select(selectColumns)
+          .eq('is_published', true)
+          .neq('slug', currentSlug)
+          .order('published_at', { ascending: false, nullsFirst: false })
+          .limit(limit);
+
+        if (fallbackData && fallbackData.length > 0) {
+          return fallbackData as BlogPost[];
+        }
+      }
+    } catch (err) {
+      console.warn('Supabase fetch related blog posts error:', err);
+    }
+  }
+
+  // 3. Fallback to INITIAL_BLOG_POSTS
+  const initialList = INITIAL_BLOG_POSTS.filter((p) => p.slug !== currentSlug && p.is_published);
+  const sameCatInitial = category ? initialList.filter((p) => p.category === category) : [];
+  return (sameCatInitial.length > 0 ? sameCatInitial : initialList).slice(0, limit);
+}
+
 
 // Helper to submit lead
 export async function submitLead(lead: Lead): Promise<{ success: boolean; message: string }> {
@@ -646,6 +778,8 @@ function cacheBlogPostLocal(post: BlogPost, previousSlug?: string): void {
 }
 
 export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> {
+  serverBlogCache = null;
+  singlePostMemoryCache.clear();
   cacheBlogPostLocal(post);
 
   if (!isSupabaseConfigured()) return post;
@@ -703,6 +837,8 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
 }
 
 export async function deleteBlogPostFromSupabase(id: string, slug?: string): Promise<void> {
+  serverBlogCache = null;
+  singlePostMemoryCache.clear();
   if (typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem('ostrune_blog_posts');

@@ -249,6 +249,7 @@ export default function BlogPostClientView({
         {/* Back Link */}
         <Link
           href="/blog"
+          prefetch={true}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C] transition-colors"
         >
           <ArrowLeft size={14} />
@@ -359,7 +360,7 @@ export default function BlogPostClientView({
           <div className="pt-8 border-t border-[#E5E7EB] space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-[#1C1C1C]">Related Articles</h3>
-              <Link href="/blog" className="text-xs font-bold text-[#FF9D00] hover:underline">
+              <Link href="/blog" prefetch={true} className="text-xs font-bold text-[#FF9D00] hover:underline">
                 View All Articles →
               </Link>
             </div>
@@ -372,11 +373,12 @@ export default function BlogPostClientView({
                       {rel.category.replace('_', ' ')}
                     </span>
                     <h4 className="font-bold text-sm text-[#1C1C1C] line-clamp-2 hover:text-[#FF9D00] transition-colors">
-                      <Link href={`/blog/${rel.slug}`}>{rel.title}</Link>
+                      <Link href={`/blog/${rel.slug}`} prefetch={true}>{rel.title}</Link>
                     </h4>
                   </div>
                   <Link
                     href={`/blog/${rel.slug}`}
+                    prefetch={true}
                     className="text-xs font-bold text-[#FF9D00] hover:underline inline-flex items-center gap-1"
                   >
                     <span>Read Article</span>

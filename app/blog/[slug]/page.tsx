@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { notFound } from 'next/navigation';
-import { getBlogPostBySlug, getBlogPosts } from '@/lib/supabase/data';
-import type { BlogPost } from '@/types';
+import { getBlogPostBySlug, getBlogPosts, getRelatedBlogPosts } from '@/lib/supabase/data';
 import { seoRobots, getSiteUrl, getOgImageUrl, getSiteName } from '@/lib/seo';
 import BlogPostClientView from './BlogPostClientView';
 
 export const dynamicParams = true;
 // ISR: pre-render all blog posts at build, cache at the edge, revalidate in background.
-// Kills the 3-5s on every request by avoiding a per-request serverless + Supabase round trip.
+// Kills latency by serving from cache and revalidating asynchronously.
 export const revalidate = 300;
 export const dynamic = 'auto';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
+
+const getCachedPost = cache(async (slug: string) => {
+  return getBlogPostBySlug(slug);
+});
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts(true);
@@ -22,7 +25,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = await getCachedPost(slug);
 
   if (!post || !post.is_published) {
     notFound();
@@ -77,25 +80,20 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 
 export default async function BlogPostDetailPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const allPublished = await getBlogPosts(true);
-  const post = allPublished.find((p) => p.slug === slug) || (await getBlogPostBySlug(slug));
+  const post = await getCachedPost(slug);
 
-  let finalRelated: BlogPost[] = [];
-  if (post) {
-    const relatedPosts = allPublished
-      .filter((p) => p.slug !== post.slug && p.category === post.category)
-      .slice(0, 3);
-    finalRelated =
-      relatedPosts.length > 0
-        ? relatedPosts
-        : allPublished.filter((p) => p.slug !== post.slug).slice(0, 3);
+  if (!post || !post.is_published) {
+    notFound();
   }
+
+  const finalRelated = await getRelatedBlogPosts(post.slug, post.category, 3);
 
   return (
     <BlogPostClientView
       slug={slug}
-      serverPost={post && post.is_published ? post : null}
+      serverPost={post}
       serverRelated={finalRelated}
     />
   );
 }
+
