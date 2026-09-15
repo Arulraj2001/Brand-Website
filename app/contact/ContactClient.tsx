@@ -115,7 +115,7 @@ export default function ContactClient() {
             Book a Free Strategy Call & Proposal
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Let's Discuss Your <GradientText>Project & Growth Goals</GradientText>
+            Let&apos;s Discuss Your <GradientText>Project & Growth Goals</GradientText>
           </h1>
           <p className="text-base text-[#6B7280] leading-relaxed">
             Fill out the form below to receive a custom proposal and 15-minute strategy call. Response guaranteed within 12 hours across all time zones.
@@ -150,7 +150,7 @@ export default function ContactClient() {
                     Project Inquiry Received!
                   </h2>
                   <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                    Thank you! We'll get back to you within 12 hours with a custom project proposal and transparent budget options.
+                    Thank you! We&apos;ll get back to you within 12 hours with a custom project proposal and transparent budget options.
                   </p>
                   <div className="pt-2 flex justify-center gap-3">
                     <Button

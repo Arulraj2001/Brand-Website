@@ -370,7 +370,7 @@ export default function StudentProjectsClient() {
                 Everything Delivered Under MSME Registered &ldquo;Learnithm&rdquo;
               </h2>
               <p className="text-[#6B7280] text-sm md:text-base leading-relaxed mb-8 max-w-2xl">
-                We don't just send code — we equip you with everything needed to ace your project evaluation, impress your external examiner, and build your career portfolio.
+                We don&apos;t just send code — we equip you with everything needed to ace your project evaluation, impress your external examiner, and build your career portfolio.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">

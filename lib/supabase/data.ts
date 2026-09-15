@@ -273,7 +273,7 @@ export async function saveTeamMembersToSupabase(newTeam: TeamMember[]): Promise<
 
 export function normalizeProject(project: PortfolioProject): PortfolioProject {
   if (!project) return project;
-  let rawSlug = project.slug || '';
+  const rawSlug = project.slug || '';
   let slug = rawSlug;
   if (rawSlug === 'realstate-website' || rawSlug === 'yourchoiceproperties-real-estate-portal') {
     slug = 'real-estate-website';
@@ -283,9 +283,9 @@ export function normalizeProject(project: PortfolioProject): PortfolioProject {
     slug = rawSlug.toLowerCase();
   }
 
-  let title = (project.title || '').replace(/Realstate/gi, 'Real Estate');
-  let fullDesc = (project.full_description || '').replace(/Realstate/gi, 'Real Estate');
-  let shortDesc = (project.short_description || '').replace(/Realstate/gi, 'Real Estate');
+  const title = (project.title || '').replace(/Realstate/gi, 'Real Estate');
+  const fullDesc = (project.full_description || '').replace(/Realstate/gi, 'Real Estate');
+  const shortDesc = (project.short_description || '').replace(/Realstate/gi, 'Real Estate');
 
   let beforeMetric = project.before_metric || '';
   if (
@@ -330,7 +330,7 @@ export function getPortfolioProjectsSync(): PortfolioProject[] {
 
 // Helper to fetch portfolio projects
 export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
-  let localCache: PortfolioProject[] = getPortfolioProjectsSync();
+  const localCache: PortfolioProject[] = getPortfolioProjectsSync();
 
   if (!isSupabaseConfigured()) return localCache;
 
@@ -416,6 +416,25 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   }
 }
 
+export function getBlogPostTimestamp(post: BlogPost): number {
+  const dateStr = post.published_at || post.created_at;
+  if (!dateStr) return 0;
+  const time = new Date(dateStr).getTime();
+  return isNaN(time) ? 0 : time;
+}
+
+export function sortBlogPostsRecentFirst(posts: BlogPost[]): BlogPost[] {
+  return [...posts].sort((a, b) => {
+    const timeA = getBlogPostTimestamp(a);
+    const timeB = getBlogPostTimestamp(b);
+    if (timeB !== timeA) return timeB - timeA;
+    const createA = new Date(a.created_at || 0).getTime();
+    const createB = new Date(b.created_at || 0).getTime();
+    if (createB !== createA) return createB - createA;
+    return (b.slug || b.id || '').localeCompare(a.slug || a.id || '');
+  });
+}
+
 // Helper to fetch blog posts (all for admin, published only for public)
 export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
   let localPosts: BlogPost[] = INITIAL_BLOG_POSTS;
@@ -434,13 +453,18 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
   }
 
   if (!isSupabaseConfigured()) {
-    return publishedOnly ? localPosts.filter((p) => p.is_published) : localPosts;
+    const sorted = sortBlogPostsRecentFirst(localPosts);
+    return publishedOnly ? sorted.filter((p) => p.is_published) : sorted;
   }
 
   let dbPosts: BlogPost[] = [];
   try {
     const supabase = createClient();
-    let query = supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
+    let query = supabase
+      .from('blog_posts')
+      .select('*')
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false });
 
     if (publishedOnly) {
       query = query.eq('is_published', true);
@@ -465,12 +489,20 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
     if (key) map.set(key, post);
   }
 
-  const combined = Array.from(map.values());
+  // Strictly sort merged results by recency descending (most recent first)
+  const combined = sortBlogPostsRecentFirst(Array.from(map.values()));
 
   if (typeof window !== 'undefined' && combined.length > 0) {
     try {
-      const cacheablePosts = publishedOnly ? combined.filter((p) => p.is_published) : combined;
-      localStorage.setItem('ostrune_blog_posts', JSON.stringify(cacheablePosts));
+      if (!publishedOnly) {
+        localStorage.setItem('ostrune_blog_posts', JSON.stringify(combined));
+      } else {
+        const existing = localStorage.getItem('ostrune_blog_posts');
+        const existingList: BlogPost[] = existing ? JSON.parse(existing) : [];
+        const existingDrafts = existingList.filter((p) => !p.is_published);
+        const mergedCache = sortBlogPostsRecentFirst([...combined, ...existingDrafts]);
+        localStorage.setItem('ostrune_blog_posts', JSON.stringify(mergedCache));
+      }
     } catch {}
   }
 
@@ -588,6 +620,9 @@ function cacheBlogPostLocal(post: BlogPost, previousSlug?: string): void {
       list = [post, ...list];
     }
 
+    // Always ensure localStorage cache stays strictly sorted by recency descending
+    list = sortBlogPostsRecentFirst(list);
+
     localStorage.setItem('ostrune_blog_posts', JSON.stringify(list));
     window.dispatchEvent(new Event('ostrune_blog_updated'));
     window.dispatchEvent(new Event('storage'));
@@ -618,6 +653,7 @@ export async function saveBlogPostToSupabase(post: BlogPost): Promise<BlogPost> 
       author_name: post.author_name || 'Ostrune Team',
       is_published: post.is_published,
       published_at: post.published_at || (post.is_published ? new Date().toISOString() : null),
+      created_at: post.created_at || new Date().toISOString(),
     };
 
     const savePayload = (nextPayload: BlogPostPayload) =>
@@ -685,7 +721,7 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
   if (typeof window !== 'undefined') {
     try {
       const cached = localStorage.getItem('ostrune_portfolio_projects');
-      let projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
+      const projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
       const existingIdx = projectsList.findIndex((p) => p.id === project.id || p.slug === project.slug);
       if (existingIdx >= 0) {
         projectsList[existingIdx] = { ...projectsList[existingIdx], ...project };
@@ -791,7 +827,7 @@ export async function saveProjectToSupabase(project: PortfolioProject): Promise<
       if (typeof window !== 'undefined') {
         try {
           const cached = localStorage.getItem('ostrune_portfolio_projects');
-          let projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
+          const projectsList: PortfolioProject[] = cached ? JSON.parse(cached) : [...INITIAL_PORTFOLIO];
           const idx = projectsList.findIndex((p) => p.slug === updatedProject.slug);
           if (idx >= 0) projectsList[idx] = updatedProject;
           else projectsList.unshift(updatedProject);

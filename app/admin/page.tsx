@@ -67,6 +67,7 @@ import {
   saveTestimonialToSupabase,
   deleteTestimonialFromSupabase,
   getBlogPosts,
+  sortBlogPostsRecentFirst,
   saveBlogPostToSupabase,
   deleteBlogPostFromSupabase,
   getLeadsFromSupabase,
@@ -105,6 +106,10 @@ function createLocalId(prefix = ''): string {
   localIdCounter += 1;
   const randomPart = globalThis.crypto?.randomUUID?.() || localIdCounter.toString(36);
   return `${prefix}${randomPart}`;
+}
+
+function getBatchSequenceTimestamp(offsetIndex = 0): string {
+  return new Date(Date.now() - offsetIndex * 1000).toISOString();
 }
 
 const INITIAL_LEADS: Lead[] = [
@@ -174,6 +179,8 @@ export interface StagedImportPost {
   customUrl: string;
   generatedPosterUrl?: string;
   is_poster?: boolean;
+  published_at?: string;
+  created_at?: string;
 }
 
 export default function AdminDashboardPage() {
@@ -642,7 +649,7 @@ export default function AdminDashboardPage() {
       return out;
     };
 
-    let parsed: any;
+    let parsed: unknown;
     try {
       parsed = JSON.parse(raw);
     } catch {
@@ -710,8 +717,11 @@ export default function AdminDashboardPage() {
         generatedPosterUrl = initialRawImg;
       }
 
+      const importedPublishedAt = (item.published_at as string) || (item.date as string) || (item.pubDate as string) || '';
+      const importedCreatedAt = (item.created_at as string) || importedPublishedAt || '';
+
       staged.push({
-        tempId: `stage-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+        tempId: createLocalId(`stage-${i}-`),
         title,
         slug,
         category,
@@ -726,6 +736,8 @@ export default function AdminDashboardPage() {
         customUrl: initialRawImg,
         generatedPosterUrl,
         is_poster,
+        published_at: importedPublishedAt || undefined,
+        created_at: importedCreatedAt || undefined,
       });
     }
 
@@ -756,8 +768,14 @@ export default function AdminDashboardPage() {
 
     try {
       let count = 0;
-      for (const item of stagedImportPosts) {
+      for (let i = 0; i < stagedImportPosts.length; i++) {
+        const item = stagedImportPosts[i];
         const finalCoverUrl = getStagedCoverUrl(item);
+
+        // Preserve staged sequence: earlier items in import list have higher recency
+        const staggeredTimestamp = getBatchSequenceTimestamp(i);
+        const postPublishedAt = item.published_at || staggeredTimestamp;
+        const postCreatedAt = item.created_at || postPublishedAt;
 
         const finalPost: BlogPost = {
           id: createLocalId('blog-'),
@@ -773,8 +791,8 @@ export default function AdminDashboardPage() {
           excerpt: item.excerpt,
           content: item.content,
           is_published: true,
-          created_at: new Date().toISOString(),
-          published_at: new Date().toISOString(),
+          created_at: postCreatedAt,
+          published_at: postPublishedAt,
         };
 
         await saveBlogPostToSupabase(finalPost);
@@ -1319,16 +1337,18 @@ export default function AdminDashboardPage() {
     return matchesSearch;
   });
 
-  const filteredBlogPosts = blogPosts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
-      post.slug.toLowerCase().includes(blogSearch.toLowerCase()) ||
-      (post.target_keyword && post.target_keyword.toLowerCase().includes(blogSearch.toLowerCase())) ||
-      (post.city && post.city.toLowerCase().includes(blogSearch.toLowerCase()));
+  const filteredBlogPosts = sortBlogPostsRecentFirst(
+    blogPosts.filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
+        post.slug.toLowerCase().includes(blogSearch.toLowerCase()) ||
+        (post.target_keyword && post.target_keyword.toLowerCase().includes(blogSearch.toLowerCase())) ||
+        (post.city && post.city.toLowerCase().includes(blogSearch.toLowerCase()));
 
-    if (blogCategoryFilter !== 'all') return matchesSearch && post.category === blogCategoryFilter;
-    return matchesSearch;
-  });
+      if (blogCategoryFilter !== 'all') return matchesSearch && post.category === blogCategoryFilter;
+      return matchesSearch;
+    })
+  );
 
   const totalLeads = leads.length;
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;

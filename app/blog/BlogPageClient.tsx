@@ -4,14 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Calendar, Clock, BookOpen, MapPin, ChevronLeft, ChevronRight, Search, Sparkles, User, Tag, TrendingUp, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Calendar, Clock, BookOpen, MapPin, ChevronLeft, ChevronRight, Search, Sparkles, User, Tag, TrendingUp, ShieldCheck, ArrowUpDown } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { BlogPost } from '@/types';
-import { getBlogPosts } from '@/lib/supabase/data';
+import { getBlogPosts, getBlogPostTimestamp } from '@/lib/supabase/data';
 
 const POSTS_PER_PAGE = 6;
+
+export type BlogSortOption = 'recent' | 'oldest' | 'alphabetical';
 
 function getReadTimeMinutes(content?: string): number {
   const wordCount = content ? content.trim().split(/\s+/).filter(Boolean).length : 300;
@@ -26,6 +28,7 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [filter, setFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<BlogSortOption>('recent');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(initialPosts.length === 0);
 
@@ -55,8 +58,33 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = filteredPosts.find((p) => p.is_published) || filteredPosts[0];
-  const gridPosts = filteredPosts.filter((p) => p.id !== featuredPost?.id);
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (sortBy === 'recent') {
+      const timeA = getBlogPostTimestamp(a);
+      const timeB = getBlogPostTimestamp(b);
+      if (timeB !== timeA) return timeB - timeA;
+      const createA = new Date(a.created_at || 0).getTime();
+      const createB = new Date(b.created_at || 0).getTime();
+      if (createB !== createA) return createB - createA;
+      return (b.slug || b.id || '').localeCompare(a.slug || a.id || '');
+    }
+    if (sortBy === 'oldest') {
+      const timeA = getBlogPostTimestamp(a);
+      const timeB = getBlogPostTimestamp(b);
+      if (timeA !== timeB) return timeA - timeB;
+      const createA = new Date(a.created_at || 0).getTime();
+      const createB = new Date(b.created_at || 0).getTime();
+      if (createA !== createB) return createA - createB;
+      return (a.slug || a.id || '').localeCompare(b.slug || b.id || '');
+    }
+    if (sortBy === 'alphabetical') {
+      return a.title.localeCompare(b.title);
+    }
+    return 0;
+  });
+
+  const featuredPost = sortedPosts.find((p) => p.is_published) || sortedPosts[0];
+  const gridPosts = sortedPosts.filter((p) => p.id !== featuredPost?.id);
 
   const totalPages = Math.max(1, Math.ceil(gridPosts.length / POSTS_PER_PAGE));
   const effectiveCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
@@ -184,28 +212,51 @@ export default function BlogPageClient({ initialPosts = [] }: BlogPageClientProp
           </Card>
         )}
 
-        {/* Live Keyword Search Bar & Category Filter Bar */}
+        {/* Live Keyword Search Bar & Sort Dropdown */}
         <div className="space-y-4">
-          <div className="max-w-xl mx-auto relative">
-            <Search size={16} className="absolute left-4 top-3 text-[#9CA3AF]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search guides by title, target keyword, or topic (e.g. speed, SEO, ads)..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-[#E5E7EB] text-xs sm:text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white shadow-xs"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-3 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C]"
-              >
-                Clear
-              </button>
-            )}
+          <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-3">
+            <div className="relative flex-1 w-full">
+              <Search size={16} className="absolute left-4 top-3 text-[#9CA3AF]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Search guides by title, target keyword, or topic (e.g. speed, SEO, ads)..."
+                className="w-full pl-11 pr-14 py-2.5 rounded-xl border border-[#E5E7EB] text-xs sm:text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white shadow-xs"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-3 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C]"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Sort Control Dropdown */}
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+              <div className="relative inline-flex items-center bg-white border border-[#E5E7EB] rounded-xl px-3 py-2 shadow-xs text-xs font-semibold text-[#1C1C1C] hover:border-[#FF9D00] transition-colors">
+                <ArrowUpDown size={14} className="text-[#FF9D00] mr-2 shrink-0" />
+                <span className="text-[#6B7280] mr-1 hidden md:inline">Sort:</span>
+                <select
+                  aria-label="Sort articles"
+                  value={sortBy}
+                  onChange={(e) => {
+                    setSortBy(e.target.value as BlogSortOption);
+                    setCurrentPage(1);
+                  }}
+                  className="bg-transparent font-bold text-xs text-[#1C1C1C] focus:outline-none cursor-pointer pr-1"
+                >
+                  <option value="recent">Most Recent (Default)</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="alphabetical">Alphabetical (A–Z)</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* Standardized Filter Pills (Mapped 1:1 to Canonical Slugs) */}
