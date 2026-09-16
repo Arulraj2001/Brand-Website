@@ -35,6 +35,11 @@ const nextConfig: NextConfig = {
         destination: '/portfolio/real-estate-website',
         permanent: true,
       },
+      {
+        source: '/blog/nextjs-vs-wordpress-business-websites',
+        destination: '/blog/nextjs-vs-wordpress-for-business-websites',
+        permanent: true,
+      },
     ];
   },
   async headers() {

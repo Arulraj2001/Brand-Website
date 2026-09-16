@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Info, DollarSign } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Info, DollarSign, Calendar, MessageSquare, ArrowRight } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -152,6 +152,25 @@ export default function ContactClient() {
                   <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
                     Thank you! We&apos;ll get back to you within 12 hours with a custom project proposal and transparent budget options.
                   </p>
+                  <div className="mt-4 p-4 rounded-xl bg-[#FFF9E6] border border-[#FFD21E] text-left space-y-2 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#FF9D00] uppercase">
+                      <Sparkles size={14} />
+                      <span>Prefer an instant discussion?</span>
+                    </div>
+                    <p className="text-xs text-[#1C1C1C]">
+                      Prefer not to wait for our email response? Jump straight to an engineering consultation on WhatsApp with our lead architect.
+                    </p>
+                    <a
+                      href="https://wa.me/919943632731?text=Hi%20Ostrune%20Team%2C%20I%20just%20submitted%20a%20project%20inquiry%20on%20your%20website%20and%20would%20like%20to%20discuss%20it%20now."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-[#1C1C1C] hover:bg-[#FF9D00] text-white text-xs font-bold rounded-lg transition-colors"
+                    >
+                      <MessageSquare size={14} />
+                      <span>Chat Directly on WhatsApp</span>
+                      <ArrowRight size={14} />
+                    </a>
+                  </div>
                   <div className="pt-2 flex justify-center gap-3">
                     <Button
                       onClick={() => setSubmitted(false)}
@@ -253,14 +272,12 @@ export default function ContactClient() {
                         {...register('service_interested')}
                         className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
                       >
-                        <option value="Old Website Upgrade">Old Website Upgrade (Speed & SEO)</option>
-                        <option value="UGC Ads">UGC Video Ads (E-Commerce)</option>
-                        <option value="Website Development">Website Development</option>
-                        <option value="App Development">App Development (Web & Mobile)</option>
-                        <option value="SEO Optimization">SEO Optimization</option>
-                        <option value="Local Business Marketing">Local Business Marketing</option>
-                        <option value="Meta Ads">Meta & LinkedIn Ads</option>
-                        <option value="Sales Growth">Sales Growth & Lead Gen</option>
+                        <option value="Custom Website Development">Custom Website (Any Tech Stack: Next.js/React/Node/Python)</option>
+                        <option value="Mobile App Development">Mobile App Development (iOS &amp; Android)</option>
+                        <option value="Lead Generation & Growth">B2B &amp; Commercial Lead Generation</option>
+                        <option value="Old Website Upgrade">Old Website Upgrade (Speed &amp; 100/100 Core Web Vitals)</option>
+                        <option value="Technical SEO & Ads">Technical SEO, Meta &amp; LinkedIn Ads</option>
+                        <option value="UGC Ads">UGC Video Ads for Brands</option>
                       </select>
                     </div>
 
@@ -375,6 +392,30 @@ export default function ContactClient() {
 
           {/* Column 2: Trust Content & Contact Details (5 Cols) */}
           <div className="lg:col-span-5 space-y-4">
+            {/* Direct Instant Booking Card */}
+            <Card className="p-5 space-y-3 bg-gradient-to-br from-[#1C1C1C] to-[#2B2F38] text-white border border-[#FFD21E]/30 shadow-lg">
+              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#FFD21E]">
+                <Calendar size={14} />
+                <span>Fast-Track Discovery</span>
+              </div>
+              <h3 className="text-base font-bold text-white">
+                Need to Start Immediately?
+              </h3>
+              <p className="text-xs text-[#D1D5DB] leading-relaxed">
+                Connect directly with our lead technical architect to discuss project requirements, custom stack selection, or campaign timelines right away.
+              </p>
+              <a
+                href="https://wa.me/919943632731?text=Hi%20Ostrune%20Team%2C%20I%20am%20looking%20to%20start%20a%20new%20project%20(Website%20%2F%20App%20%2F%20Lead%20Gen)%20and%20would%20like%20a%20quick%20consultation."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center w-full gap-2 px-3.5 py-2.5 bg-[#FFD21E] hover:bg-[#FF9D00] text-[#1C1C1C] font-bold text-xs rounded-lg transition-colors"
+              >
+                <MessageSquare size={14} />
+                <span>Instant Consultation on WhatsApp</span>
+                <ArrowRight size={14} />
+              </a>
+            </Card>
+
             {/* SLA Banner */}
             <Card className="p-5 space-y-2 bg-[#FFF9E6] border border-[#FFD21E]">
               <div className="flex items-center gap-1.5 text-[#FF9D00] text-xs font-bold uppercase">

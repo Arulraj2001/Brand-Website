@@ -8,10 +8,10 @@ import GradientText from '@/components/ui/GradientText';
 import HeroMockup from './HeroMockup';
 
 const ROTATING_WORDS = [
-  'SEO Growth',
-  'Sub-Second Speed',
-  'High-ROAS UGC Ads',
-  'Google Rankings',
+  'Custom Tech Stacks',
+  'Mobile Applications',
+  'Predictable Lead Gen',
+  'High-ROAS Funnels',
 ];
 
 export default function HeroSection() {
@@ -58,17 +58,17 @@ export default function HeroSection() {
             {/* Top Brand Tag Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF9E6] text-[#1C1C1C] text-xs font-bold border border-[#FFD21E] shadow-2xs">
               <Sparkles size={14} className="text-[#FF9D00] animate-pulse" />
-              <span>Full-Stack Web Engineering & Growth Marketing</span>
+              <span>Custom Websites • Mobile Apps • Predictable Lead Generation</span>
               <span className="text-[#1C1C1C]/40">•</span>
               <span className="flex items-center gap-1 font-semibold text-[#3B82F6]">
-                <Globe size={12} /> Serving Clients Worldwide
+                <Globe size={12} /> Global Delivery
               </span>
             </div>
 
             {/* Dynamic H1 Headline with Rotating Word Flip */}
             <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-[#1C1C1C] tracking-[-0.02em] leading-[1.12]">
-              Custom Web Engineering &{' '}
-              <span className="inline-block min-w-[280px] sm:min-w-[320px] text-left">
+              Custom Websites, Mobile Apps &amp;{' '}
+              <span className="inline-block min-w-[280px] sm:min-w-[340px] text-left">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={wordIndex}
@@ -86,13 +86,13 @@ export default function HeroSection() {
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-[#6B7280] leading-[1.6] max-w-2xl font-medium">
-              Sub-second Next.js web applications, Core Web Vitals speed upgrades, high-ROAS UGC video ads, and technical SEO architecture for ambitious brands worldwide. Guaranteed 12-hour reply across all global time zones.
+              We engineer custom websites on your preferred tech stack (Next.js, React, Node, Python, WordPress), build scalable iOS &amp; Android mobile applications, and deploy high-converting lead generation funnels for ambitious brands worldwide. Guaranteed 12-hour reply across all time zones.
             </p>
 
             {/* CTA Group */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
               <Button href="/contact" variant="primary" size="lg" className="shadow-md hover:shadow-lg">
-                <span>Book a Free Strategy Call</span>
+                <span>Get Free Scope &amp; Quote</span>
                 <ArrowRight size={18} />
               </Button>
               <Button href="/portfolio" variant="secondary" size="lg" className="border-2">

@@ -36,16 +36,60 @@ export default function AutoLeadModal() {
       return;
     }
 
-    // Check if user has already seen popup in this browser session
-    const hasSeen = sessionStorage.getItem('hasSeenLeadModal');
-    if (!hasSeen) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        sessionStorage.setItem('hasSeenLeadModal', 'true');
-      }, 60000); // 1 Minute (60 Seconds) Auto Popup Trigger
-
-      return () => clearTimeout(timer);
+    // 24-hour dismissal check
+    const DISMISS_KEY = 'ostrune_lead_modal_dismissed_at';
+    const lastDismissed = localStorage.getItem(DISMISS_KEY);
+    if (lastDismissed) {
+      const elapsed = Date.now() - parseInt(lastDismissed, 10);
+      if (elapsed < 24 * 60 * 60 * 1000) {
+        return; // Suppressed for 24 hours
+      }
     }
+
+    // Session check
+    if (sessionStorage.getItem('hasSeenLeadModal')) {
+      return;
+    }
+
+    let triggered = false;
+    const triggerModal = () => {
+      if (triggered) return;
+      triggered = true;
+      setIsOpen(true);
+      sessionStorage.setItem('hasSeenLeadModal', 'true');
+      cleanup();
+    };
+
+    // Trigger 1: Fallback timer (25s)
+    const timer = setTimeout(() => {
+      triggerModal();
+    }, 25000);
+
+    // Trigger 2: Exit intent (desktop mouse leaving viewport top)
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 15) {
+        triggerModal();
+      }
+    };
+    document.addEventListener('mouseleave', handleMouseLeave);
+
+    // Trigger 3: 50% scroll depth
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0 && scrollY / totalHeight >= 0.5) {
+        triggerModal();
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+    return cleanup;
   }, [pathname]);
 
   // Keep pre-selected budget tier in sync when user toggles any currency (USD, INR, EUR, GBP, AUD, CAD)
@@ -77,11 +121,14 @@ export default function AutoLeadModal() {
     setSubmitting(false);
     if (result.success) {
       setSubmitted(true);
+      localStorage.setItem('ostrune_lead_modal_dismissed_at', Date.now().toString());
     }
   };
 
   const closeModal = () => {
     setIsOpen(false);
+    localStorage.setItem('ostrune_lead_modal_dismissed_at', Date.now().toString());
+    sessionStorage.setItem('hasSeenLeadModal', 'true');
   };
 
   return (
@@ -120,21 +167,38 @@ export default function AutoLeadModal() {
             <div className="p-6 sm:p-7 space-y-5">
               {submitted ? (
                 /* Success State */
-                <div className="py-8 text-center space-y-4">
+                <div className="py-6 text-center space-y-4">
                   <div className="w-14 h-14 rounded-full bg-[#10B981]/15 text-[#10B981] mx-auto flex items-center justify-center border border-[#10B981]/30">
                     <CheckCircle2 size={32} />
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-xl font-extrabold text-[#1C1C1C]">
-                      Strategy Request Received!
+                      Architecture &amp; Scope Request Received!
                     </h3>
                     <p className="text-sm text-[#6B7280] max-w-sm mx-auto">
-                      Our lead technical architect will review your project and email a custom proposal within 12 hours.
+                      Our lead technical architect will review your project and email a custom proposal and stack scope within 12 hours.
                     </p>
+                  </div>
+                  <div className="p-3 bg-[#FFF9E6] border border-[#FFD21E] rounded-xl text-left space-y-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF9D00] uppercase">
+                      <Sparkles size={13} />
+                      <span>Need an immediate consultation?</span>
+                    </div>
+                    <p className="text-xs text-[#374151]">
+                      Connect directly with our engineering lead on WhatsApp for real-time scope discussion and instant quote.
+                    </p>
+                    <a
+                      href="https://wa.me/919943632731?text=Hi%20Ostrune%2C%20I%20just%20submitted%20a%20project%20inquiry%20and%20want%20to%20discuss%20the%20scope."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center w-full gap-1.5 px-3 py-2 bg-[#1C1C1C] hover:bg-[#FF9D00] text-white rounded-lg text-xs font-bold transition-colors"
+                    >
+                      <span>Chat on WhatsApp Now</span>
+                    </a>
                   </div>
                   <button
                     onClick={closeModal}
-                    className="px-6 py-2.5 bg-[#1C1C1C] text-white rounded-xl text-xs font-bold hover:bg-[#FF9D00] transition-colors"
+                    className="px-6 py-2 bg-[#F3F4F6] text-[#6B7280] hover:text-[#1C1C1C] rounded-xl text-xs font-bold transition-colors"
                   >
                     Got It, Close Window
                   </button>
@@ -146,13 +210,13 @@ export default function AutoLeadModal() {
                   <div className="space-y-2 text-center sm:text-left">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E] text-xs font-extrabold">
                       <Sparkles size={13} className="animate-pulse text-[#FF9D00]" />
-                      <span>Free 15-Min Strategy Call & Custom Quote</span>
+                      <span>Free Technical Scope &amp; Strategy Call</span>
                     </div>
                     <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] tracking-tight leading-snug">
-                      Get a Free Audit — We’ll Show You Exactly What’s Holding Your Site Back
+                      Tell Us What You&apos;re Building — Get Architecture &amp; Quote in 12h
                     </h2>
                     <p className="text-xs text-[#6B7280] leading-relaxed">
-                      Tell us your goal — we’ll send a free audit and a clear action plan within 12 hours.
+                      Custom websites (any stack), mobile applications (iOS/Android), or predictable lead generation — our lead architects will prepare your scope today.
                     </p>
                   </div>
 
@@ -214,12 +278,11 @@ export default function AutoLeadModal() {
                           className="w-full px-3 py-2 text-xs rounded-lg border border-[#E5E7EB] text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-[#F9FAFB] focus:bg-white transition-colors"
                         >
                           <option value="" disabled>Select a Service *</option>
-                          <option value="Website Development">Website Development</option>
-                          <option value="Old Website Upgrade">Old Website Speed & SEO</option>
-                          <option value="UGC Ads">UGC Video Ads</option>
-                          <option value="App Development">App Development</option>
-                          <option value="SEO Dominance">SEO Dominance</option>
-                          <option value="Local Business Growth">Local Business Growth</option>
+                          <option value="Custom Website Development">Custom Website (Any Tech Stack: Next.js/React/Node/Python)</option>
+                          <option value="Mobile App Development">Mobile App Development (iOS &amp; Android)</option>
+                          <option value="Predictable Lead Generation">Predictable B2B &amp; E-Commerce Lead Generation</option>
+                          <option value="Website Speed Upgrade">Old Website Speed &amp; 100/100 Core Web Vitals</option>
+                          <option value="Technical SEO & Ads">Technical SEO, Meta &amp; LinkedIn Ads</option>
                         </select>
                       </div>
                     </div>

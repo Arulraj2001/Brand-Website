@@ -94,39 +94,51 @@ export default function PortfolioClient({ initialProjects = [] }: PortfolioClien
         </div>
 
         {/* Filter Pills Bar */}
-        <div className="flex flex-wrap justify-center items-center gap-2">
-          {[
-            { id: 'all', label: 'All Projects' },
-            { id: 'web_dev', label: 'Web Dev' },
-            { id: 'app_dev', label: 'App Dev' },
-            { id: 'website_upgrade', label: 'Speed & SEO' },
-            { id: 'ugc_ads', label: 'UGC Ads' },
-            { id: 'seo', label: 'SEO' },
-            { id: 'local_business', label: 'Local Business' },
-            { id: 'meta_ads', label: 'Meta Ads' },
-            { id: 'sales_growth', label: 'Lead Gen' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setFilter(item.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
-                filter === item.id
-                  ? 'bg-[#FF9D00] text-white shadow-xs'
-                  : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="space-y-4">
+          <h2 className="sr-only">Filter Case Studies by Capability</h2>
+          <div className="flex flex-wrap justify-center items-center gap-2">
+            {[
+              { id: 'all', label: 'All Projects' },
+              { id: 'web_dev', label: 'Web Dev' },
+              { id: 'app_dev', label: 'App Dev' },
+              { id: 'website_upgrade', label: 'Speed & SEO' },
+              { id: 'ugc_ads', label: 'UGC Ads' },
+              { id: 'seo', label: 'SEO' },
+              { id: 'local_business', label: 'Local Business' },
+              { id: 'meta_ads', label: 'Meta Ads' },
+              { id: 'sales_growth', label: 'Lead Gen' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setFilter(item.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${
+                  filter === item.id
+                    ? 'bg-[#FF9D00] text-white shadow-xs'
+                    : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:text-[#1C1C1C]'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Clean, Aligned 3-Column Portfolio Card Grid */}
         {loading ? (
           <div className="py-16 text-center text-[#6B7280] font-medium text-sm">Loading live projects...</div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
-            <AnimatePresence>
-              {filteredProjects.map((project) => {
+          <div className="space-y-6">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C]">
+                Verified Client Implementations
+              </h2>
+              <span className="text-xs font-bold text-[#6B7280]">
+                {filteredProjects.length} {filteredProjects.length === 1 ? 'Case Study' : 'Case Studies'}
+              </span>
+            </div>
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+              <AnimatePresence>
+                {filteredProjects.map((project) => {
                 const isFeatured = project.is_featured;
                 const location = project.client_location || project.client_city || 'Global';
 
@@ -238,7 +250,8 @@ export default function PortfolioClient({ initialProjects = [] }: PortfolioClien
                 );
               })}
             </AnimatePresence>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </div>
     </div>

@@ -92,73 +92,85 @@ export default function ServicesBentoSection() {
 
   const servicesData: ServiceItem[] = [
     {
-      id: 'website-upgrade',
-      category: 'engineering',
-      isFeaturedLarge: true,
-      icon: Gauge,
-      iconVariant: 'secondary',
-      badge: 'HIGH DEMAND SERVICE',
-      title: 'Old Website Upgrade / Speed & SEO Overhaul',
-      description:
-        'Is your website slow, outdated, or dropping on Google rankings? We audit and fix sluggish legacy sites, eliminating plugin bloat to guarantee 100/100 Core Web Vitals and sub-second page loads.',
-      bullets: [
-        'Sub-Second Page Load Times',
-        '100/100 Mobile Core Web Vitals',
-        'Technical SEO Cleanup & Schema',
-        'Modern High-Converting Redesign',
-      ],
-      linkText: 'Fix My Slow Website',
-      linkHref: '/services/website-speed-upgrade',
-      tag: 'Speed & SEO Upgrade',
-    },
-    {
-      id: 'ugc-ads',
-      category: 'growth',
-      isFeaturedRight: true,
-      icon: Video,
-      iconVariant: 'accent',
-      badge: 'UGC Ads Agency',
-      title: 'UGC Video Ads for E-Commerce & DTC',
-      description:
-        'User-Generated Content video ad hooks produced by real creators. Outperform expensive studio ads with high-converting native TikTok, Meta & Instagram ad creatives.',
-      bullets: [
-        'Authentic Creator Hook Scripting',
-        'Rapid A/B Video Creative Testing',
-        '5.2x Verified ROAS Results',
-      ],
-      linkText: 'View UGC Ads',
-      linkHref: '/services/ugc-video-ads',
-      tag: 'High-ROAS Hooks',
-    },
-    {
       id: 'web-dev',
       category: 'engineering',
+      isFeaturedLarge: true,
       icon: Code2,
       iconVariant: 'secondary',
-      badge: 'Web Dev',
-      title: 'Website Development',
+      badge: 'CORE PILLAR 1 • ANY TECH STACK',
+      title: 'Custom Website Engineering (Client-Specified Stack)',
       description:
-        'Custom business sites, landing pages, and e-commerce portals built with zero plugin bloat.',
+        'We build tailor-made business websites, web applications, and e-commerce portals on the exact tech stack you require (Next.js, React, Node, Python, Vue, or Headless CMS). Guaranteed sub-second speeds and zero plugin bloat.',
+      bullets: [
+        'Custom Tech Stack (Next.js, React, Node, Python)',
+        'Sub-Second Global Edge Performance',
+        'Custom Web Apps & E-Commerce Systems',
+        'Structured Technical SEO & JSON-LD Schemas',
+      ],
+      linkText: 'Build Custom Website',
       linkHref: '/services/website-development',
+      tag: 'Tailored Tech Stack',
     },
     {
       id: 'app-dev',
       category: 'engineering',
+      isFeaturedRight: true,
       icon: Smartphone,
       iconVariant: 'accent',
-      badge: 'App Dev',
-      title: 'App Development',
+      badge: 'CORE PILLAR 2 • IOS & ANDROID',
+      title: 'Mobile Application Development',
       description:
-        'Scalable web applications and iOS / Android mobile apps with real-time database backends.',
+        'Scalable cross-platform and native mobile apps built with React Native and Flutter. Fast database synchronization, native performance, and guaranteed app store approvals.',
+      bullets: [
+        'Unified iOS & Android Codebases',
+        'Supabase & Firebase Real-Time DB Backends',
+        'In-App Subscriptions & Stripe Payments',
+        'Smooth 60fps Native UX & Offline Support',
+      ],
+      linkText: 'Build Mobile App',
       linkHref: '/services/app-development',
+      tag: 'iOS & Android Ready',
+    },
+    {
+      id: 'sales-growth',
+      category: 'growth',
+      icon: Zap,
+      iconVariant: 'success',
+      badge: 'CORE PILLAR 3 • LEADS',
+      title: 'B2B & Commercial Lead Generation',
+      description:
+        'Automated client acquisition funnels, high-converting CRO landing pages, and multi-channel lead qualification pipelines that fill your calendar with paying clients.',
+      linkHref: '/services/sales-growth-cro',
+    },
+    {
+      id: 'website-upgrade',
+      category: 'engineering',
+      icon: Gauge,
+      iconVariant: 'secondary',
+      badge: 'Speed Overhaul',
+      title: 'Old Website Upgrade & Speed',
+      description:
+        'Audit and eliminate sluggish legacy plugins to guarantee 100/100 Core Web Vitals and sub-second page loads.',
+      linkHref: '/services/website-speed-upgrade',
+    },
+    {
+      id: 'ugc-ads',
+      category: 'growth',
+      icon: Video,
+      iconVariant: 'accent',
+      badge: 'High-ROAS Creatives',
+      title: 'UGC Video Ads for Brands',
+      description:
+        'Creator video ad hooks produced for TikTok, Meta & Instagram to outperform traditional studio ads.',
+      linkHref: '/services/ugc-video-ads',
     },
     {
       id: 'seo',
       category: 'growth',
       icon: Search,
       iconVariant: 'success',
-      badge: 'SEO',
-      title: 'SEO Optimization',
+      badge: 'SEO Dominance',
+      title: 'SEO & Organic Growth',
       description:
         'Rank top 3 on Google for commercial intent buyer queries across English-speaking global markets.',
       linkHref: '/services/seo-optimization',
@@ -179,22 +191,11 @@ export default function ServicesBentoSection() {
       category: 'growth',
       icon: Target,
       iconVariant: 'accent',
-      badge: 'Meta Ads',
+      badge: 'Paid Ads',
       title: 'Meta & LinkedIn Ads',
       description:
-        'Full Facebook & Instagram ad management, conversion tracking API (CAPI), and scalable ad copy.',
+        'Full paid advertising management with server-side CAPI pixel setup and high-converting creative.',
       linkHref: '/services/meta-ads',
-    },
-    {
-      id: 'sales-growth',
-      category: 'growth',
-      icon: Zap,
-      iconVariant: 'success',
-      badge: 'CRO & Leads',
-      title: 'Sales Growth & Lead Gen',
-      description:
-        'High-converting lead funnels, landing page CRO, and automated consultation booking workflows.',
-      linkHref: '/services/sales-growth-cro',
     },
   ];
 
@@ -217,13 +218,13 @@ export default function ServicesBentoSection() {
         <div className="max-w-3xl mx-auto text-center mb-8 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB] shadow-2xs">
             <Sparkles size={14} className="text-[#1C1C1C]" />
-            8 Core International Capabilities
+            3 Core Pillars • 8 Digital Capabilities
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Specialized Web Engineering & <GradientText>Growth Services</GradientText>
+            Custom Websites, Mobile Apps &amp; <GradientText>Lead Gen Engines</GradientText>
           </h2>
           <p className="text-sm text-[#6B7280]">
-            From sub-second web & mobile development to old site speed overhauls and high-ROAS UGC video ads for international brands worldwide.
+            From client-requested custom tech stacks and cross-platform mobile apps to sub-second speed overhauls and predictable B2B lead generation.
           </p>
 
           {/* RESHUFFLE & ASSEMBLE GRID BUTTON */}

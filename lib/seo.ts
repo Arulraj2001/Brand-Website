@@ -17,7 +17,7 @@ export function getSiteUrl(): string {
 }
 
 export function getDefaultTagline(): string {
-  return 'We build sub-second Next.js websites and run high-ROAS SEO and Meta ad funnels for growing businesses worldwide. Guaranteed 12h reply across all time zones.';
+  return 'Custom websites engineered on any tech stack, scalable iOS & Android mobile applications, and predictable B2B lead generation funnels worldwide. Guaranteed 12h reply across all time zones.';
 }
 
 export interface OgUrlOptions {

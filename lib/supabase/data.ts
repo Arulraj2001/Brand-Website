@@ -435,6 +435,18 @@ export function sortBlogPostsRecentFirst(posts: BlogPost[]): BlogPost[] {
   });
 }
 
+export function normalizeBlogPost(post: BlogPost): BlogPost {
+  if (!post) return post;
+  const authorName =
+    !post.author_name || post.author_name.includes('ApexPulse') || post.author_name.includes('Arusyth')
+      ? 'Ostrune Team'
+      : post.author_name;
+  return {
+    ...post,
+    author_name: authorName,
+  };
+}
+
 let serverBlogCache: { posts: BlogPost[]; timestamp: number; publishedOnly: boolean } | null = null;
 const singlePostMemoryCache = new Map<string, { post: BlogPost; timestamp: number }>();
 
@@ -502,7 +514,7 @@ export async function getBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
   }
 
   // Strictly sort merged results by recency descending (most recent first)
-  const combined = sortBlogPostsRecentFirst(Array.from(map.values()));
+  const combined = sortBlogPostsRecentFirst(Array.from(map.values())).map(normalizeBlogPost);
 
   if (typeof window !== 'undefined' && combined.length > 0) {
     try {
@@ -581,7 +593,7 @@ export async function getBlogPostBySlug(
     }
     const { data, error } = await query.maybeSingle();
     if (!error && data) {
-      const post = data as BlogPost;
+      const post = normalizeBlogPost(data as BlogPost);
       if (typeof window === 'undefined') {
         singlePostMemoryCache.set(slug, { post, timestamp: Date.now() });
       }
@@ -593,7 +605,7 @@ export async function getBlogPostBySlug(
 
   // 5. Final fallback check against INITIAL_BLOG_POSTS
   const fallback = INITIAL_BLOG_POSTS.find((p) => p.slug === slug) || null;
-  return fallback && (options.includeDrafts || fallback.is_published) ? fallback : null;
+  return fallback && (options.includeDrafts || fallback.is_published) ? normalizeBlogPost(fallback) : null;
 }
 
 // Helper to fetch 3 related blog posts for detail view with minimal card payload

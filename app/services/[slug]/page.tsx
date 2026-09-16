@@ -205,10 +205,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Pain Points */}
             <div className="bg-[#FFF9E6]/70 border border-[#FFD21E]/60 p-6 rounded-xl space-y-4">
-              <div className="flex items-center gap-2 text-sm font-extrabold uppercase text-[#FF9D00] tracking-wider">
+              <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase text-[#FF9D00] tracking-wider">
                 <AlertCircle size={16} />
-                <span>Common Challenges We Solve</span>
-              </div>
+                <span>Common Business Challenges We Solve</span>
+              </h2>
               <ul className="space-y-3 text-xs sm:text-sm text-[#1C1C1C] font-semibold">
                 {service.painPoints.map((pt, pIdx) => (
                   <li key={pIdx} className="flex items-start gap-2.5 leading-relaxed">
@@ -221,10 +221,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
             {/* Deliverables & Fix Process */}
             <div className="bg-[#F4F6F8] border border-[#E5E7EB] p-6 rounded-xl space-y-4">
-              <div className="flex items-center gap-2 text-sm font-extrabold uppercase text-[#3B82F6] tracking-wider">
+              <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase text-[#3B82F6] tracking-wider">
                 <CheckCircle2 size={16} />
-                <span>Our Engineering & Fix Process</span>
-              </div>
+                <span>Our Engineering &amp; Execution Protocol</span>
+              </h2>
               <ul className="space-y-3 text-xs sm:text-sm text-[#1C1C1C]">
                 {service.auditProcess.map((ap, aIdx) => (
                   <li key={aIdx} className="flex items-start gap-2.5 leading-relaxed">
@@ -237,7 +237,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           </div>
 
           {/* Benchmark Results Ticker */}
-          <BenchmarkImpactBadge results={service.results} />
+          <div className="space-y-2">
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#6B7280]">
+              Guaranteed Performance &amp; Deliverable Benchmarks
+            </h2>
+            <BenchmarkImpactBadge results={service.results} />
+          </div>
         </div>
 
         {/* FAQ Section */}
@@ -275,9 +280,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
         {/* CTA Card */}
         <Card className="p-8 sm:p-10 bg-white border-2 border-[#FFD21E] text-center space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C]">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C]">
             Ready for Guaranteed {service.title} Results?
-          </h3>
+          </h2>
           <p className="text-sm text-[#6B7280] max-w-xl mx-auto leading-relaxed">
             Book a free 15-minute strategy call and receive your custom technical proposal within 12 hours.
           </p>

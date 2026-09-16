@@ -232,7 +232,8 @@ export default function RichArticleContent({
 
     // Natural Callout Injection Strategy:
     // If category is provided, find a natural insertion point (e.g. before the 2nd/3rd H2 section or after a mid-article paragraph)
-    if (category && rawBlocks.length >= 4) {
+    const effectiveCategory: BlogCategory = category || 'web_dev';
+    if (rawBlocks.length >= 4) {
       const finalBlocks: React.ReactNode[] = [...rawBlocks];
       
       // Find all H2 indices
@@ -266,7 +267,7 @@ export default function RichArticleContent({
         finalBlocks.splice(
           insertIdx,
           0,
-          <BlogMidCallout key="blog-mid-callout" category={category} postSlug={postSlug} />
+          <BlogMidCallout key="blog-mid-callout" category={effectiveCategory} postSlug={postSlug} />
         );
       }
       return finalBlocks;

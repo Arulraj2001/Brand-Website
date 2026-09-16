@@ -24,7 +24,7 @@ import {
 const homeUrl = getSiteUrl();
 const siteName = getSiteName();
 const tagline = getDefaultTagline();
-const homeTitle = `${siteName} — High-Performance Web Development & SEO Agency`;
+const homeTitle = `${siteName} — Custom Websites, Mobile Apps & Lead Generation Agency`;
 const homeOgUrl = getOgImageUrl({ title: homeTitle, description: tagline, type: 'website' });
 
 export const metadata: Metadata = {

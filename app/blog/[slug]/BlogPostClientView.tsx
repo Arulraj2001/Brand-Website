@@ -161,32 +161,7 @@ export default function BlogPostClientView({
       : `${post.title} - ${post.category.replace('_', ' ')} guide by Ostrune`
   ).slice(0, 124);
 
-  // Article JSON-LD Schema
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: post.excerpt,
-    image: post.cover_image_url || `${siteUrl}/api/blog-banner?title=${encodeURIComponent(post.title)}`,
-    datePublished: post.published_at || post.created_at,
-    dateModified: post.published_at || post.created_at,
-    author: {
-      '@type': 'Organization',
-      name: post.author_name || 'Ostrune Team',
-      url: `${siteUrl}/about`,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Ostrune',
-      url: siteUrl,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/logo.png`,
-      },
-    },
-  };
-
-  // FAQPage JSON-LD Schema
+  // FAQPage JSON-LD Schema (rendered uniquely on client view)
   const faqJsonLd =
     faqItems.length > 0
       ? {
@@ -203,41 +178,8 @@ export default function BlogPostClientView({
         }
       : null;
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteUrl,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Blog',
-        item: `${siteUrl}/blog`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: post.title,
-        item: `${siteUrl}/blog/${post.slug}`,
-      },
-    ],
-  };
-
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
       {faqJsonLd && (
         <script
           type="application/ld+json"
