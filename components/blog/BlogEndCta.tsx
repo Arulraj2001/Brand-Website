@@ -23,53 +23,53 @@ export default function BlogEndCta({ category, postSlug, postTitle }: BlogEndCta
   ) || INITIAL_PORTFOLIO[0];
 
   return (
-    <div className="space-y-6 my-10">
+    <div className="space-y-6 my-12">
       {/* Primary End-of-Post CTA Box */}
-      <div className="relative overflow-hidden rounded-2xl border-2 border-[#FFD21E] bg-white p-6 sm:p-8 shadow-sm">
+      <div className="relative overflow-hidden rounded-3xl border border-[#FFB800]/30 cyber-glass-glow p-8 sm:p-10 shadow-2xl">
         {/* Top Accent Gradient Line */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#3B82F6]" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFB800] to-transparent opacity-80" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column (6 Cols): Service Offer & Value Props */}
-          <div className="lg:col-span-6 space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-extrabold uppercase tracking-wide">
+          <div className="lg:col-span-6 space-y-5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFB800]/15 text-[#FFB800] text-xs font-mono font-bold uppercase tracking-wider border border-[#FFB800]/30">
               <Sparkles size={13} />
               <span>{ctaConfig.auditBadge}</span>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C] leading-tight">
+            <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
               {ctaConfig.auditTitle}
             </h3>
 
-            <p className="text-sm text-[#4B5563] leading-relaxed">
+            <p className="text-sm text-gray-300 font-light leading-relaxed">
               {ctaConfig.auditDescription}
             </p>
 
-            <div className="space-y-2.5 pt-1 text-xs font-semibold text-[#1C1C1C]">
-              <div className="flex items-center gap-2">
+            <div className="space-y-2.5 pt-1 text-xs font-mono text-gray-300">
+              <div className="flex items-center gap-2.5">
                 <CheckCircle2 size={16} className="text-[#10B981] shrink-0" />
-                <span>Custom proposal & engineering audit delivered in 12 hours</span>
+                <span>Custom proposal &amp; engineering audit delivered in &lt;12 hours</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <CheckCircle2 size={16} className="text-[#10B981] shrink-0" />
                 <span>Zero obligations, 100% free technical evaluation</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <CheckCircle2 size={16} className="text-[#10B981] shrink-0" />
-                <span>Stripe & PayPal billing at 60% lower rates than Western agencies</span>
+                <span>Stripe &amp; Escrow backed sprint agreements</span>
               </div>
             </div>
 
             {/* Case Study Benchmark Snippet */}
             {matchedCaseStudy && (
-              <div className="mt-4 p-4 rounded-xl bg-[#FFF9E6] border border-[#FFD21E]/70 space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] font-extrabold text-[#FF9D00] uppercase tracking-wider">
-                  <span className="flex items-center gap-1">
-                    <Award size={13} /> Proven Benchmark Case Study
+              <div className="mt-4 p-4 rounded-2xl bg-white/[0.03] border border-[#FFB800]/30 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-mono font-bold text-[#FFB800] uppercase tracking-wider">
+                  <span className="flex items-center gap-1.5">
+                    <Award size={13} /> Benchmark Case Study
                   </span>
-                  <span className="text-[#6B7280] font-normal">{matchedCaseStudy.client_name}</span>
+                  <span className="text-gray-400 font-normal">{matchedCaseStudy.client_name}</span>
                 </div>
-                <p className="text-xs font-bold text-[#1C1C1C] leading-snug">
+                <p className="text-xs font-mono font-bold text-white leading-snug">
                   &ldquo;{matchedCaseStudy.results}&rdquo;
                 </p>
               </div>
@@ -85,10 +85,10 @@ export default function BlogEndCta({ category, postSlug, postTitle }: BlogEndCta
           </div>
 
           {/* Right Column (6 Cols): Embedded Audit Lead Form */}
-          <div className="lg:col-span-6 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-5 sm:p-6">
-            <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#FF9D00] pb-3 mb-3 border-b border-[#E5E7EB]">
+          <div className="lg:col-span-6 cyber-glass border border-white/[0.08] rounded-2xl p-6">
+            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#FFB800] pb-3 mb-3 border-b border-white/[0.08]">
               <Zap size={14} />
-              <span>Submit Your Site for a Free Audit</span>
+              <span>Submit Site for Free Architectural Audit</span>
             </div>
 
             <FreeAuditLeadForm

@@ -68,10 +68,10 @@ export default function BlogPostClientView({
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 bg-[#F9FAFB] min-h-screen flex items-center justify-center">
+      <div className="pt-32 pb-20 bg-[#05060A] text-white min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-4 border-[#FF9D00] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-semibold text-[#6B7280]">Loading Article...</p>
+          <div className="w-12 h-12 border-3 border-[#FFB800] border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-[#FFB800]/20" />
+          <p className="text-xs font-mono font-bold text-gray-400 uppercase tracking-widest">Decrypting Telemetry Article...</p>
         </div>
       </div>
     );
@@ -79,28 +79,29 @@ export default function BlogPostClientView({
 
   if (!post) {
     return (
-      <div className="pt-36 pb-28 bg-[#F7F8FB] min-h-screen flex items-center justify-center px-4 bg-line-pattern">
-        <div className="max-w-md w-full text-center space-y-6 bg-white border border-[#E7E8F0] p-8 sm:p-10 rounded-3xl shadow-md">
-          <div className="w-16 h-16 rounded-2xl bg-[#FFF9E6] text-[#FF9D00] flex items-center justify-center mx-auto border border-[#FFD21E]/60">
+      <div className="pt-36 pb-28 bg-[#05060A] text-white min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#FFB800]/10 blur-[150px] pointer-events-none" />
+        <div className="max-w-md w-full text-center space-y-6 cyber-glass border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-white/[0.04] text-[#FFB800] flex items-center justify-center mx-auto border border-[#FFB800]/30 shadow-lg">
             <Compass size={32} />
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#FF9D00]">
-              ARTICLE NOT FOUND
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#FFB800]">
+              TELEMETRY ERROR 404
             </span>
-            <h1 className="text-2xl font-extrabold text-[#1C1C1C]">
-              Article Relocated or Unavailable
+            <h1 className="text-2xl font-black text-white">
+              Article Unavailable
             </h1>
-            <p className="text-sm text-[#6B7280] leading-relaxed">
-              This blog article may have been unpublished, relocated, or deleted by the author.
+            <p className="text-sm text-gray-400 font-light leading-relaxed">
+              This intelligence brief may have been archived or relocated in the active deployment index.
             </p>
           </div>
 
           <div className="pt-2">
             <Button href="/blog" variant="primary" size="md" className="w-full">
               <ArrowLeft size={16} />
-              <span>Back to All Articles</span>
+              <span>Return to Intelligence Hub</span>
             </Button>
           </div>
         </div>
@@ -115,7 +116,7 @@ export default function BlogPostClientView({
   const formattedDate = pubDate
     ? new Date(pubDate).toLocaleDateString('en-US', {
         day: 'numeric',
-        month: 'long',
+        month: 'short',
         year: 'numeric',
       })
     : 'Recent';
@@ -179,7 +180,11 @@ export default function BlogPostClientView({
       : null;
 
   return (
-    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+    <div className="pt-32 pb-24 bg-[#05060A] text-white min-h-screen relative overflow-hidden">
+      {/* Background Atmosphere */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-[#FFB800]/10 blur-[180px] pointer-events-none" />
+      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-[#00F0FF]/5 blur-[200px] pointer-events-none" />
+
       {faqJsonLd && (
         <script
           type="application/ld+json"
@@ -187,34 +192,34 @@ export default function BlogPostClientView({
         />
       )}
 
-      <article className="max-w-6xl mx-auto px-4 space-y-8">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 space-y-10 relative z-10">
         {/* Back Link */}
         <Link
           href="/blog"
           prefetch={true}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#1C1C1C] transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono font-bold text-gray-400 hover:text-[#FFB800] transition-colors group"
         >
-          <ArrowLeft size={14} />
-          <span>Back to All Articles</span>
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          <span>&larr; Return to Intelligence Hub</span>
         </Link>
 
         {/* Hero Header */}
-        <div className="space-y-4 max-w-4xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-[4px] bg-[#3B82F6] text-white text-xs font-bold uppercase">
+        <div className="space-y-5 max-w-4xl">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="px-3 py-1 rounded-full bg-[#FFB800]/10 text-[#FFB800] border border-[#FFB800]/30 text-xs font-mono font-bold uppercase tracking-wider">
               {post.category.replace('_', ' ')}
             </span>
 
             {post.city && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1C1C] bg-white px-2.5 py-0.5 rounded-[4px] border border-[#E5E7EB]">
-                <MapPin size={11} className="text-[#3B82F6]" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono text-gray-300 cyber-glass px-3 py-1 rounded-full border border-white/[0.08]">
+                <MapPin size={11} className="text-[#00F0FF]" />
                 {post.city}
               </span>
             )}
 
             {post.target_keyword && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#FF9D00] bg-[#FFF9E6] px-2.5 py-0.5 rounded-[4px] border border-[#FFD21E]/60">
-                <Tag size={11} className="text-[#FF9D00]" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#FFB800] bg-[#FFB800]/10 px-3 py-1 rounded-full border border-[#FFB800]/25">
+                <Tag size={11} />
                 #{post.target_keyword.replace(/\s+/g, '-')}
               </span>
             )}
@@ -229,7 +234,7 @@ export default function BlogPostClientView({
                 return (
                   <span
                     key={idx}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6B7280] bg-white px-2 py-0.5 rounded-[4px] border border-[#E5E7EB]"
+                    className="inline-flex items-center gap-1 text-[11px] font-mono text-gray-400 cyber-glass px-2.5 py-0.5 rounded-full border border-white/[0.06]"
                   >
                     #{cleanKw.replace(/\s+/g, '-')}
                   </span>
@@ -237,27 +242,27 @@ export default function BlogPostClientView({
               })}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
             {post.title}
           </h1>
 
-          <div className="flex items-center gap-4 text-xs font-semibold text-[#6B7280] pt-1">
-            <Link href="/about" className="flex items-center gap-1 hover:text-[#FF9D00] transition-colors">
-              <User size={13} className="text-[#FF9D00]" /> <span>{post.author_name || 'Ostrune Team'}</span>
+          <div className="flex items-center gap-4 text-xs font-mono text-gray-400 pt-1">
+            <Link href="/about" className="flex items-center gap-1.5 hover:text-[#FFB800] transition-colors">
+              <User size={13} className="text-[#FFB800]" /> <span>{post.author_name || 'Ostrune Team'}</span>
             </Link>
             <span>•</span>
-            <span className="flex items-center gap-1">
-              <Calendar size={13} /> {formattedDate}
+            <span className="flex items-center gap-1.5">
+              <Calendar size={13} className="text-[#00F0FF]" /> {formattedDate}
             </span>
             <span>•</span>
-            <span className="flex items-center gap-1">
-              <Clock size={13} /> {readTimeMinutes} min read
+            <span className="flex items-center gap-1.5">
+              <Clock size={13} className="text-[#10B981]" /> {readTimeMinutes} min read
             </span>
           </div>
         </div>
 
         {/* Hero Cover Image with Alt Text */}
-        <div className="relative h-64 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-[#1C1C1C]">
+        <div className="relative h-64 sm:h-[440px] w-full rounded-3xl overflow-hidden border border-white/[0.1] shadow-2xl bg-[#090A12]">
           <Image
             src={
               post.cover_image_url ||
@@ -266,7 +271,7 @@ export default function BlogPostClientView({
             alt={coverAltText}
             fill
             sizes="(max-width: 768px) 100vw, 90vw"
-            className="object-cover blur-xl opacity-40 scale-110"
+            className="object-cover blur-xl opacity-30 scale-110"
           />
           <Image
             src={
@@ -299,34 +304,34 @@ export default function BlogPostClientView({
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <div className="pt-8 border-t border-[#E5E7EB] space-y-6">
+          <div className="pt-10 border-t border-white/[0.08] space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-[#1C1C1C]">Related Articles</h3>
-              <Link href="/blog" prefetch={true} className="text-xs font-bold text-[#FF9D00] hover:underline">
-                View All Articles →
+              <h3 className="text-xl font-black text-white">Related Intelligence</h3>
+              <Link href="/blog" prefetch={true} className="text-xs font-mono font-bold text-[#FFB800] hover:text-[#FFD21E] transition-colors">
+                View All Dossiers &rarr;
               </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {relatedPosts.map((rel) => (
-                <Card key={rel.id} className="p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] font-bold text-[#3B82F6] uppercase">
+                <div key={rel.id} className="cyber-glass p-5 rounded-2xl border border-white/[0.08] hover:border-[#FFB800]/40 transition-all flex flex-col justify-between space-y-3 group">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono font-bold text-[#00F0FF] uppercase">
                       {rel.category.replace('_', ' ')}
                     </span>
-                    <h4 className="font-bold text-sm text-[#1C1C1C] line-clamp-2 hover:text-[#FF9D00] transition-colors">
+                    <h4 className="font-bold text-sm text-white line-clamp-2 group-hover:text-[#FFB800] transition-colors">
                       <Link href={`/blog/${rel.slug}`} prefetch={true}>{rel.title}</Link>
                     </h4>
                   </div>
                   <Link
                     href={`/blog/${rel.slug}`}
                     prefetch={true}
-                    className="text-xs font-bold text-[#FF9D00] hover:underline inline-flex items-center gap-1"
+                    className="text-xs font-mono font-bold text-[#FFB800] hover:text-[#FFD21E] inline-flex items-center gap-1 pt-1"
                   >
-                    <span>Read Article</span>
+                    <span>Read Dossier</span>
                     <ArrowRight size={12} />
                   </Link>
-                </Card>
+                </div>
               ))}
             </div>
           </div>

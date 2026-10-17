@@ -5,9 +5,9 @@ import { breadcrumbListSchema } from '@/lib/schema';
 import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 import AboutClient from './AboutClient';
 
-const aboutTitle = 'About Ostrune | Global Web Engineering & Growth Agency';
+const aboutTitle = 'About Us | Custom Web Development, Shopify & Apps | Ostrune';
 const aboutDescription =
-  'Discover Ostrune\'s engineering ethos: zero-plugin modern tech, sub-second web architecture, verified client ROAS, and transparent global delivery.';
+  'Learn about Ostrune: our team, principles, and how we build fast custom websites, Shopify stores, WordPress, and mobile apps for clients worldwide.';
 
 export const metadata: Metadata = {
   title: {

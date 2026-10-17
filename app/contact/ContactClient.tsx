@@ -7,8 +7,6 @@ import * as z from 'zod';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, CheckCircle2, Send, Sparkles, Award, ShieldCheck, Info, DollarSign, Calendar, MessageSquare, ArrowRight } from 'lucide-react';
 import GradientText from '@/components/ui/GradientText';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useCurrency, CURRENCIES } from '@/components/ui/CurrencyContext';
 import { submitLead } from '@/lib/supabase/data';
@@ -72,31 +70,27 @@ export default function ContactClient() {
   };
 
   const onSubmit = async (data: LeadFormData) => {
-    if (!budgetSelection || budgetSelection === '') {
-      setValue('budget_range', '');
-      return;
+    setSubmitting(true);
+    let finalBudget = data.budget_range;
+    if (budgetSelection === 'custom' && customAmount) {
+      const cleanVal = customAmount.replace(/^[$\u20B9]\s*/, '');
+      const symbol = currency === 'INR' ? '₹' : '$';
+      finalBudget = `${symbol}${cleanVal} (Custom)`;
     }
 
-    setSubmitting(true);
-
-    const symbol = currency === 'INR' ? '₹' : '$';
-    const finalBudget =
-      budgetSelection === 'custom'
-        ? customAmount.trim().startsWith('$') || customAmount.trim().startsWith('₹')
-          ? customAmount.trim()
-          : `${symbol}${customAmount.trim()}`
-        : data.budget_range;
-
-    const result = await submitLead({
+    const payload = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       country: data.country,
       service_interested: data.service_interested,
       budget_range: finalBudget,
-      message: data.message || 'General Strategy Request',
-    });
+      message: data.message || '',
+    };
+
+    const result = await submitLead(payload);
     setSubmitting(false);
+
     if (result.success) {
       setSubmitted(true);
       reset();
@@ -106,27 +100,30 @@ export default function ContactClient() {
   };
 
   return (
-    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
-      <div className="max-w-[1200px] mx-auto px-4 space-y-10">
+    <div className="pt-32 pb-24 bg-[#05060A] text-white min-h-screen relative overflow-hidden">
+      {/* Background Atmosphere */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#FFB800]/10 blur-[180px] pointer-events-none" />
+
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 space-y-12 relative z-10">
         {/* Page Header */}
-        <div className="max-w-3xl mx-auto text-center space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
-            <Sparkles size={14} className="text-[#1C1C1C]" />
-            Book a Free Strategy Call & Proposal
+        <div className="max-w-3xl mx-auto text-center space-y-4">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/[0.04] text-[#FFB800] text-xs font-mono font-bold border border-white/[0.1] shadow-xs">
+            <Sparkles size={14} className="text-[#FFB800]" />
+            <span>Direct Project Consultation</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Let&apos;s Discuss Your <GradientText>Project & Growth Goals</GradientText>
+          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-[-0.035em]">
+            Let&apos;s Build or Scale Your <GradientText>Website</GradientText>
           </h1>
-          <p className="text-base text-[#6B7280] leading-relaxed">
-            Fill out the form below to receive a custom proposal and 15-minute strategy call. Response guaranteed within 12 hours across all time zones.
+          <p className="text-base sm:text-lg text-neutral-300 leading-relaxed">
+            Tell us about your project below. Whether you need a custom web application from scratch or an optimized store on Shopify, WordPress, or Wix, our team will review your goals and provide an honest, transparent quote.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-[#1C1C1C] pt-1">
-            <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
-              <Clock size={13} className="text-[#FF9D00]" /> Global Time-Zone Coverage
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-mono font-bold text-neutral-300 pt-2">
+            <span className="flex items-center gap-1.5 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/10">
+              <Clock size={13} className="text-[#FFB800]" /> Quick, Friendly Response
             </span>
-            <span className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-[#E5E7EB]">
-              <ShieldCheck size={13} className="text-[#3B82F6]" /> Stripe & PayPal Accepted
+            <span className="flex items-center gap-1.5 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/10">
+              <ShieldCheck size={13} className="text-[#00F0FF]" /> Flexible Payment Terms
             </span>
           </div>
         </div>
@@ -135,7 +132,7 @@ export default function ContactClient() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Column 1: Lead Form (7 Cols) */}
           <div className="lg:col-span-7">
-            <Card className="p-6 sm:p-8">
+            <div className="cyber-glass rounded-3xl p-6 sm:p-10 border border-white/10 shadow-[0_16px_50px_rgba(0,0,0,0.6)] text-white">
               {submitted ? (
                 /* Success State */
                 <motion.div
@@ -143,82 +140,75 @@ export default function ContactClient() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-10 space-y-4"
                 >
-                  <div className="w-16 h-16 rounded-full bg-[#10B981]/15 text-[#10B981] mx-auto flex items-center justify-center shadow-xs">
+                  <div className="w-16 h-16 rounded-full bg-[#10B981]/20 text-[#10B981] mx-auto flex items-center justify-center border border-[#10B981]/30">
                     <CheckCircle2 size={36} />
                   </div>
-                  <h2 className="text-2xl font-bold text-[#1C1C1C]">
+                  <h2 className="text-2xl sm:text-3xl font-black text-white">
                     Project Inquiry Received!
                   </h2>
-                  <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                    Thank you! We&apos;ll get back to you within 12 hours with a custom project proposal and transparent budget options.
+                  <p className="text-sm text-neutral-300 max-w-md mx-auto leading-relaxed">
+                    Thank you for reaching out! Our team is reviewing your requirements and will get back to you with clear pricing, platform options, and next steps.
                   </p>
-                  <div className="mt-4 p-4 rounded-xl bg-[#FFF9E6] border border-[#FFD21E] text-left space-y-2 max-w-md mx-auto">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#FF9D00] uppercase">
+                  <div className="mt-4 p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left space-y-2 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FFB800] uppercase">
                       <Sparkles size={14} />
                       <span>Prefer an instant discussion?</span>
                     </div>
-                    <p className="text-xs text-[#1C1C1C]">
-                      Prefer not to wait for our email response? Jump straight to an engineering consultation on WhatsApp with our lead architect.
+                    <p className="text-xs text-neutral-300">
+                      Reach us directly on WhatsApp at <strong className="text-white font-mono">{activeSettings.phone}</strong> for instant scoping.
                     </p>
-                    <a
-                      href="https://wa.me/919943632731?text=Hi%20Ostrune%20Team%2C%20I%20just%20submitted%20a%20project%20inquiry%20on%20your%20website%20and%20would%20like%20to%20discuss%20it%20now."
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-[#1C1C1C] hover:bg-[#FF9D00] text-white text-xs font-bold rounded-lg transition-colors"
-                    >
-                      <MessageSquare size={14} />
-                      <span>Chat Directly on WhatsApp</span>
-                      <ArrowRight size={14} />
-                    </a>
                   </div>
-                  <div className="pt-2 flex justify-center gap-3">
-                    <Button
-                      onClick={() => setSubmitted(false)}
-                      variant="secondary"
-                      size="md"
-                    >
-                      Submit Another Inquiry
-                    </Button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSubmitted(false)}
+                    className="text-xs font-mono font-bold text-[#FFB800] hover:underline pt-2 inline-block"
+                  >
+                    Submit another project inquiry
+                  </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF9D00] pb-2 border-b border-[#E5E7EB]">
-                    <Sparkles size={14} />
-                    <span>Free 15-Minute Strategy & Architecture Session</span>
+                /* Form Fields */
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                  {/* Currency Selector Banner */}
+                  <div className="p-4 bg-white/[0.03] rounded-2xl border border-white/[0.08] flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-mono font-bold text-white">Currency Preference</p>
+                      <p className="text-[11px] text-neutral-400">View pricing in your local currency</p>
+                    </div>
+                    <CurrencySelector />
                   </div>
 
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
                         Full Name *
                       </label>
                       <input
                         {...register('name')}
                         type="text"
                         placeholder="e.g. David Miller"
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] placeholder-neutral-500 transition-colors font-mono"
                       />
                       {errors.name && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
                           {errors.name.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
                         Work Email *
                       </label>
                       <input
                         {...register('email')}
                         type="email"
                         placeholder="e.g. david@company.com"
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] placeholder-neutral-500 transition-colors font-mono"
                       />
                       {errors.email && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
                           {errors.email.message}
                         </p>
                       )}
@@ -228,34 +218,34 @@ export default function ContactClient() {
                   {/* Phone & Country */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Phone Number *
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
+                        Phone / WhatsApp *
                       </label>
                       <input
                         {...register('phone')}
                         type="tel"
-                        placeholder="Your WhatsApp number (with country code)"
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                        placeholder="WhatsApp (with country code)"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] placeholder-neutral-500 transition-colors font-mono"
                       />
                       {errors.phone && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
                           {errors.phone.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
                         Country / Location *
                       </label>
                       <input
                         {...register('country')}
                         type="text"
-                        placeholder="e.g. Your city / country"
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                        placeholder="e.g. London, UK"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] placeholder-neutral-500 transition-colors font-mono"
                       />
                       {errors.country && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
                           {errors.country.message}
                         </p>
                       )}
@@ -265,218 +255,196 @@ export default function ContactClient() {
                   {/* Service & Budget */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
                         Service Interested *
                       </label>
                       <select
                         {...register('service_interested')}
-                        className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-neutral-900 transition-colors font-mono"
                       >
-                        <option value="Custom Website Development">Custom Website (Any Tech Stack: Next.js/React/Node/Python)</option>
+                        <option value="Custom Website Development">Custom Website (Next.js / React / Node / Python)</option>
+                        <option value="Shopify E-Commerce">Shopify / E-Commerce Store</option>
+                        <option value="WordPress or Wix Site">CMS Website (WordPress / Wix / Webflow)</option>
                         <option value="Mobile App Development">Mobile App Development (iOS &amp; Android)</option>
-                        <option value="Lead Generation & Growth">B2B &amp; Commercial Lead Generation</option>
-                        <option value="Old Website Upgrade">Old Website Upgrade (Speed &amp; 100/100 Core Web Vitals)</option>
-                        <option value="Technical SEO & Ads">Technical SEO, Meta &amp; LinkedIn Ads</option>
+                        <option value="Old Website Upgrade">Old Website Speed Upgrade (95+ Vitals)</option>
+                        <option value="Technical SEO & Ads">Technical SEO, Google &amp; Meta Ads</option>
                         <option value="UGC Ads">UGC Video Ads for Brands</option>
                       </select>
-                    </div>
-
-                    {/* Enhanced Budget Range UI */}
-                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border border-[#FFD21E] shadow-xs space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-extrabold text-[#1C1C1C] flex items-center gap-1.5">
-                          <div className="w-5 h-5 rounded-md bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                            <DollarSign size={13} className="stroke-[2.5]" />
-                          </div>
-                          <span>Budget Range ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol}) *</span>
-                        </label>
-                        <CurrencySelector />
-                      </div>
-
-                      <div className="relative">
-                        <select
-                          value={budgetSelection}
-                          onChange={handleBudgetDropdownChange}
-                          className="w-full pl-3.5 pr-8 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] focus:border-[#FF9D00] shadow-2xs transition-all font-mono-stats cursor-pointer"
-                        >
-                          <option value="" disabled>Select your budget range *</option>
-                          {getBudgetOptionsForCurrency(currency, rates).map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                          <option value="custom">✏️ Enter Custom Amount ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol})...</option>
-                        </select>
-                      </div>
-
-                      {errors.budget_range && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
-                          {errors.budget_range.message}
+                      {errors.service_interested && (
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
+                          {errors.service_interested.message}
                         </p>
                       )}
+                    </div>
 
-                      {isConverted && (
-                        <p className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 pt-0.5">
-                          <Info size={13} className="text-[#FF9D00] shrink-0" />
-                          <span>Currency converted live — billing available in {currency}.</span>
+                    <div>
+                      <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
+                        Budget Range ({currency}) *
+                      </label>
+                      <select
+                        value={budgetSelection}
+                        onChange={handleBudgetDropdownChange}
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-neutral-900 transition-colors font-mono"
+                      >
+                        <option value="">Select budget range...</option>
+                        {getBudgetOptionsForCurrency(currency).map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.budget_range && !budgetSelection && (
+                        <p className="text-xs text-[#EF4444] font-mono mt-1">
+                          {errors.budget_range.message}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Custom Budget Text Input & Live Converted Output */}
+                  {/* Custom Budget Amount Input */}
                   {budgetSelection === 'custom' && (
                     <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="relative mt-2 space-y-1.5"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="space-y-1.5"
                     >
-                      <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
-                        Custom Budget Amount ({(CURRENCIES[currency] || CURRENCIES.USD).code} {(CURRENCIES[currency] || CURRENCIES.USD).symbol}) *
+                      <label className="block text-xs font-mono font-bold text-neutral-300 uppercase tracking-wider">
+                        Enter Custom Budget ({currency}) *
                       </label>
                       <div className="relative">
-                        <div className="absolute left-3 top-2.5 text-xs font-extrabold text-[#FF9D00] flex items-center gap-1">
-                          <span>{(CURRENCIES[currency] || CURRENCIES.USD).symbol}</span>
-                          <span>{currency}</span>
-                        </div>
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-neutral-400">
+                          {currency === 'INR' ? '₹' : '$'}
+                        </span>
                         <input
                           type="text"
                           value={customAmount}
                           onChange={handleCustomAmountChange}
-                          placeholder={`e.g. 250 or 1,500 in ${currency}`}
-                          className="w-full pl-16 pr-3.5 py-2 text-xs md:text-sm font-bold text-[#1C1C1C] bg-white border border-[#FFD21E] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF9D00] font-mono-stats"
+                          placeholder={currency === 'INR' ? '50,000' : '2,500'}
+                          className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] font-mono"
                         />
                       </div>
-
-                      {errors.budget_range && (
-                        <p className="text-xs text-[#EF4444] font-semibold mt-1">
-                          {errors.budget_range.message}
-                        </p>
-                      )}
                     </motion.div>
                   )}
 
-                  {/* Message (Optional) */}
+                  {/* Message */}
                   <div>
-                    <label className="block text-xs font-semibold text-[#1C1C1C] mb-1">
+                    <label className="block text-xs font-mono font-bold text-neutral-300 mb-1.5 uppercase tracking-wider">
                       Project Goals / Current Site URL (Optional)
                     </label>
                     <textarea
                       {...register('message')}
                       rows={4}
                       placeholder="Tell us about your current site speed, main pain points, or timeline..."
-                      className="w-full px-3.5 py-[9px] rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white focus:outline-none focus:border-[#FFB800] bg-white/[0.04] placeholder-neutral-500 transition-colors font-mono"
                     />
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
                     disabled={submitting}
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
+                    className="w-full py-4 bg-gradient-to-r from-[#FFB800] to-[#FF9500] hover:scale-[1.01] active:scale-[0.99] text-black rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(255,184,0,0.35)] transition-all cursor-pointer disabled:opacity-50"
                   >
                     {submitting ? (
-                      <span>Sending Request...</span>
+                      <span>Sending Inquiry...</span>
                     ) : (
                       <>
-                        <span>Book Free Strategy Call</span>
+                        <span>Send Message &amp; Get Free Quote</span>
                         <Send size={16} />
                       </>
                     )}
-                  </Button>
+                  </button>
                 </form>
               )}
-            </Card>
+            </div>
           </div>
 
-          {/* Column 2: Trust Content & Contact Details (5 Cols) */}
-          <div className="lg:col-span-5 space-y-4">
+          {/* Column 2: Fast-Track & Direct Channels (5 Cols) */}
+          <div className="lg:col-span-5 space-y-5">
             {/* Direct Instant Booking Card */}
-            <Card className="p-5 space-y-3 bg-gradient-to-br from-[#1C1C1C] to-[#2B2F38] text-white border border-[#FFD21E]/30 shadow-lg">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#FFD21E]">
+            <div className="cyber-glass-glow rounded-3xl p-6 sm:p-7 space-y-4 border border-[#FFB800]/40 text-white">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#FFB800]">
                 <Calendar size={14} />
                 <span>Fast-Track Discovery</span>
               </div>
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-xl font-black text-white">
                 Need to Start Immediately?
               </h3>
-              <p className="text-xs text-[#D1D5DB] leading-relaxed">
-                Connect directly with our lead technical architect to discuss project requirements, custom stack selection, or campaign timelines right away.
+              <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
+                Connect directly with our team on WhatsApp to discuss project requirements, platform choices (Shopify, WordPress, Wix, or custom code), and get immediate answers.
               </p>
               <a
                 href="https://wa.me/919943632731?text=Hi%20Ostrune%20Team%2C%20I%20am%20looking%20to%20start%20a%20new%20project%20(Website%20%2F%20App%20%2F%20Lead%20Gen)%20and%20would%20like%20a%20quick%20consultation."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center w-full gap-2 px-3.5 py-2.5 bg-[#FFD21E] hover:bg-[#FF9D00] text-[#1C1C1C] font-bold text-xs rounded-lg transition-colors"
+                className="inline-flex items-center justify-center w-full gap-2 px-4 py-3 bg-[#FFB800] hover:bg-[#FF9500] text-black font-black text-xs rounded-xl transition-all shadow-md"
               >
-                <MessageSquare size={14} />
-                <span>Instant Consultation on WhatsApp</span>
+                <MessageSquare size={15} />
+                <span>Chat Directly on WhatsApp</span>
                 <ArrowRight size={14} />
               </a>
-            </Card>
+            </div>
 
-            {/* SLA Banner */}
-            <Card className="p-5 space-y-2 bg-[#FFF9E6] border border-[#FFD21E]">
-              <div className="flex items-center gap-1.5 text-[#FF9D00] text-xs font-bold uppercase">
+            {/* Direct Communication Banner */}
+            <div className="cyber-glass rounded-2xl p-6 space-y-2 border border-white/10 text-white">
+              <div className="flex items-center gap-1.5 text-[#00F0FF] text-xs font-mono font-bold uppercase">
                 <Clock size={14} />
-                <span>Response SLA Guarantee</span>
+                <span>Honest Consultation</span>
               </div>
-              <h3 className="text-base font-bold text-[#1C1C1C]">
-                Guaranteed Response Within 12 Hours
+              <h3 className="text-base font-bold text-white">
+                Straightforward Guidance &amp; Clear Milestones
               </h3>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
-                Our lead technical strategists review incoming requests continuously across all business hours worldwide.
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                No high-pressure sales reps. You speak with builders who will honestly recommend whether custom code, Shopify, WordPress, or Wix is right for your budget.
               </p>
-            </Card>
+            </div>
 
             {/* Why Work With Us */}
-            <Card className="p-5 space-y-3">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#FF9D00]">
+            <div className="cyber-glass rounded-2xl p-6 space-y-3 border border-white/10 text-white">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#10B981]">
                 <Award size={14} />
-                <span>Offshore Value Proposition</span>
+                <span>Why Clients Choose Us</span>
               </div>
-              <h3 className="text-base font-bold text-[#1C1C1C]">
-                Same Quality. 60% Lower Rates.
+              <h3 className="text-base font-bold text-white">
+                Any Tech Stack. 100% Code Ownership.
               </h3>
-              <div className="space-y-2 text-xs text-[#6B7280]">
-                <div className="flex items-center gap-2 font-semibold">
+              <div className="space-y-2.5 text-xs font-mono text-neutral-300">
+                <div className="flex items-center gap-2">
                   <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>Sub-second Core Web Vitals speed scores</span>
+                  <span>Sub-second page speeds &amp; 95+ Core Web Vitals</span>
                 </div>
-                <div className="flex items-center gap-2 font-semibold">
+                <div className="flex items-center gap-2">
                   <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>Fluent English communication with zero friction</span>
+                  <span>Shopify, WordPress, Wix, or custom Next.js/React</span>
                 </div>
-                <div className="flex items-center gap-2 font-semibold">
+                <div className="flex items-center gap-2">
                   <CheckCircle2 size={15} className="text-[#10B981] shrink-0" />
-                  <span>Stripe & PayPal international billing accepted</span>
+                  <span>Clear pricing, weekly milestone demos, no hidden fees</span>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Office Info Card */}
-            <Card className="p-5 space-y-3">
-              <h3 className="text-base font-bold text-[#1C1C1C]">Global Remote HQ</h3>
-              <div className="space-y-2 text-xs text-[#6B7280]">
+            <div className="cyber-glass rounded-2xl p-6 space-y-3 border border-white/10 text-white">
+              <h3 className="text-base font-bold text-white">Global Remote HQ</h3>
+              <div className="space-y-2.5 text-xs font-mono text-neutral-300">
                 <div className="flex items-start gap-2">
-                  <MapPin size={15} className="text-[#FF9D00] shrink-0 mt-0.5" />
+                  <MapPin size={15} className="text-[#FFB800] shrink-0 mt-0.5" />
                   <span>{activeSettings.address}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone size={15} className="text-[#FF9D00] shrink-0" />
-                  <a href={`tel:${activeSettings.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-[#FF9D00] font-semibold text-xs">
+                  <Phone size={15} className="text-[#FFB800] shrink-0" />
+                  <a href={`tel:${activeSettings.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-[#FFB800]">
                     {activeSettings.phone}
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail size={15} className="text-[#FF9D00] shrink-0" />
-                  <a href={`mailto:${activeSettings.email}`} className="hover:text-[#FF9D00] text-xs">
+                  <Mail size={15} className="text-[#FFB800] shrink-0" />
+                  <a href={`mailto:${activeSettings.email}`} className="hover:text-[#FFB800]">
                     {activeSettings.email}
                   </a>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         </div>
       </div>

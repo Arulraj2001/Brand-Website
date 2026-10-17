@@ -45,7 +45,9 @@ import {
   GraduationCap,
   Video,
   Play,
+  Target,
 } from 'lucide-react';
+import ClientHunterTab from '@/components/admin/client-hunter/ClientHunterTab';
 import {
   generateTnTodayPoster,
   generateTnTodayPosterAsync,
@@ -83,6 +85,7 @@ type AdminTab =
   | 'overview'
   | 'portfolio'
   | 'leads'
+  | 'client_hunter'
   | 'testimonials'
   | 'team'
   | 'settings'
@@ -1399,6 +1402,7 @@ export default function AdminDashboardPage() {
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
     { id: 'leads', label: 'Leads Queue', icon: Users },
+    { id: 'client_hunter', label: 'Client Hunter', icon: Target },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
     { id: 'site_stats', label: 'Site Stats', icon: TrendingUp },
     { id: 'activity_feed', label: 'Activity Feed', icon: Sparkles },
@@ -1887,6 +1891,11 @@ export default function AdminDashboardPage() {
               </table>
             </div>
           </div>
+        )}
+
+        {/* TAB: CLIENT HUNTER & OUTREACH ENGINE */}
+        {activeTab === 'client_hunter' && (
+          <ClientHunterTab />
         )}
 
         {/* TAB 4: TESTIMONIALS MANAGER */}

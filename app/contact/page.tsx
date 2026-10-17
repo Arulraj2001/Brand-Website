@@ -5,9 +5,9 @@ import { webPageSchema, breadcrumbListSchema, professionalServiceSchema } from '
 import { getOgImageUrl, getSiteUrl, getSiteName, seoRobots } from '@/lib/seo';
 import ContactClient from './ContactClient';
 
-const contactTitle = 'Contact Ostrune | Book a Free 15-Minute Strategy Call';
+const contactTitle = 'Contact Us | Web Development, Shopify & App Consultation | Ostrune';
 const contactDescription =
-  'Book a free 15-minute strategy call with Ostrune. Get a custom scope proposal and transparent pricing. Guaranteed reply within 12h across all time zones.';
+  'Get in touch with Ostrune for custom web development, Shopify, WordPress, Wix, or mobile app projects. Transparent pricing, honest recommendations, and friendly consultation.';
 
 export const metadata: Metadata = {
   title: {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import {
@@ -15,7 +15,6 @@ import {
   Gauge,
   MapPin,
   Video,
-  RotateCcw,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import IconBox from '@/components/ui/IconBox';
@@ -41,17 +40,15 @@ interface ServiceItem {
 function MotionCardWrapper({
   children,
   className = '',
-  isFeatured = false,
 }: {
   children: React.ReactNode;
   className?: string;
-  isFeatured?: boolean;
 }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useTransform(mouseY, [-150, 150], [6, -6]);
-  const rotateY = useTransform(mouseX, [-150, 150], [-6, 6]);
+  const rotateX = useTransform(mouseY, [-180, 180], [5, -5]);
+  const rotateY = useTransform(mouseX, [-180, 180], [-5, 5]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -66,20 +63,19 @@ function MotionCardWrapper({
     mouseY.set(0);
   };
 
-  const baseCardStyle = isFeatured ? 'hf-card-featured' : 'hf-card';
-
   return (
     <motion.div
       style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative group cursor-pointer ${baseCardStyle} ${className}`}
+      whileHover={{ y: -6, transition: { duration: 0.25 } }}
+      className={`relative group cursor-pointer cyber-glass rounded-3xl border border-white/[0.12] hover:border-[#FFB800]/50 transition-all text-white p-6 sm:p-8 flex flex-col justify-between ${className}`}
     >
       {/* Dynamic Cursor Spotlight Halo */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
         style={{
-          background: `radial-gradient(350px circle at calc(50% + ${mouseX.get()}px) calc(50% + ${mouseY.get()}px), rgba(255, 157, 0, 0.18), transparent 80%)`,
+          background: `radial-gradient(350px circle at calc(50% + ${mouseX.get()}px) calc(50% + ${mouseY.get()}px), rgba(255, 184, 0, 0.16), transparent 80%)`,
         }}
       />
       <div className="relative z-20 h-full flex flex-col justify-between">{children}</div>
@@ -88,67 +84,14 @@ function MotionCardWrapper({
 }
 
 export default function ServicesBentoSection() {
-  const [isStacked, setIsStacked] = useState(true);
-
-  const servicesData: ServiceItem[] = [
-    {
-      id: 'web-dev',
-      category: 'engineering',
-      isFeaturedLarge: true,
-      icon: Code2,
-      iconVariant: 'secondary',
-      badge: 'CORE PILLAR 1 • ANY TECH STACK',
-      title: 'Custom Website Engineering (Client-Specified Stack)',
-      description:
-        'We build tailor-made business websites, web applications, and e-commerce portals on the exact tech stack you require (Next.js, React, Node, Python, Vue, or Headless CMS). Guaranteed sub-second speeds and zero plugin bloat.',
-      bullets: [
-        'Custom Tech Stack (Next.js, React, Node, Python)',
-        'Sub-Second Global Edge Performance',
-        'Custom Web Apps & E-Commerce Systems',
-        'Structured Technical SEO & JSON-LD Schemas',
-      ],
-      linkText: 'Build Custom Website',
-      linkHref: '/services/website-development',
-      tag: 'Tailored Tech Stack',
-    },
-    {
-      id: 'app-dev',
-      category: 'engineering',
-      isFeaturedRight: true,
-      icon: Smartphone,
-      iconVariant: 'accent',
-      badge: 'CORE PILLAR 2 • IOS & ANDROID',
-      title: 'Mobile Application Development',
-      description:
-        'Scalable cross-platform and native mobile apps built with React Native and Flutter. Fast database synchronization, native performance, and guaranteed app store approvals.',
-      bullets: [
-        'Unified iOS & Android Codebases',
-        'Supabase & Firebase Real-Time DB Backends',
-        'In-App Subscriptions & Stripe Payments',
-        'Smooth 60fps Native UX & Offline Support',
-      ],
-      linkText: 'Build Mobile App',
-      linkHref: '/services/app-development',
-      tag: 'iOS & Android Ready',
-    },
-    {
-      id: 'sales-growth',
-      category: 'growth',
-      icon: Zap,
-      iconVariant: 'success',
-      badge: 'CORE PILLAR 3 • LEADS',
-      title: 'B2B & Commercial Lead Generation',
-      description:
-        'Automated client acquisition funnels, high-converting CRO landing pages, and multi-channel lead qualification pipelines that fill your calendar with paying clients.',
-      linkHref: '/services/sales-growth-cro',
-    },
+  const standardServices: ServiceItem[] = [
     {
       id: 'website-upgrade',
       category: 'engineering',
       icon: Gauge,
       iconVariant: 'secondary',
       badge: 'Speed Overhaul',
-      title: 'Old Website Upgrade & Speed',
+      title: 'Old Website Upgrade / Speed & SEO',
       description:
         'Audit and eliminate sluggish legacy plugins to guarantee 100/100 Core Web Vitals and sub-second page loads.',
       linkHref: '/services/website-speed-upgrade',
@@ -158,11 +101,22 @@ export default function ServicesBentoSection() {
       category: 'growth',
       icon: Video,
       iconVariant: 'accent',
-      badge: 'High-ROAS Creatives',
+      badge: 'High-ROAS Hooks',
       title: 'UGC Video Ads for Brands',
       description:
-        'Creator video ad hooks produced for TikTok, Meta & Instagram to outperform traditional studio ads.',
+        'Creator video ad hooks produced for TikTok, Meta & Instagram to outperform traditional studio ads with authentic hooks.',
       linkHref: '/services/ugc-video-ads',
+    },
+    {
+      id: 'sales-growth',
+      category: 'growth',
+      icon: Zap,
+      iconVariant: 'success',
+      badge: 'Lead Engines',
+      title: 'B2B & Commercial Lead Generation',
+      description:
+        'Automated client acquisition funnels, high-converting CRO landing pages, and multi-channel qualification systems.',
+      linkHref: '/services/sales-growth-cro',
     },
     {
       id: 'seo',
@@ -172,7 +126,7 @@ export default function ServicesBentoSection() {
       badge: 'SEO Dominance',
       title: 'SEO & Organic Growth',
       description:
-        'Rank top 3 on Google for commercial intent buyer queries across English-speaking global markets.',
+        'Rank top 3 on Google for high-intent buyer keywords across competitive English-speaking global markets.',
       linkHref: '/services/seo-optimization',
     },
     {
@@ -183,7 +137,7 @@ export default function ServicesBentoSection() {
       badge: 'Local SEO',
       title: 'Local Business Marketing',
       description:
-        'Google Business Profile optimization, local map packs, and localized ads for brick & mortar clients.',
+        'Google Business Profile optimization, local map pack dominance, and localized ads for brick & mortar companies.',
       linkHref: '/services/local-business-marketing',
     },
     {
@@ -194,181 +148,151 @@ export default function ServicesBentoSection() {
       badge: 'Paid Ads',
       title: 'Meta & LinkedIn Ads',
       description:
-        'Full paid advertising management with server-side CAPI pixel setup and high-converting creative.',
+        'Full paid advertising management with server-side CAPI pixel setup, custom audiences, and high-converting creative.',
       linkHref: '/services/meta-ads',
     },
   ];
 
   return (
-    <section className="py-16 bg-[#F9FAFB] border-t border-[#E5E7EB] relative overflow-hidden bg-line-pattern">
-      {/* Ambient Physics Orbs */}
+    <section className="py-24 bg-[#05060A] border-t border-white/[0.08] relative overflow-hidden text-white">
+      {/* Ambient Nebula Blooms */}
       <motion.div
         animate={{ y: [0, -25, 0], x: [0, 20, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-12 left-1/4 w-80 h-80 bg-[#FFD21E]/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-12 left-1/4 w-80 h-80 bg-[#FFB800]/10 rounded-full blur-[140px] pointer-events-none"
       />
       <motion.div
         animate={{ y: [0, 25, 0], x: [0, -20, 0] }}
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-12 right-1/4 w-96 h-96 bg-[#3B82F6]/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute bottom-12 right-1/4 w-96 h-96 bg-[#00F0FF]/10 rounded-full blur-[160px] pointer-events-none"
       />
 
-      <div className="max-w-[1200px] mx-auto px-4 relative z-10">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB] shadow-2xs">
-            <Sparkles size={14} className="text-[#1C1C1C]" />
-            3 Core Pillars • 8 Digital Capabilities
+        <div className="max-w-3xl mx-auto text-center mb-14 space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-[#FFB800] text-xs font-mono font-bold border border-white/[0.1] shadow-2xs">
+            <Sparkles size={14} className="text-[#FFB800]" />
+            <span>Digital Capabilities &amp; Architecture</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1C1C1C] tracking-tight">
-            Custom Websites, Mobile Apps &amp; <GradientText>Lead Gen Engines</GradientText>
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            Custom Web, Mobile &amp; <GradientText>Lead Gen Engines</GradientText>
           </h2>
-          <p className="text-sm text-[#6B7280]">
-            From client-requested custom tech stacks and cross-platform mobile apps to sub-second speed overhauls and predictable B2B lead generation.
+          <p className="text-sm sm:text-base text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+            From client-specified custom tech stacks and cross-platform mobile apps to sub-second speed overhauls and predictable B2B acquisition funnels.
           </p>
-
-          {/* RESHUFFLE & ASSEMBLE GRID BUTTON */}
-          <div className="pt-2 flex justify-center">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => setIsStacked(!isStacked)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border shadow-xs transition-all min-h-[42px] cursor-pointer ${
-                isStacked
-                  ? 'bg-[#1C1C1C] text-[#FFD21E] border-[#FFD21E]'
-                  : 'bg-white text-[#1C1C1C] border-[#E5E7EB] hover:border-[#FF9D00]'
-              }`}
-            >
-              <RotateCcw size={15} className={isStacked ? 'animate-spin text-[#FFD21E]' : 'text-[#FF9D00]'} />
-              <span>{isStacked ? '🔀 Reshuffle & Assemble Grid' : '✨ Stack & Assemble Cards'}</span>
-            </motion.button>
-          </div>
         </div>
 
-        {/* BENTO GRID / RUMMY DECK SHUFFLE */}
-        <div className="space-y-5">
+        {/* BENTO GRID */}
+        <div className="space-y-6">
           {/* Top Row: Large Featured Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-            {/* Featured Large Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Featured Left Card (7 cols) */}
             <motion.div
-              initial={
-                isStacked
-                  ? { x: 120, y: 40, rotate: -8, scale: 0.88, zIndex: 30 }
-                  : { y: 20, opacity: 1 }
-              }
-              animate={
-                isStacked
-                  ? { x: 120, y: 40, rotate: -8, scale: 0.88, zIndex: 30 }
-                  : { x: 0, y: 0, rotate: 0, scale: 1, zIndex: 1 }
-              }
-              transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.05 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
               className="lg:col-span-7 flex"
             >
-              <MotionCardWrapper isFeatured className="w-full p-5 sm:p-7 space-y-4">
+              <MotionCardWrapper className="w-full space-y-5">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <IconBox icon={Gauge} size={22} variant="secondary" />
-                    <span className="px-2.5 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-[11px] font-extrabold tracking-wide border border-[#E5E7EB]">
-                      HIGH DEMAND SERVICE
+                  <div className="flex items-center justify-between mb-4">
+                    <IconBox icon={Code2} size={24} variant="secondary" />
+                    <span className="px-3 py-1 rounded-full bg-[#FFB800]/15 text-[#FFB800] text-xs font-mono font-bold border border-[#FFB800]/30 shadow-xs">
+                      CORE PILLAR 1 • ANY TECH STACK
                     </span>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#1C1C1C] mb-2 group-hover:text-[#FF9D00] transition-colors">
-                    Old Website Upgrade / Speed & SEO Overhaul
+                  <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 group-hover:text-[#FFB800] transition-colors tracking-tight">
+                    Custom Website Engineering
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-[#6B7280] leading-relaxed mb-4">
-                    Is your website slow, outdated, or dropping on Google rankings? We audit and fix sluggish legacy sites, eliminating plugin bloat to guarantee 100/100 Core Web Vitals and sub-second page loads.
+                  <p className="text-sm text-neutral-300 leading-relaxed mb-6 font-light">
+                    We build tailor-made business websites, web applications, and e-commerce portals on the exact tech stack you require (Next.js, React, Node, Python, Vue, or Headless CMS). Guaranteed sub-second speeds and zero plugin bloat.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-[#1C1C1C] pt-1">
-                    <div className="flex items-center gap-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono text-neutral-200 pt-2">
+                    <div className="flex items-center gap-2">
                       <Check size={14} className="text-[#10B981] shrink-0" />
-                      <span>Sub-Second Page Load Times</span>
+                      <span>Custom Stack (Next.js, React, Node, Python)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check size={14} className="text-[#10B981] shrink-0" />
-                      <span>100/100 Mobile Core Web Vitals</span>
+                      <span>Sub-Second Global Edge Latency</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check size={14} className="text-[#10B981] shrink-0" />
-                      <span>Technical SEO Cleanup & Schema</span>
+                      <span>Custom Web Apps &amp; Headless Portals</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check size={14} className="text-[#10B981] shrink-0" />
-                      <span>Modern High-Converting Redesign</span>
+                      <span>JSON-LD Schemas &amp; Semantic SEO</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-[#3B82F6] bg-[#3B82F6]/10 px-2.5 py-1 rounded-[4px]">
-                    Speed & SEO Upgrade
-                  </span>
+                <div className="pt-5 border-t border-white/[0.08] flex items-center justify-between">
+                  <span className="text-xs font-mono text-neutral-400">7–14 Day Delivery Sprint</span>
                   <Link
-                    href="/services/website-speed-upgrade"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF9D00] hover:underline"
+                    href="/services/website-development"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-[#FFB800] text-[#FFB800] hover:text-black font-bold text-xs border border-[#FFB800]/30 transition-all"
                   >
-                    <span>Fix My Slow Website</span>
+                    <span>Build Custom Website</span>
                     <ArrowUpRight size={14} />
                   </Link>
                 </div>
               </MotionCardWrapper>
             </motion.div>
 
-            {/* Featured Right Card */}
+            {/* Featured Right Card (5 cols) */}
             <motion.div
-              initial={
-                isStacked
-                  ? { x: -140, y: 30, rotate: 6, scale: 0.86, zIndex: 20 }
-                  : { y: 20, opacity: 1 }
-              }
-              animate={
-                isStacked
-                  ? { x: -140, y: 30, rotate: 6, scale: 0.86, zIndex: 20 }
-                  : { x: 0, y: 0, rotate: 0, scale: 1, zIndex: 1 }
-              }
-              transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               className="lg:col-span-5 flex"
             >
-              <MotionCardWrapper className="w-full p-5 sm:p-7 space-y-4">
+              <MotionCardWrapper className="w-full space-y-5">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <IconBox icon={Video} size={22} variant="accent" />
-                    <span className="text-[11px] font-bold text-[#3B82F6] bg-[#3B82F6]/10 px-2.5 py-1 rounded-[4px]">
-                      UGC Ads Agency
+                  <div className="flex items-center justify-between mb-4">
+                    <IconBox icon={Smartphone} size={24} variant="accent" />
+                    <span className="px-3 py-1 rounded-full bg-[#00F0FF]/15 text-[#00F0FF] text-xs font-mono font-bold border border-[#00F0FF]/30 shadow-xs">
+                      CORE PILLAR 2 • IOS &amp; ANDROID
                     </span>
                   </div>
 
-                  <h3 className="text-lg sm:text-xl font-bold text-[#1C1C1C] mb-2 group-hover:text-[#FF9D00] transition-colors">
-                    UGC Video Ads for E-Commerce & DTC
+                  <h3 className="text-xl sm:text-2xl font-black text-white mb-3 group-hover:text-[#00F0FF] transition-colors tracking-tight">
+                    Mobile Application Development
                   </h3>
 
-                  <p className="text-xs text-[#6B7280] leading-relaxed mb-4">
-                    User-Generated Content video ad hooks produced by real creators. Outperform expensive studio ads with high-converting native TikTok, Meta & Instagram ad creatives.
+                  <p className="text-sm text-neutral-300 leading-relaxed mb-6 font-light">
+                    Scalable cross-platform and native mobile apps built with React Native and Flutter. Fast database synchronization, native 60fps UX, and guaranteed app store approvals.
                   </p>
 
-                  <div className="space-y-2 text-xs font-semibold text-[#1C1C1C]">
-                    <div className="flex items-center gap-1.5">
-                      <Check size={14} className="text-[#10B981]" />
-                      <span>Authentic Creator Hook Scripting</span>
+                  <div className="space-y-2.5 text-xs font-mono text-neutral-200">
+                    <div className="flex items-center gap-2">
+                      <Check size={14} className="text-[#10B981] shrink-0" />
+                      <span>Unified iOS &amp; Android Codebases</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Check size={14} className="text-[#10B981]" />
-                      <span>Rapid A/B Video Creative Testing</span>
+                    <div className="flex items-center gap-2">
+                      <Check size={14} className="text-[#10B981] shrink-0" />
+                      <span>Supabase &amp; Cloud Real-Time DB</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Check size={14} className="text-[#10B981]" />
-                      <span>5.2x Verified ROAS Results</span>
+                    <div className="flex items-center gap-2">
+                      <Check size={14} className="text-[#10B981] shrink-0" />
+                      <span>Stripe Subscriptions &amp; In-App Pay</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
-                  <span className="font-mono-stats font-bold text-[#FF9D00] text-xs">High-ROAS Hooks</span>
-                  <Link href="/services/ugc-video-ads" className="text-[#FF9D00] font-bold text-xs hover:underline flex items-center gap-1">
-                    <span>View UGC Ads</span>
-                    <ArrowUpRight size={13} />
+                <div className="pt-5 border-t border-white/[0.08] flex items-center justify-between">
+                  <span className="text-xs font-mono text-neutral-400">iOS &amp; Android Ready</span>
+                  <Link
+                    href="/services/app-development"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-[#00F0FF] text-[#00F0FF] hover:text-black font-bold text-xs border border-[#00F0FF]/30 transition-all"
+                  >
+                    <span>Build Mobile App</span>
+                    <ArrowUpRight size={14} />
                   </Link>
                 </div>
               </MotionCardWrapper>
@@ -376,64 +300,48 @@ export default function ServicesBentoSection() {
           </div>
 
           {/* Bottom Grid: 6 Standard Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {servicesData
-              .filter((s) => !s.isFeaturedLarge && !s.isFeaturedRight)
-              .map((service, index) => {
-                const IconComp = service.icon;
-                const stackRotation = (index % 2 === 0 ? 1 : -1) * (4 + index * 2);
-                const stackOffsetX = (index - 2.5) * 35;
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {standardServices.map((service, index) => {
+              const IconComp = service.icon;
 
-                return (
-                  <motion.div
-                    key={service.id}
-                    initial={
-                      isStacked
-                        ? { x: stackOffsetX, y: -60, rotate: stackRotation, scale: 0.85, zIndex: 10 + index }
-                        : { y: 20, opacity: 1 }
-                    }
-                    animate={
-                      isStacked
-                        ? { x: stackOffsetX, y: -60, rotate: stackRotation, scale: 0.85, zIndex: 10 + index }
-                        : { x: 0, y: 0, rotate: 0, scale: 1, zIndex: 1 }
-                    }
-                    transition={{
-                      type: 'spring',
-                      stiffness: 210,
-                      damping: 17,
-                      delay: 0.1 + index * 0.04,
-                    }}
-                    className="flex"
-                  >
-                    <MotionCardWrapper className="p-5 space-y-3 flex flex-col justify-between w-full">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <IconBox icon={IconComp} size={18} variant={service.iconVariant} />
-                          <span className="text-[10px] font-bold text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-0.5 rounded-[4px]">
-                            {service.badge}
-                          </span>
-                        </div>
-                        <h3 className="text-base font-bold text-[#1C1C1C] group-hover:text-[#FF9D00] transition-colors">
-                          {service.title}
-                        </h3>
-                        <p className="text-xs text-[#6B7280] leading-relaxed">
-                          {service.description}
-                        </p>
+              return (
+                <motion.div
+                  key={service.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.05 * index }}
+                  className="flex"
+                >
+                  <MotionCardWrapper className="p-6 space-y-4 flex flex-col justify-between w-full">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <IconBox icon={IconComp} size={20} variant={service.iconVariant} />
+                        <span className="text-[11px] font-mono font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/25 px-2.5 py-0.5 rounded-full">
+                          {service.badge}
+                        </span>
                       </div>
+                      <h3 className="text-lg font-black text-white group-hover:text-[#FFB800] transition-colors tracking-tight">
+                        {service.title}
+                      </h3>
+                      <p className="text-xs text-neutral-300 leading-relaxed font-light">
+                        {service.description}
+                      </p>
+                    </div>
 
-                      <div className="pt-3 border-t border-[#E5E7EB] flex items-center justify-between">
-                        <Link
-                          href={service.linkHref}
-                          className="text-[#FF9D00] text-xs font-bold hover:underline flex items-center justify-between w-full"
-                        >
-                          <span>Learn More</span>
-                          <ArrowUpRight size={14} />
-                        </Link>
-                      </div>
-                    </MotionCardWrapper>
-                  </motion.div>
-                );
-              })}
+                    <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
+                      <Link
+                        href={service.linkHref}
+                        className="text-[#FFB800] text-xs font-bold hover:underline inline-flex items-center justify-between w-full group/link"
+                      >
+                        <span>Explore Protocol</span>
+                        <ArrowUpRight size={14} className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                      </Link>
+                    </div>
+                  </MotionCardWrapper>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

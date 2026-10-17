@@ -25,47 +25,47 @@ export default function BlogMidCallout({ category, postSlug }: BlogMidCalloutPro
   const serviceUrl = withBlogSource(ctaConfig.serviceUrl, postSlug);
 
   return (
-    <div className="my-8 p-5 sm:p-6 bg-gradient-to-r from-[#FFFDF5] via-[#FFF9E6] to-[#FFFDF5] border-l-4 border-[#FF9D00] border-y border-r border-[#FFD21E]/60 rounded-r-2xl shadow-2xs space-y-3 relative overflow-hidden group">
+    <div className="my-8 p-6 cyber-glass-glow border-l-4 border-l-[#FFB800] border border-[#FFB800]/25 rounded-2xl shadow-2xl space-y-3.5 relative overflow-hidden group">
       {/* Background Accent Pill */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-[11px] font-extrabold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFB800]/15 text-[#FFB800] text-xs font-mono font-bold uppercase tracking-wider border border-[#FFB800]/30">
             <Sparkles size={12} />
-            <span>Growth Insight</span>
+            <span>Telemetry Insight</span>
           </span>
-          <span className="text-xs font-bold text-[#FF9D00] uppercase tracking-wider hidden sm:inline">
+          <span className="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider hidden sm:inline">
             {ctaConfig.serviceTitle}
           </span>
         </div>
 
         <Link
           href={serviceUrl}
-          className="text-xs font-bold text-[#1C1C1C] hover:text-[#FF9D00] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+          className="text-xs font-mono font-bold text-[#FFB800] hover:text-[#FFD21E] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
         >
           <span>{ctaConfig.ctaButtonText}</span>
-          <ArrowRight size={13} className="text-[#FF9D00]" />
+          <ArrowRight size={13} className="text-[#FFB800]" />
         </Link>
       </div>
 
-      <div className="space-y-1">
-        <h4 className="text-base sm:text-lg font-extrabold text-[#1C1C1C]">
+      <div className="space-y-1.5">
+        <h4 className="text-base sm:text-lg font-black text-white">
           {ctaConfig.midCalloutTitle}
         </h4>
-        <p className="text-xs sm:text-sm text-[#374151] leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed">
           {ctaConfig.midCalloutText}
         </p>
       </div>
 
-      <div className="pt-1 flex items-center justify-between border-t border-[#FFD21E]/40 text-xs">
-        <span className="text-[#6B7280] font-medium">
-          Need custom engineering or audit for your site?
+      <div className="pt-2 flex items-center justify-between border-t border-white/[0.08] text-xs font-mono">
+        <span className="text-gray-400">
+          Need custom architecture or audit for your site?
         </span>
         <Link
           href={serviceUrl}
-          className="font-bold text-[#FF9D00] hover:underline inline-flex items-center gap-1 shrink-0"
+          className="font-bold text-[#FFB800] hover:underline inline-flex items-center gap-1 shrink-0"
         >
           <Zap size={12} />
-          <span>Get Free Proposal →</span>
+          <span>Get Free Proposal &rarr;</span>
         </Link>
       </div>
     </div>

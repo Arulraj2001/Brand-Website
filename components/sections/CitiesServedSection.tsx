@@ -55,7 +55,7 @@ export default function CitiesServedSection() {
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB]">
             <CheckCircle2 size={13} className="text-[#10B981]" />
-            <span>Guaranteed 12-Hour Reply SLA</span>
+            <span>Clear Milestones &amp; Fast Delivery</span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB]">
             <ShieldCheck size={13} className="text-[#3B82F6]" />

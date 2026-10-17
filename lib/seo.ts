@@ -17,7 +17,7 @@ export function getSiteUrl(): string {
 }
 
 export function getDefaultTagline(): string {
-  return 'Custom websites engineered on any tech stack, scalable iOS & Android mobile applications, and predictable B2B lead generation funnels worldwide. Guaranteed 12h reply across all time zones.';
+  return 'High-performance websites and mobile apps built for growing businesses. Custom full-stack engineering (Next.js, React, Node, Python) and modern CMS solutions (Shopify, WordPress, Wix) with transparent pricing and global collaboration.';
 }
 
 export interface OgUrlOptions {

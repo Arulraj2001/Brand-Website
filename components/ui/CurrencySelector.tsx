@@ -31,17 +31,17 @@ export default function CurrencySelector({ className = '' }: CurrencySelectorPro
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-[#1C1C1C] bg-white border border-[#E5E7EB] rounded-lg hover:border-[#FF9D00] transition-colors shadow-xs cursor-pointer focus:outline-none"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-gray-200 bg-white/[0.05] border border-white/[0.1] rounded-lg hover:border-[#FFB800]/50 hover:text-white transition-all shadow-xs cursor-pointer focus:outline-none"
         aria-label="Select display currency"
       >
         <span className="text-sm shrink-0">{activeConfig.flag}</span>
         <span>{activeConfig.code} ({activeConfig.symbol})</span>
-        <ChevronDown size={12} className={`text-[#6B7280] transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-1 w-44 rounded-lg bg-white border border-[#E5E7EB] shadow-lg z-50 py-1 text-xs font-medium focus:outline-none animate-in fade-in-50 zoom-in-95">
-          <div className="px-3 py-1 text-[10px] uppercase tracking-wider font-extrabold text-[#9CA3AF] border-b border-[#E5E7EB]">
+        <div className="absolute right-0 mt-1 w-44 rounded-xl bg-[#0C0E18] border border-white/[0.12] shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-50 py-1 text-xs font-medium focus:outline-none backdrop-blur-xl animate-in fade-in-50 zoom-in-95">
+          <div className="px-3 py-1 text-[10px] uppercase tracking-wider font-mono font-extrabold text-gray-400 border-b border-white/[0.08]">
             Display Currency
           </div>
           {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => {
@@ -55,15 +55,15 @@ export default function CurrencySelector({ className = '' }: CurrencySelectorPro
                   setCurrency(code);
                   setOpen(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-[#FFF9E6] hover:text-[#FF9D00] transition-colors cursor-pointer ${
-                  isSelected ? 'bg-[#FFF9E6] text-[#FF9D00] font-bold' : 'text-[#1C1C1C]'
+                className={`w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-[#FFB800] transition-colors cursor-pointer ${
+                  isSelected ? 'bg-[#FFB800]/15 text-[#FFB800] font-bold' : 'text-gray-300'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{item.flag}</span>
                   <span>{item.code} ({item.symbol})</span>
                 </div>
-                <span className="text-[11px] text-[#6B7280]">{item.name}</span>
+                <span className="text-[11px] text-gray-400 font-mono">{item.name}</span>
               </button>
             );
           })}

@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Source_Sans_3, Source_Code_Pro } from 'next/font/google';
+import { Source_Sans_3, Source_Code_Pro, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
 import AutoLeadModal from '@/components/ui/AutoLeadModal';
+import CyberCursor from '@/components/ui/CyberCursor';
 import { CurrencyProvider } from '@/components/ui/CurrencyContext';
 import JsonLd from '@/components/JsonLd';
 import {
@@ -26,6 +27,14 @@ const sourceCode = Source_Code_Pro({
   subsets: ['latin'],
   variable: '--font-source-code',
   display: 'swap',
+  weight: ['400', '600', '700'],
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+  style: ['normal', 'italic'],
   weight: ['400', '600', '700'],
 });
 
@@ -255,8 +264,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${sourceSans.variable} ${sourceCode.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-white text-[#1C1C1C] selection:bg-[#FFD21E] selection:text-[#1C1C1C]">
+    <html lang="en" className={`dark ${sourceSans.variable} ${sourceCode.variable} ${playfair.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col font-sans bg-[#05060A] text-[#F3F4F6] selection:bg-[#FFB800] selection:text-black">
         <JsonLd data={buildGlobalSchema()} />
         <Script
           strategy="afterInteractive"
@@ -282,6 +291,7 @@ export default function RootLayout({
           <Footer />
           <WhatsAppFloatingButton />
           <AutoLeadModal />
+          <CyberCursor />
         </CurrencyProvider>
       </body>
     </html>

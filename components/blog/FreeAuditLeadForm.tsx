@@ -94,20 +94,20 @@ export default function FreeAuditLeadForm({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="p-6 bg-[#ECFDF5] border border-[#10B981]/40 rounded-xl text-center space-y-3"
+        className="p-6 bg-emerald-500/[0.05] border border-emerald-500/25 rounded-2xl text-center space-y-3"
       >
-        <div className="w-12 h-12 rounded-full bg-[#10B981]/20 text-[#10B981] mx-auto flex items-center justify-center">
-          <CheckCircle2 size={28} />
+        <div className="w-12 h-12 rounded-full bg-emerald-500/15 text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/25">
+          <CheckCircle2 size={24} />
         </div>
-        <h4 className="text-lg font-bold text-[#1C1C1C]">Audit Request Received!</h4>
-        <p className="text-xs text-[#374151] max-w-sm mx-auto leading-relaxed">
-          Thank you! Our engineering team will analyze your website and email your free{' '}
-          <strong className="text-[#1C1C1C]">{ctaConfig.auditBadge.toLowerCase()}</strong> report
+        <h4 className="text-lg font-black text-white">Audit Request Received!</h4>
+        <p className="text-xs text-gray-300 font-light max-w-sm mx-auto leading-relaxed">
+          Our engineering team will analyze your website architecture and send your free{' '}
+          <strong className="text-[#FFB800]">{ctaConfig.auditBadge.toLowerCase()}</strong> brief
           within 12 hours.
         </p>
         <button
           onClick={() => setSubmitted(false)}
-          className="text-xs font-bold text-[#10B981] hover:underline pt-1"
+          className="text-xs font-mono font-bold text-[#FFB800] hover:underline pt-1"
         >
           Submit another website
         </button>
@@ -116,9 +116,9 @@ export default function FreeAuditLeadForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {submitError && (
-        <div className="p-3 rounded-lg bg-[#FEF2F2] border border-[#EF4444]/30 text-xs text-[#DC2626] flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-red-500/[0.05] border border-red-500/20 text-xs text-red-400 flex items-center gap-2 font-mono">
           <AlertCircle size={14} className="shrink-0" />
           <span>{submitError}</span>
         </div>
@@ -127,17 +127,17 @@ export default function FreeAuditLeadForm({
       <div className={`grid grid-cols-1 ${compact ? 'gap-3' : 'sm:grid-cols-2 gap-3.5'}`}>
         {/* Name */}
         <div>
-          <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
-            Full Name <span className="text-[#EF4444]">*</span>
+          <label className="block text-xs font-mono font-bold text-gray-300 mb-1.5">
+            Full Name <span className="text-[#FFB800]">*</span>
           </label>
           <input
             {...register('name')}
             type="text"
             placeholder="e.g. Sarah Miller"
-            className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00] bg-white transition-colors"
+            className="w-full px-4 py-2.5 rounded-xl border border-white/[0.1] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FFB800] bg-white/[0.04] transition-colors"
           />
           {errors.name && (
-            <p className="text-[11px] text-[#EF4444] font-semibold mt-1">
+            <p className="text-[11px] text-red-400 font-mono mt-1">
               {errors.name.message}
             </p>
           )}
@@ -145,17 +145,17 @@ export default function FreeAuditLeadForm({
 
         {/* Email */}
         <div>
-          <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
-            Work Email <span className="text-[#EF4444]">*</span>
+          <label className="block text-xs font-mono font-bold text-gray-300 mb-1.5">
+            Work Email <span className="text-[#FFB800]">*</span>
           </label>
           <input
             {...register('email')}
             type="email"
             placeholder="e.g. sarah@company.com"
-            className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00] bg-white transition-colors"
+            className="w-full px-4 py-2.5 rounded-xl border border-white/[0.1] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FFB800] bg-white/[0.04] transition-colors"
           />
           {errors.email && (
-            <p className="text-[11px] text-[#EF4444] font-semibold mt-1">
+            <p className="text-[11px] text-red-400 font-mono mt-1">
               {errors.email.message}
             </p>
           )}
@@ -164,22 +164,22 @@ export default function FreeAuditLeadForm({
 
       {/* Website URL */}
       <div>
-        <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
-          Website URL <span className="text-[#EF4444]">*</span>
+        <label className="block text-xs font-mono font-bold text-gray-300 mb-1.5">
+          Website URL <span className="text-[#FFB800]">*</span>
         </label>
         <div className="relative">
-          <div className="absolute left-3 top-2.5 text-[#9CA3AF]">
+          <div className="absolute left-3.5 top-3 text-gray-400">
             <Globe size={14} />
           </div>
           <input
             {...register('website_url')}
             type="text"
             placeholder="e.g. mycompany.com or https://example.com"
-            className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00] bg-white transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FFB800] bg-white/[0.04] transition-colors"
           />
         </div>
         {errors.website_url && (
-          <p className="text-[11px] text-[#EF4444] font-semibold mt-1">
+          <p className="text-[11px] text-red-400 font-mono mt-1">
             {errors.website_url.message}
           </p>
         )}
@@ -187,14 +187,14 @@ export default function FreeAuditLeadForm({
 
       {/* Optional Message */}
       <div>
-        <label className="block text-xs font-bold text-[#1C1C1C] mb-1">
-          Current Goal / Main Pain Point <span className="text-[#9CA3AF] font-normal">(Optional)</span>
+        <label className="block text-xs font-mono font-bold text-gray-300 mb-1.5">
+          Current Goal / Main Bottleneck <span className="text-gray-500 font-normal">(Optional)</span>
         </label>
         <textarea
           {...register('message')}
           rows={compact ? 2 : 3}
-          placeholder="e.g. Slow load time, dropping search rank, low ROAS..."
-          className="w-full px-3.5 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00] bg-white transition-colors resize-none"
+          placeholder="e.g. Slow load time, dropping organic rank, low ROAS..."
+          className="w-full px-4 py-2.5 rounded-xl border border-white/[0.1] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FFB800] bg-white/[0.04] transition-colors resize-none"
         />
       </div>
 
@@ -206,7 +206,7 @@ export default function FreeAuditLeadForm({
         className="w-full justify-center"
       >
         {submitting ? (
-          <span>Analyzing Site & Sending...</span>
+          <span>Analyzing Site &amp; Sending...</span>
         ) : (
           <>
             <Sparkles size={15} />
@@ -215,8 +215,8 @@ export default function FreeAuditLeadForm({
           </>
         )}
       </Button>
-      <p className="text-[11px] text-[#9CA3AF] text-center">
-        100% Free • No credit card required • Response within 12 hours
+      <p className="text-[11px] font-mono text-gray-500 text-center">
+        100% Free &bull; No credit card required &bull; Response within 12 hours
       </p>
     </form>
   );

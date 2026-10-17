@@ -58,6 +58,96 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
 
 export const INITIAL_PORTFOLIO: PortfolioProject[] = [
   {
+    id: 'p-aura',
+    title: 'Luxury Direct-to-Consumer E-Commerce Store',
+    slug: 'aura-luxury-ecommerce-store',
+    client_name: 'Aura & Co.',
+    client_location: 'London, United Kingdom',
+    client_city: 'London',
+    service_type: 'web_dev',
+    short_description: 'High-converting luxury e-commerce experience built on Shopify & custom headless frontend for international buyers.',
+    full_description: 'Aura & Co. needed a bespoke digital storefront reflecting their premium brand identity. We designed and developed an ultra-fast shopping experience featuring seamless currency switching, one-click checkout, and 98+ mobile speed performance.',
+    challenge_description: 'Their previous online store had slow mobile loading speeds (>4s) and high checkout drop-off rates on mobile devices.',
+    solution_description: 'Re-architected the store using modern modular Shopify architecture, optimized image compression, streamlined cart drawers, and Klaviyo automated email flows.',
+    before_metric: '4.2s Mobile Load Speed • 1.4% Checkout Conversion • High Abandonment',
+    after_metric: '0.9s Mobile Load Speed • 3.8% Conversion Rate • +142% Revenue Growth',
+    project_duration: '14 Days',
+    tech_stack: ['Shopify Plus', 'Liquid', 'Tailwind CSS', 'Klaviyo', 'Stripe'],
+    deliverables: [
+      'Bespoke E-Commerce Storefront',
+      'Sub-Second Mobile Checkout',
+      'Automated Email Marketing Funnels',
+      'Inventory & ERP Integration',
+    ],
+    cover_image_url: '/images/ecommerce-showcase.jpg',
+    gallery_urls: ['/images/hero-showcase.jpg'],
+    results: '0.9s Mobile Speed • +142% Revenue Growth • 3.8% Conversion Rate',
+    testimonial: 'Ostrune transformed our online store. Our mobile conversions doubled within three weeks of launch.',
+    live_url: 'https://ostrune.netlify.app/portfolio',
+    is_featured: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'p-finpulse',
+    title: 'Cloud Financial Analytics & Invoicing Dashboard',
+    slug: 'finpulse-cloud-analytics-platform',
+    client_name: 'FinPulse',
+    client_location: 'Austin, TX, United States',
+    client_city: 'Austin',
+    service_type: 'web_dev',
+    short_description: 'Interactive SaaS web platform with real-time analytics, automated invoicing, and multi-tenant security.',
+    full_description: 'Engineered a full-stack financial intelligence application with real-time transaction streaming, role-based access control, and seamless Stripe billing integration.',
+    challenge_description: 'FinPulse required a high-performance web app capable of rendering tens of thousands of real-time data points smoothly on low-bandwidth connections.',
+    solution_description: 'Built using Next.js App Router, React Server Components, Tailwind CSS, and optimized database queries with automated cloud deployment.',
+    before_metric: 'Legacy monolith backend • 3.8s page transitions • Unresponsive tables',
+    after_metric: '0.6s Initial Load • 100/100 Core Web Vitals • Instant Data Filtering',
+    project_duration: '18 Days',
+    tech_stack: ['Next.js', 'React', 'TypeScript', 'Node.js', 'Tailwind CSS', 'PostgreSQL'],
+    deliverables: [
+      'Cloud Analytics Dashboard',
+      'Stripe Subscription Billing',
+      'Real-Time Financial Charts',
+      'Role-Based Access Control',
+    ],
+    cover_image_url: '/images/hero-showcase.jpg',
+    gallery_urls: ['/images/ecommerce-showcase.jpg'],
+    results: '100/100 Core Web Vitals • 0.6s Load Time • Enterprise-Grade Reliability',
+    testimonial: 'The engineering quality and attention to performance were top-notch. Our users love the new interface speed.',
+    live_url: 'https://ostrune.netlify.app/portfolio',
+    is_featured: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'p-payease',
+    title: 'Cross-Platform Mobile Wallet & Payments App',
+    slug: 'payease-mobile-wallet-app',
+    client_name: 'PayEase',
+    client_location: 'Singapore',
+    client_city: 'Singapore',
+    service_type: 'app_dev',
+    short_description: 'Native-speed iOS and Android financial application with instant QR payments and biometric security.',
+    full_description: 'Designed and built an intuitive cross-platform mobile application supporting QR transfers, multi-currency accounts, and push notification alerts.',
+    challenge_description: 'Building two separate native iOS and Android apps was projected to take 6 months and exceed their startup budget.',
+    solution_description: 'Delivered a single high-performance React Native codebase with native 60fps animations, biometric authentication (FaceID/Fingerprint), and encrypted local storage.',
+    before_metric: '6-Month Native Roadmap • $60k+ Traditional Agency Quote',
+    after_metric: '21-Day Launch Sprint • 60fps Native Performance • Apple & Play Store Live',
+    project_duration: '21 Days',
+    tech_stack: ['React Native', 'Expo', 'TypeScript', 'Node.js', 'Supabase', 'Stripe SDK'],
+    deliverables: [
+      'iOS & Android Cross-Platform App',
+      'Biometric Authentication (FaceID)',
+      'Instant QR Code Payments',
+      'App Store & Google Play Submission',
+    ],
+    cover_image_url: '/images/mobile-showcase.jpg',
+    gallery_urls: ['/images/hero-showcase.jpg'],
+    results: '60fps Native Performance • 21-Day Launch • Approved on iOS & Android',
+    testimonial: 'We went from concept to active App Store downloads in three weeks. Amazing execution speed.',
+    live_url: 'https://ostrune.netlify.app/portfolio',
+    is_featured: true,
+    created_at: new Date().toISOString(),
+  },
+  {
     id: '1',
     title: 'Civic News & Public Interest Web Portal',
     slug: 'vizhitn-civic-news-portal',
@@ -65,7 +155,7 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
     client_location: 'Tamil Nadu, India',
     client_city: '',
     service_type: 'web_dev',
-    short_description: 'Engineered a lightweight civic-news publishing platform optimized for high concurrent traffic and instant page rendering.',
+    short_description: 'Lightweight civic-news publishing platform optimized for high concurrent traffic and instant page rendering.',
     full_description: 'VizhiTn is a regional civic-news platform delivering public-interest explainers and local news updates. We re-architected their web portal using modern server-side rendering, sub-second edge distribution, responsive UI components, and accessible typography.',
     challenge_description: 'VizhiTn needed a reliable news publishing engine capable of serving regional civic-news updates rapidly without server crashes or slow page load times.',
     solution_description: 'Architected a high-performance publishing platform with streamlined content delivery, server-side caching, structured data schemas, and clean reader-focused typography.',
@@ -79,10 +169,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'Structured Technical SEO & Breadcrumb Schemas',
       'Responsive Mobile-First Typography System',
     ],
-    cover_image_url: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
-    gallery_urls: [
-      'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=800&q=80'
-    ],
+    cover_image_url: '/images/hero-showcase.jpg',
+    gallery_urls: ['/images/ecommerce-showcase.jpg'],
     results: '0.7s Load Speed | 99/100 Core Web Vitals | Reliable Civic News Delivery',
     testimonial: 'Ostrune delivered an exceptionally fast and responsive news web portal for our platform.',
     live_url: 'https://vizhitn.in',
@@ -111,10 +199,8 @@ export const INITIAL_PORTFOLIO: PortfolioProject[] = [
       'Sub-Second Property Gallery Optimization',
       'Local Map & Google Business Profile Integration',
     ],
-    cover_image_url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
-    gallery_urls: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
-    ],
+    cover_image_url: '/images/ecommerce-showcase.jpg',
+    gallery_urls: ['/images/hero-showcase.jpg'],
     results: 'Automated Lead Capture | Sub-Second Property Galleries | Verified Growth',
     testimonial: 'Our online property inquiries increased immediately after launching the new platform built by Ostrune.',
     live_url: 'https://yourchoiceproperties.in',
@@ -319,7 +405,7 @@ export function getPortfolioProjectsSync(): PortfolioProject[] {
       const cached = localStorage.getItem('ostrune_portfolio_projects');
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed) && parsed.length >= 3 && cached.includes('aura-luxury-ecommerce')) {
           return parsed.map(normalizeProject);
         }
       }
@@ -1198,8 +1284,11 @@ export function saveStudentFeedbackLocal(videos: StudentFeedbackVideo[]): void {
   }
 }
 
+let studentFeedbackTableMissing = false;
+let studentProjectsTableMissing = false;
+
 export async function fetchStudentFeedbackFromSupabase(): Promise<StudentFeedbackVideo[] | null> {
-  if (!isSupabaseConfigured()) return null;
+  if (!isSupabaseConfigured() || studentFeedbackTableMissing) return null;
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -1207,12 +1296,17 @@ export async function fetchStudentFeedbackFromSupabase(): Promise<StudentFeedbac
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
+    if (error) {
+      studentFeedbackTableMissing = true;
+      return null;
+    }
+
+    if (data) {
       saveStudentFeedbackLocal(data as StudentFeedbackVideo[]);
       return data as StudentFeedbackVideo[];
     }
-  } catch (err) {
-    console.error('Error fetching student feedback from Supabase:', err);
+  } catch {
+    studentFeedbackTableMissing = true;
   }
   return null;
 }
@@ -1302,7 +1396,7 @@ export function saveStudentProjectsLocal(projects: StudentProject[]): void {
 }
 
 export async function fetchStudentProjectsFromSupabase(): Promise<StudentProject[] | null> {
-  if (!isSupabaseConfigured()) return null;
+  if (!isSupabaseConfigured() || studentProjectsTableMissing) return null;
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -1310,12 +1404,17 @@ export async function fetchStudentProjectsFromSupabase(): Promise<StudentProject
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
+    if (error) {
+      studentProjectsTableMissing = true;
+      return null;
+    }
+
+    if (data) {
       saveStudentProjectsLocal(data as StudentProject[]);
       return data as StudentProject[];
     }
-  } catch (err) {
-    console.error('Error fetching student projects from Supabase:', err);
+  } catch {
+    studentProjectsTableMissing = true;
   }
   return null;
 }

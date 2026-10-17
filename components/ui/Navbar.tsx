@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PhoneCall, Menu, X, ArrowRight } from 'lucide-react';
-import Button from './Button';
+import { PhoneCall, Menu, X, ArrowRight, Sparkles } from 'lucide-react';
 import ArusythApexLogo from './ArusythApexLogo';
 import { useSiteSettings } from '@/lib/useSiteData';
 
@@ -16,11 +15,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     handleScroll();
@@ -41,37 +36,30 @@ export default function Navbar() {
   const cleanPhoneTel = activeSettings.phone.replace(/[^0-9+]/g, '');
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled ? 'py-2 px-2 sm:px-4' : 'py-0'
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 pt-3 pointer-events-none transition-all duration-300">
       <div
-        className={`max-w-[1200px] w-full mx-auto px-4 flex items-center justify-between transition-all duration-300 ${
+        className={`max-w-[1200px] w-full mx-auto px-4 sm:px-5 flex items-center justify-between transition-all duration-300 pointer-events-auto rounded-full ${
           scrolled
-            ? 'bg-white/95 backdrop-blur-md border border-[#E5E7EB] rounded-2xl shadow-md h-[52px]'
-            : 'bg-white border-b border-[#E5E7EB] h-[56px]'
+            ? 'h-[54px] bg-[#090A12]/80 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
+            : 'h-[58px] bg-[#090A12]/60 backdrop-blur-xl border border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.3)]'
         }`}
       >
         {/* Logo Left */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <ArusythApexLogo size={30} className="group-hover:scale-105 transition-transform" />
-          <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-base sm:text-lg text-[#1C1C1C] tracking-tight">
+          <ArusythApexLogo size={28} className="group-hover:scale-105 transition-transform" />
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-base tracking-tight text-white group-hover:text-[#FFB800] transition-colors">
               {activeSettings.brand_name || 'Ostrune'}
             </span>
-            <span className="text-[10px] font-mono-stats font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 px-2 py-0.5 rounded-full hidden sm:flex items-center gap-1">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
-              </span>
-              <span>12h SLA</span>
+            <span className="text-[10px] font-mono font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full hidden sm:flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
+              <span>Available for Projects</span>
             </span>
           </div>
         </Link>
 
         {/* Desktop Links Center */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5">
+        <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.03] border border-white/[0.06] rounded-full">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -79,10 +67,10 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 prefetch={true}
-                className={`transition-all duration-200 ${
+                className={`relative px-3.5 py-1 text-xs font-bold transition-all duration-200 rounded-full ${
                   isActive
-                    ? 'bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]/80 px-3.5 py-1 rounded-full text-[14px] font-extrabold shadow-2xs'
-                    : 'text-[#1C1C1C] hover:text-[#FF9D00] hover:bg-[#F9FAFB] px-3 py-1 rounded-lg text-[14px] font-bold'
+                    ? 'text-[#FFB800] bg-white/[0.08] border border-[#FFB800]/30 shadow-xs'
+                    : 'text-neutral-300 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
                 {link.name}
@@ -91,38 +79,41 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* CTA Right */}
-        <div className="hidden md:flex items-center gap-3 shrink-0">
+        {/* Right CTA Group */}
+        <div className="hidden sm:flex items-center gap-3 shrink-0">
           <a
             href={`tel:${cleanPhoneTel}`}
-            className="flex items-center gap-2 text-xs font-bold text-[#1C1C1C] hover:text-[#10B981] transition-colors group"
+            className="flex items-center gap-2 text-xs font-mono font-semibold text-neutral-300 hover:text-white transition-colors"
           >
-            <div className="relative w-7 h-7 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/40 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xs">
-              <span className="absolute inset-0 rounded-full bg-[#10B981]/20 animate-ping opacity-60" />
-              <PhoneCall size={13} className="animate-phone-ring relative z-10 text-[#10B981]" />
+            <div className="w-6 h-6 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center">
+              <PhoneCall size={12} className="animate-phone-ring text-[#10B981]" />
             </div>
-            <span className="font-mono-stats">{activeSettings.phone}</span>
+            <span className="hidden xl:inline">{activeSettings.phone}</span>
           </a>
-          <Button href="/contact" variant="primary" size="sm">
-            <span>Book a Call</span>
+
+          <Link
+            href="/contact"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black tracking-tight bg-gradient-to-r from-[#FFB800] to-[#FF9500] text-black shadow-[0_0_20px_rgba(255,184,0,0.35)] hover:shadow-[0_0_28px_rgba(255,184,0,0.5)] hover:scale-105 active:scale-95 transition-all"
+          >
+            <span>Start Sprint</span>
             <ArrowRight size={13} />
-          </Button>
+          </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Hamburger Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-1.5 rounded-lg text-[#1C1C1C] hover:bg-[#F9FAFB]"
+          className="lg:hidden p-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/10 transition-colors"
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Frosted Smoked Glass) */}
       {mobileMenuOpen && (
-        <div className="absolute top-[56px] left-2 right-2 md:hidden bg-white border border-[#E5E7EB] rounded-2xl px-4 pt-3 pb-5 shadow-xl space-y-3 mt-1 z-50">
-          <nav className="flex flex-col space-y-1.5">
+        <div className="mt-2 max-w-[1200px] mx-auto lg:hidden bg-[#090A12]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl pointer-events-auto space-y-3">
+          <nav className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -131,25 +122,31 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`text-xs font-bold py-2.5 px-3.5 rounded-xl transition-colors ${
                   pathname === link.href
-                    ? 'bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]'
-                    : 'text-[#1C1C1C] hover:bg-[#F9FAFB]'
+                    ? 'bg-[#FFB800]/15 text-[#FFB800] border border-[#FFB800]/30'
+                    : 'text-neutral-300 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
                 {link.name}
               </Link>
             ))}
           </nav>
-          <div className="pt-2 border-t border-[#E5E7EB] flex flex-col gap-2">
+
+          <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
             <a
               href={`tel:${cleanPhoneTel}`}
-              className="flex items-center justify-center gap-2 text-xs font-bold text-[#1C1C1C] py-2.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl hover:border-[#10B981] transition-colors"
+              className="flex items-center justify-center gap-2 text-xs font-mono font-bold text-neutral-200 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl"
             >
-              <PhoneCall size={15} className="text-[#10B981] animate-phone-ring" />
+              <PhoneCall size={14} className="text-[#10B981]" />
               <span>Call {settings.phone}</span>
             </a>
-            <Button href="/contact" variant="primary" size="sm" className="w-full">
-              Book a Free Strategy Call
-            </Button>
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-[#FFB800] to-[#FF9500] text-black shadow-lg"
+            >
+              <span>Book Free Strategy Sprint</span>
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
       )}

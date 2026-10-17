@@ -1,17 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ShieldCheck, Globe, Sparkles, Clock } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
+import HeroShowcaseCard from './HeroShowcaseCard';
 import GradientText from '@/components/ui/GradientText';
-import HeroMockup from './HeroMockup';
 
-const ROTATING_WORDS = [
-  'Custom Tech Stacks',
-  'Mobile Applications',
-  'Predictable Lead Gen',
-  'High-ROAS Funnels',
+const ROTATING_CAPABILITIES = [
+  'Custom Next.js & React Web Apps',
+  'Shopify & WordPress E-Commerce Stores',
+  'Cross-Platform iOS & Android Mobile Apps',
+  'Speed Optimization & 100/100 Core Web Vitals',
 ];
 
 export default function HeroSection() {
@@ -19,112 +23,130 @@ export default function HeroSection() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
+      setWordIndex((prev) => (prev + 1) % ROTATING_CAPABILITIES.length);
     }, 2800);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-dot-pattern bg-white">
-      {/* Ultra-Level Ambient Quantum Orbs & Light Spotlights */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-          x: [0, 30, 0],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-10 left-10 w-96 h-96 bg-[#FFD21E]/15 rounded-full blur-3xl pointer-events-none"
-      />
+    <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-[#05060A] text-white">
+      {/* Ambient Atmospheric Glows */}
       <motion.div
         animate={{
           scale: [1, 1.25, 1],
-          opacity: [0.25, 0.45, 0.25],
-          y: [0, -30, 0],
+          opacity: [0.15, 0.28, 0.15],
+          x: [0, 40, 0],
         }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-10 right-10 w-96 h-96 bg-[#3B82F6]/15 rounded-full blur-3xl pointer-events-none"
+        className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-[#FFB800]/20 rounded-full blur-[140px] pointer-events-none"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.12, 0.22, 0.12],
+          y: [0, -50, 0],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/2 -right-32 w-[600px] h-[600px] bg-[#3B82F6]/20 rounded-full blur-[160px] pointer-events-none"
       />
 
-      <div className="max-w-[1200px] mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Asymmetrical Copy (7 cols) */}
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          
+          {/* Left Column: Clear, High-Converting Agency Copy (7 cols) */}
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-7 space-y-6"
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 space-y-7"
           >
-            {/* Top Brand Tag Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF9E6] text-[#1C1C1C] text-xs font-bold border border-[#FFD21E] shadow-2xs">
-              <Sparkles size={14} className="text-[#FF9D00] animate-pulse" />
-              <span>Custom Websites • Mobile Apps • Predictable Lead Generation</span>
-              <span className="text-[#1C1C1C]/40">•</span>
-              <span className="flex items-center gap-1 font-semibold text-[#3B82F6]">
-                <Globe size={12} /> Global Delivery
-              </span>
+            {/* Clean Trust Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] text-xs font-mono font-medium text-neutral-300 backdrop-blur-md shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+              <span className="text-white font-bold">Full-Service Web &amp; Mobile Development Agency</span>
             </div>
 
-            {/* Dynamic H1 Headline with Rotating Word Flip */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-[#1C1C1C] tracking-[-0.02em] leading-[1.12]">
-              Custom Websites, Mobile Apps &amp;{' '}
-              <span className="inline-block min-w-[280px] sm:min-w-[340px] text-left">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={wordIndex}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -20, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="inline-block"
-                  >
-                    <GradientText>{ROTATING_WORDS[wordIndex]}</GradientText>
-                  </motion.span>
-                </AnimatePresence>
-              </span>
+            {/* Clear Headline with Editorial Serif Accent */}
+            <h1 className="text-4xl sm:text-6xl lg:text-[62px] font-black tracking-[-0.035em] leading-[1.08] text-white">
+              We Build High-Speed Websites &amp; Apps That{' '}
+              <GradientText>Grow Your Business</GradientText>.
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-base sm:text-lg text-[#6B7280] leading-[1.6] max-w-2xl font-medium">
-              We engineer custom websites on your preferred tech stack (Next.js, React, Node, Python, WordPress), build scalable iOS &amp; Android mobile applications, and deploy high-converting lead generation funnels for ambitious brands worldwide. Guaranteed 12-hour reply across all time zones.
-            </p>
-
-            {/* CTA Group */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
-              <Button href="/contact" variant="primary" size="lg" className="shadow-md hover:shadow-lg">
-                <span>Get Free Scope &amp; Quote</span>
-                <ArrowRight size={18} />
-              </Button>
-              <Button href="/portfolio" variant="secondary" size="lg" className="border-2">
-                <span>View Case Studies</span>
-              </Button>
+            {/* Rotating Tech Capability Banner */}
+            <div className="flex items-center gap-2 text-sm sm:text-base font-mono text-[#00F0FF]">
+              <span className="text-neutral-500 font-bold">&gt;&gt;</span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={wordIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="font-bold tracking-wide"
+                >
+                  {ROTATING_CAPABILITIES[wordIndex]}
+                </motion.span>
+              </AnimatePresence>
             </div>
 
-            {/* Trust Badges Bar */}
-            <div className="pt-5 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#6B7280] border-t border-[#E5E7EB]">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] shadow-2xs">
-                <CheckCircle2 size={15} className="text-[#10B981]" />
-                <span>Same Quality, 60% Lower Cost</span>
+            {/* Natural, Human Description */}
+            <p className="text-base sm:text-lg text-neutral-300 leading-relaxed max-w-xl font-light">
+              From bespoke custom architectures (Next.js, React, Node.js, Python) to high-converting stores on Shopify, WordPress, and Wix. We design and engineer websites that look world-class, load in under a second, and turn visitors into paying customers.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <Link
+                href="/contact"
+                className="flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-black tracking-tight bg-gradient-to-r from-[#FFB800] to-[#FF9500] text-black shadow-[0_0_28px_rgba(255,184,0,0.35)] hover:shadow-[0_0_40px_rgba(255,184,0,0.55)] hover:scale-105 active:scale-95 transition-all group"
+              >
+                <span>Get a Free Project Quote</span>
+                <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/portfolio"
+                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold text-neutral-200 bg-white/[0.04] border border-white/[0.12] hover:bg-white/[0.08] hover:text-white transition-all backdrop-blur-md"
+              >
+                <span>View Our Client Work</span>
+              </Link>
+            </div>
+
+            {/* Real, Honest Value Badges */}
+            <div className="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-white/[0.08]">
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+                <div className="flex items-center gap-1.5 text-[#10B981] font-mono text-xs font-bold">
+                  <CheckCircle2 size={14} />
+                  <span>100/100 Speed</span>
+                </div>
+                <p className="text-xs text-neutral-300 font-light">Sub-second page loads certified on Google Mobile Vitals.</p>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] shadow-2xs">
-                <Clock size={15} className="text-[#FF9D00]" />
-                <span>Global Time-Zone Coverage</span>
+
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+                <div className="flex items-center gap-1.5 text-[#FFB800] font-mono text-xs font-bold">
+                  <Sparkles size={14} />
+                  <span>Any Tech Stack</span>
+                </div>
+                <p className="text-xs text-neutral-300 font-light">Custom code, Shopify, WordPress, Wix, or Webflow.</p>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] shadow-2xs">
-                <ShieldCheck size={15} className="text-[#3B82F6]" />
-                <span>Stripe & PayPal Accepted</span>
+
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+                <div className="flex items-center gap-1.5 text-[#00F0FF] font-mono text-xs font-bold">
+                  <CheckCircle2 size={14} />
+                  <span>Direct Communication</span>
+                </div>
+                <p className="text-xs text-neutral-300 font-light">Speak directly with senior engineers with transparent updates.</p>
               </div>
             </div>
           </motion.div>
 
-          {/* Right Column: Ultra 3D Dashboard Mockup (5 cols) */}
+          {/* Right Column: Live Interactive Website & App Showcase (5 cols) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
             className="lg:col-span-5"
           >
-            <HeroMockup />
+            <HeroShowcaseCard />
           </motion.div>
         </div>
       </div>

@@ -107,12 +107,12 @@ const SERVICES = [
     id: 'web-dev',
     slug: 'website-development',
     icon: Code2,
-    badge: 'CORE ENGINEERING',
-    title: 'Website Development',
-    tagline: 'Custom business websites, high-converting landing pages, and e-commerce portals.',
-    painPoints: ['Clunky WordPress templates that break during updates?', 'Slow server speeds causing high abandonment rates?'],
-    auditProcess: ['Modern architecture with zero plugin bloat.', 'Stripe & PayPal international checkout integration.'],
-    results: '99.9% Uptime • Sub-Second Page Speeds • Global Edge Deployment',
+    badge: 'CORE ENGINEERING & CMS',
+    title: 'Website Development (Custom & CMS)',
+    tagline: 'Custom Next.js & React web apps, or expertly crafted stores on Shopify, WordPress, and Wix.',
+    painPoints: ['Need a website that fits your exact workflow, budget, and business goals?', 'Current website is slow, hard to manage, or looks dated?'],
+    auditProcess: ['Flexible platform selection: Next.js, Node.js, Python, Shopify, WordPress, Wix.', 'Speed optimization, mobile-first design, and conversion-focused UX.'],
+    results: '99.9% Uptime • Sub-Second Page Speeds • Any Tech Stack',
   },
   {
     id: 'app-dev',
@@ -167,7 +167,7 @@ const SERVICES = [
     tagline: 'Turn cold site visitors into qualified consultation bookings with interactive funnels.',
     painPoints: ['Getting website traffic but zero inquiry form submissions?', 'Slow manual follow-ups losing warm leads?'],
     auditProcess: ['Interactive multi-step qualification forms.', 'Automated CRM routing & Instant Email/SMS booking alerts.'],
-    results: '+340% Inquiry Rate • 12-Hour SLA Reply • Higher Client LTV',
+    results: '+340% Inquiry Rate • Instant Lead Alerts • Higher Client LTV',
   },
 ];
 
@@ -194,7 +194,7 @@ export default function ServicesPage() {
         name: 'Do you work with international clients in different time zones?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes! We support clients worldwide across US, Europe, Middle East, and Asia-Pacific with a guaranteed 12-hour response SLA and fluent async communication.',
+          text: 'Yes! We support clients worldwide across North America, Europe, Middle East, and Asia-Pacific with scheduled calls matching your working hours and direct asynchronous updates.',
         },
       },
       {
@@ -217,41 +217,45 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen bg-line-pattern">
+    <div className="pt-32 pb-24 bg-[#05060A] text-white min-h-screen relative overflow-hidden">
+      {/* Background Atmosphere */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-[#FFB800]/10 blur-[180px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-[#00F0FF]/5 blur-[200px] pointer-events-none" />
+
       <JsonLd data={servicesIndexSchema} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <div className="max-w-[1200px] mx-auto px-4 space-y-16">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 space-y-16 relative z-10">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#FFD21E] text-[#1C1C1C] text-xs font-bold border border-[#E5E7EB]">
-            <Sparkles size={14} className="text-[#1C1C1C]" />
-            Complete Digital Growth Suite
+        <div className="max-w-3xl mx-auto text-center space-y-5">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/[0.04] text-[#FFB800] text-xs font-mono font-bold border border-white/[0.1] shadow-xs">
+            <Sparkles size={14} className="text-[#FFB800]" />
+            Full-Stack Digital Engineering Capabilities
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1C1C] tracking-tight leading-tight">
-            Affordable Web Engineering, SEO & <GradientText>Performance Growth Services</GradientText>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
+            Elite Web Systems, Technical SEO & <GradientText>Scale Infrastructure</GradientText>
           </h1>
-          <p className="text-base text-[#6B7280] leading-relaxed">
-            Explore dedicated service specializations: sub-second web & app development, website speed overhauls, UGC video ads, and SEO dominance for growing businesses worldwide.
+          <p className="text-base sm:text-lg text-gray-400 font-light leading-relaxed">
+            Engineered for high-performing brands worldwide: sub-second web apps, legacy architecture overhauls, high-converting UGC creative engines, and organic SEO dominance.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-[#1C1C1C] pt-2">
-            <span className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#E5E7EB]">
-              <Clock size={13} className="text-[#FF9D00]" /> Global Time-Zone Coverage
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <span className="flex items-center gap-2 cyber-glass px-3.5 py-1.5 rounded-full border border-white/[0.08] text-xs font-mono text-gray-300">
+              <Clock size={13} className="text-[#FFB800]" /> 24/7 Global Time-Zone Coverage
             </span>
-            <span className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#E5E7EB]">
-              <CheckCircle2 size={13} className="text-[#10B981]" /> 12-Hour Reply SLA
+            <span className="flex items-center gap-2 cyber-glass px-3.5 py-1.5 rounded-full border border-white/[0.08] text-xs font-mono text-gray-300">
+              <CheckCircle2 size={13} className="text-[#10B981]" /> Sub-Second Load Times
             </span>
-            <span className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#E5E7EB]">
-              <ShieldCheck size={13} className="text-[#3B82F6]" /> Stripe & PayPal Accepted
+            <span className="flex items-center gap-2 cyber-glass px-3.5 py-1.5 rounded-full border border-white/[0.08] text-xs font-mono text-gray-300">
+              <ShieldCheck size={13} className="text-[#00F0FF]" /> Verified Stripe & Escrow Security
             </span>
           </div>
         </div>
 
         {/* Detailed Service Cards Hub */}
-        <div className="space-y-10">
+        <div className="space-y-8">
           {SERVICES.map((service, idx) => {
             const Icon = service.icon;
             const itemNumber = (idx + 1).toString().padStart(2, '0');
@@ -260,22 +264,22 @@ export default function ServicesPage() {
               <section
                 key={service.id}
                 id={service.id}
-                className="relative overflow-hidden border border-[#E5E7EB] rounded-2xl bg-white p-6 sm:p-8 shadow-xs hover:shadow-xl hover:border-[#FF9D00]/50 transition-all duration-300 group space-y-6"
+                className="relative overflow-hidden border border-white/[0.08] rounded-3xl cyber-glass p-6 sm:p-10 hover:border-[#FFB800]/40 transition-all duration-300 group space-y-8 shadow-2xl"
               >
                 {/* Accent Laser Beam */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFD21E] via-[#FF9D00] to-[#3B82F6] opacity-80" />
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFB800] to-transparent opacity-40 group-hover:opacity-100 transition-opacity" />
 
                 {/* Header Row */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5 relative">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-xl bg-[#FFD21E] text-[#1C1C1C] flex items-center justify-center font-extrabold border border-[#E5E7EB] shadow-2xs group-hover:scale-105 transition-transform shrink-0">
-                      <Icon size={24} />
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/[0.08] pb-6 relative">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FFB800]/20 to-[#FF9500]/5 border border-[#FFB800]/30 text-[#FFB800] flex items-center justify-center font-extrabold shadow-lg shadow-[#FFB800]/10 group-hover:scale-105 transition-transform shrink-0">
+                      <Icon size={26} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-extrabold uppercase bg-[#FFF9E6] text-[#FF9D00] border border-[#FFD21E]/60 px-2.5 py-0.5 rounded-full tracking-wide">
+                      <span className="text-[10px] font-mono font-bold uppercase bg-[#FFB800]/10 text-[#FFB800] border border-[#FFB800]/25 px-2.5 py-0.5 rounded-full tracking-wider">
                         {service.badge}
                       </span>
-                      <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C1C1C] mt-1 group-hover:text-[#FF9D00] transition-colors">
+                      <h2 className="text-2xl sm:text-3xl font-black text-white mt-1 group-hover:text-[#FFB800] transition-colors tracking-tight">
                         <Link href={`/services/${service.slug}`} className="hover:underline">
                           {service.title}
                         </Link>
@@ -283,36 +287,36 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-mono-stats text-3xl sm:text-4xl font-extrabold text-[#E5E7EB] group-hover:text-[#FFD21E]/60 transition-colors select-none mr-2">
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="font-mono text-3xl sm:text-4xl font-black text-white/[0.08] group-hover:text-[#FFB800]/30 transition-colors select-none">
                       #{itemNumber}
                     </span>
                     <Link
                       href={`/services/${service.slug}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#1C1C1C] text-white hover:bg-[#FF9D00] transition-colors shadow-2xs"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-bold bg-white/[0.06] hover:bg-[#FFB800] text-white hover:text-black border border-white/[0.1] hover:border-transparent transition-all shadow-md group/btn"
                     >
-                      <span>Explore Dedicated Service</span>
-                      <ExternalLink size={14} />
+                      <span>Explore Protocol</span>
+                      <ExternalLink size={13} className="group-hover/btn:translate-x-0.5 transition-transform" />
                     </Link>
                   </div>
                 </div>
 
-                <p className="text-sm sm:text-base text-[#6B7280] font-medium leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-300 font-light leading-relaxed">
                   {service.tagline}
                 </p>
 
                 {/* 2-Column Split: Pain Points vs Deliverables */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Pain Points Box */}
-                  <div className="bg-[#FFF9E6]/70 border border-[#FFD21E]/60 p-5 rounded-xl space-y-3 relative overflow-hidden">
-                    <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#FF9D00] tracking-wider">
-                      <AlertCircle size={14} className="text-[#FF9D00]" />
-                      <span>Common Pain Points We Solve</span>
+                  <div className="bg-red-500/[0.03] border border-red-500/20 p-6 rounded-2xl space-y-3.5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-red-400 tracking-wider">
+                      <AlertCircle size={15} className="text-red-400 shrink-0" />
+                      <span>Bottlenecks We Eliminate</span>
                     </div>
-                    <ul className="space-y-2.5 text-xs text-[#1C1C1C] font-semibold">
+                    <ul className="space-y-2.5 text-xs sm:text-sm text-gray-300 font-normal">
                       {service.painPoints.map((pt, pIdx) => (
-                        <li key={pIdx} className="flex items-start gap-2 leading-snug">
-                          <span className="text-[#FF9D00] font-bold text-sm shrink-0 leading-none">•</span>
+                        <li key={pIdx} className="flex items-start gap-2.5 leading-snug">
+                          <span className="text-red-400 font-bold text-base shrink-0 leading-none">•</span>
                           <span>{pt}</span>
                         </li>
                       ))}
@@ -320,15 +324,15 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Audit & Deliverables Box */}
-                  <div className="bg-[#F4F6F8] border border-[#E5E7EB] p-5 rounded-xl space-y-3 relative overflow-hidden">
-                    <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#3B82F6] tracking-wider">
-                      <CheckCircle2 size={14} className="text-[#3B82F6]" />
-                      <span>Our Deliverables & Fix Process</span>
+                  <div className="bg-cyan-500/[0.03] border border-cyan-500/20 p-6 rounded-2xl space-y-3.5 relative overflow-hidden">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-cyan-400 tracking-wider">
+                      <CheckCircle2 size={15} className="text-cyan-400 shrink-0" />
+                      <span>Engineering Deliverables</span>
                     </div>
-                    <ul className="space-y-2.5 text-xs text-[#1C1C1C]">
+                    <ul className="space-y-2.5 text-xs sm:text-sm text-gray-300 font-normal">
                       {service.auditProcess.map((ap, aIdx) => (
-                        <li key={aIdx} className="flex items-start gap-2 leading-snug">
-                          <CheckCircle2 size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                        <li key={aIdx} className="flex items-start gap-2.5 leading-snug">
+                          <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                           <span>{ap}</span>
                         </li>
                       ))}
@@ -341,9 +345,9 @@ export default function ServicesPage() {
                   <BenchmarkImpactBadge results={service.results} />
                   <Link
                     href={`/services/${service.slug}`}
-                    className="inline-flex items-center gap-1 text-xs font-extrabold text-[#FF9D00] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#FFB800] hover:text-[#FFD21E] transition-colors"
                   >
-                    <span>View Dedicated Page & FAQs</span>
+                    <span>View Technical Breakdown &amp; FAQs</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -353,20 +357,22 @@ export default function ServicesPage() {
         </div>
 
         {/* Global CTA Bottom Card */}
-        <Card className="p-8 sm:p-10 bg-white border-2 border-[#FFD21E] text-center space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1C1C]">
-            Ready to Upgrade Your Web Speed & Digital Growth?
+        <div className="relative overflow-hidden p-10 sm:p-14 cyber-glass-glow rounded-3xl border border-[#FFB800]/30 text-center space-y-6 shadow-2xl">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-[#FFB800]/10 blur-[120px] pointer-events-none" />
+
+          <h3 className="text-3xl sm:text-4xl font-black text-white tracking-tight relative z-10">
+            Ready to Accelerate Your <GradientText>Digital Revenue</GradientText>?
           </h3>
-          <p className="text-sm text-[#6B7280] max-w-2xl mx-auto leading-relaxed">
-            Get a free 15-minute technical audit and strategy proposal from our engineering team within 12 hours.
+          <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto leading-relaxed relative z-10 font-light">
+            Receive a thorough technical teardown, Core Web Vitals audit, and fixed-scope sprint proposal from our engineering team in under 12 hours.
           </p>
-          <div className="pt-2 flex justify-center">
+          <div className="pt-2 flex justify-center relative z-10">
             <Button href="/contact" variant="primary" size="lg">
-              <span>Request Free Proposal & Call</span>
+              <span>Initiate Technical Brief</span>
               <ArrowRight size={18} />
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

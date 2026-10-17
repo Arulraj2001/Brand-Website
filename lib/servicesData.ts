@@ -128,30 +128,30 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     id: 'web-dev',
     slug: 'website-development',
     icon: Code2,
-    badge: 'CORE ENGINEERING',
-    title: 'Website Development',
-    h1: 'Custom Next.js Website Development Services',
-    metaTitle: 'Custom Next.js Website Development Services | Ostrune',
+    badge: 'CORE ENGINEERING & CMS',
+    title: 'Website Development (Custom & CMS)',
+    h1: 'Custom Web & Modern CMS Development Services',
+    metaTitle: 'Web Development Services | Next.js, Shopify, WordPress, Wix | Ostrune',
     metaDescription:
-      'Custom business websites and high-converting e-commerce portals engineered with Next.js, zero plugin bloat, and sub-second load times worldwide.',
+      'High-performance website development for any tech stack—from custom Next.js and React web apps to conversion-optimized Shopify, WordPress, and Wix stores.',
     tagline:
-      'Custom business websites, high-converting landing pages, and e-commerce portals built with modern architecture.',
+      'Bespoke Next.js & React web applications, or expertly configured Shopify, WordPress, and Wix stores tailored to your business.',
     painPoints: [
-      'Clunky WordPress templates that break during routine software updates?',
-      'Slow server response times causing high visitor abandonment rates?',
-      'Inflexible web systems that cannot scale with your growing business?',
+      'Need a modern website tailored to your exact business goals and budget?',
+      'Current website feels sluggish, outdated, or hard for your internal team to edit?',
+      'Unsure whether to build a custom-coded web app or use an established CMS platform?',
     ],
     auditProcess: [
-      'Modern Architecture: Built with sub-second React/Next.js frameworks and zero plugin bloat.',
-      'Global Checkout Integration: Stripe, PayPal, and international payment gateway wiring.',
-      'SEO & Mobile Optimization: Mobile-first responsive design with structured JSON-LD schemas.',
+      'Flexible Platform Architecture: Built with modern custom code (Next.js, Node.js, Python) or flexible CMS (Shopify, WordPress, Wix).',
+      'Global Checkout Integration: Seamless Stripe, PayPal, and international payment gateway setups.',
+      'SEO & Mobile Optimization: Mobile-first responsive design with structured JSON-LD schemas and 95+ PageSpeed.',
     ],
-    results: '99.9% Uptime • Sub-Second Page Speeds • Global Edge Deployment',
+    results: '99.9% Uptime • Sub-Second Page Speeds • Any Tech Stack or CMS',
     faqs: [
       {
-        question: 'What technologies do you use for web development?',
+        question: 'What platforms and technologies do you build with?',
         answer:
-          'We build modern web applications using Next.js, React, TypeScript, Tailwind CSS, and Supabase for sub-second page performance and security.',
+          'We work across the entire modern web landscape. For custom web applications and SaaS platforms, we engineer with Next.js, React, TypeScript, Node.js, and Python. For e-commerce and marketing websites, we build and customize Shopify, WordPress, Wix, and Webflow so you have full autonomy.',
       },
       {
         question: 'Can you integrate payment gateways like Stripe or PayPal?',
@@ -159,7 +159,7 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
           'Yes, we seamlessly integrate global payment processors including Stripe, PayPal, Razorpay, and custom checkout workflows.',
       },
       {
-        question: 'How long does a custom website development project take?',
+        question: 'How long does a website development project take?',
         answer:
           'Standard business websites take 1 to 2 weeks, while complex e-commerce portals or custom web applications take 2 to 4 weeks.',
       },
@@ -363,7 +363,7 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     h1: 'Conversion Rate Optimization (CRO) & Lead Funnels',
     metaTitle: 'Conversion Rate Optimization (CRO) & Lead Funnels | Ostrune',
     metaDescription:
-      'Turn cold visitors into qualified consultation bookings with interactive lead funnels, automated CRM routing, and guaranteed 12-hour response alerts.',
+      'Turn cold visitors into qualified consultation bookings with interactive lead funnels, automated CRM routing, and instant WhatsApp/Email alerts.',
     tagline:
       'Turn cold site visitors into qualified consultation bookings with interactive funnels.',
     painPoints: [
@@ -374,9 +374,9 @@ export const SERVICES_DETAIL_MAP: Record<string, ServiceDetail> = {
     auditProcess: [
       'Interactive Qualification Funnels: Replace boring static contact forms with multi-step qualification steps.',
       'Automated CRM Routing: Instantly push new leads to WhatsApp, Email, or your sales CRM.',
-      '12-Hour SLA Booking Alerts: Ensure every inquiry receives an immediate, automated confirmation response.',
+      'Instant Lead Notification Alerts: Ensure every inquiry triggers immediate notifications to your team.',
     ],
-    results: '+340% Inquiry Rate • 12-Hour SLA Reply • Higher Client LTV',
+    results: '+340% Inquiry Rate • Instant Lead Alerts • Higher Client LTV',
     faqs: [
       {
         question: 'What is Conversion Rate Optimization (CRO)?',

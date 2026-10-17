@@ -17,19 +17,19 @@ export default function IconBox({
   const getVariantStyles = () => {
     switch (variant) {
       case 'secondary':
-        return 'bg-[#FFF9E6] text-[#FF9D00] border-[#FFD21E]';
+        return 'bg-white/[0.05] text-white border-white/[0.1]';
       case 'accent':
-        return 'bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/20';
+        return 'bg-[#00F0FF]/15 text-[#00F0FF] border-[#00F0FF]/30 shadow-[0_0_15px_rgba(0,240,255,0.15)]';
       case 'success':
-        return 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20';
+        return 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]';
       default:
-        return 'bg-[#FFF9E6] text-[#1C1C1C] border-[#FFD21E]';
+        return 'bg-[#FFB800]/15 text-[#FFB800] border-[#FFB800]/30 shadow-[0_0_15px_rgba(255,184,0,0.15)]';
     }
   };
 
   return (
     <div
-      className={`w-10 h-10 rounded-lg flex items-center justify-center border ${getVariantStyles()} ${className}`}
+      className={`w-10 h-10 rounded-xl flex items-center justify-center border ${getVariantStyles()} ${className}`}
     >
       <Icon size={size} strokeWidth={2} />
     </div>

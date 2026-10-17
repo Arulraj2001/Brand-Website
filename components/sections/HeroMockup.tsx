@@ -12,7 +12,6 @@ import {
   Clock,
   ShieldCheck,
   Zap,
-  ArrowRight,
 } from 'lucide-react';
 import { submitLead } from '@/lib/supabase/data';
 import { useSiteSettings } from '@/lib/useSiteData';
@@ -120,34 +119,34 @@ export default function HeroMockup() {
     >
       {/* Dynamic Cursor Spotlight Halo */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
         style={{
-          background: `radial-gradient(400px circle at calc(50% + ${mouseX.get()}px) calc(50% + ${mouseY.get()}px), rgba(255, 157, 0, 0.18), transparent 80%)`,
+          background: `radial-gradient(400px circle at calc(50% + ${mouseX.get()}px) calc(50% + ${mouseY.get()}px), rgba(255, 184, 0, 0.15), transparent 80%)`,
         }}
       />
 
-      {/* Main Interactive Container */}
-      <div className="relative bg-white/95 backdrop-blur-md border-2 border-[#FFD21E] rounded-2xl p-5 sm:p-6 shadow-xl space-y-4 overflow-hidden z-20">
+      {/* Main Interactive Cyber Container */}
+      <div className="relative cyber-glass rounded-3xl p-5 sm:p-6 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] space-y-4 overflow-hidden z-20 text-white">
         {/* Top Header & Live SLA Indicator */}
-        <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="text-xs font-extrabold text-[#1C1C1C] tracking-tight uppercase">
-              Project Scope &amp; Tech Estimator
+            <span className="text-xs font-mono font-bold text-neutral-200 tracking-wider uppercase">
+              Project Scope Estimator
             </span>
           </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-[#FFF9E6] border border-[#FFD21E] text-[#FF9D00] text-[11px] font-extrabold flex items-center gap-1">
-            <Zap size={12} className="text-[#FF9D00]" />
-            12h Quote SLA
+          <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-[#FFB800]/30 text-[#FFB800] text-[11px] font-mono font-bold flex items-center gap-1">
+            <Zap size={12} className="text-[#FFB800]" />
+            12h SLA
           </span>
         </div>
 
         {/* Step 1: 3-Pillar Selector Tabs */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-extrabold uppercase text-[#6B7280] tracking-wider block">
-            1. Select Your Agency Requirement
+          <label className="text-[11px] font-mono font-bold uppercase text-neutral-400 tracking-wider block">
+            1. Select Engineering Pillar
           </label>
-          <div className="grid grid-cols-3 gap-1.5 p-1 bg-[#F3F4F6] rounded-xl border border-[#E5E7EB]">
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-white/[0.03] rounded-xl border border-white/[0.08]">
             {(['website', 'mobile', 'leadgen'] as PillarType[]).map((key) => {
               const cfg = PILLAR_CONFIG[key];
               const Icon = cfg.icon;
@@ -157,14 +156,14 @@ export default function HeroMockup() {
                   key={key}
                   type="button"
                   onClick={() => handlePillarChange(key)}
-                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-white text-[#1C1C1C] shadow-sm border border-[#E5E7EB]'
-                      : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                      ? 'bg-white/10 text-[#FFB800] border border-[#FFB800]/30 shadow-xs'
+                      : 'text-neutral-400 hover:text-white'
                   }`}
                 >
-                  <Icon size={16} className={isActive ? 'text-[#FF9D00]' : 'text-[#9CA3AF]'} />
-                  <span className="mt-1 leading-none text-[11px]">{cfg.label}</span>
+                  <Icon size={16} className={isActive ? 'text-[#FFB800]' : 'text-neutral-500'} />
+                  <span className="mt-1 leading-none text-[11px] font-medium">{cfg.label}</span>
                 </button>
               );
             })}
@@ -174,10 +173,10 @@ export default function HeroMockup() {
         {/* Step 2: Dynamic Tech Stack Chips */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-extrabold uppercase text-[#6B7280] tracking-wider">
-              2. Preferred Tech Stack / Scope
+            <label className="text-[11px] font-mono font-bold uppercase text-neutral-400 tracking-wider">
+              2. Preferred Tech Stack
             </label>
-            <span className="text-[10px] font-mono-stats font-bold text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-mono font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full">
               {activeConfig.vitalBadge}
             </span>
           </div>
@@ -190,10 +189,10 @@ export default function HeroMockup() {
                   key={stack}
                   type="button"
                   onClick={() => setSelectedStack(stack)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border ${
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer border ${
                     isSelected
-                      ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-xs'
-                      : 'bg-[#F9FAFB] text-[#4B5563] border-[#E5E7EB] hover:border-[#FFD21E] hover:bg-white'
+                      ? 'bg-gradient-to-r from-[#FFB800] to-[#FF9500] text-black border-transparent font-bold shadow-xs'
+                      : 'bg-white/[0.03] text-neutral-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.06]'
                   }`}
                 >
                   {stack}
@@ -204,14 +203,14 @@ export default function HeroMockup() {
         </div>
 
         {/* Live Architecture & Sprint Snapshot */}
-        <div className="p-3 bg-gradient-to-r from-[#FFFDF5] to-[#FFF9E6] rounded-xl border border-[#FFD21E]/70 text-xs space-y-1">
-          <div className="flex items-center justify-between text-[#1C1C1C] font-extrabold">
-            <span className="flex items-center gap-1 text-[#FF9D00]">
+        <div className="p-3 bg-white/[0.02] rounded-xl border border-white/[0.08] text-xs space-y-1">
+          <div className="flex items-center justify-between text-white font-bold">
+            <span className="flex items-center gap-1.5 text-[#FFB800]">
               <Sparkles size={13} /> {activeConfig.headline}
             </span>
-            <span className="font-mono-stats text-[11px] text-[#10B981]">{activeConfig.timeline}</span>
+            <span className="font-mono text-[11px] text-[#10B981]">{activeConfig.timeline}</span>
           </div>
-          <p className="text-[11px] text-[#6B7280] leading-snug">{activeConfig.subtext}</p>
+          <p className="text-[11px] text-neutral-400 leading-snug">{activeConfig.subtext}</p>
         </div>
 
         {/* Step 3: Instant 1-Click Lead Capture */}
@@ -225,9 +224,9 @@ export default function HeroMockup() {
               <div className="w-10 h-10 rounded-full bg-[#10B981]/20 text-[#10B981] mx-auto flex items-center justify-center">
                 <CheckCircle2 size={22} />
               </div>
-              <h4 className="text-sm font-extrabold text-[#1C1C1C]">Scope &amp; Quote Request Received!</h4>
-              <p className="text-xs text-[#6B7280]">
-                Our senior technical lead will review your {activeConfig.label} project and send a custom proposal within 12 hours.
+              <h4 className="text-sm font-bold text-white">Scope &amp; Quote Request Dispatched</h4>
+              <p className="text-xs text-neutral-300">
+                Our technical lead will review your {activeConfig.label} project and transmit a custom proposal within 12 hours.
               </p>
               <button
                 type="button"
@@ -235,7 +234,7 @@ export default function HeroMockup() {
                   setSubmitted(false);
                   setContactInput('');
                 }}
-                className="text-[11px] font-bold text-[#FF9D00] hover:underline pt-1"
+                className="text-[11px] font-mono font-bold text-[#FFB800] hover:underline pt-1"
               >
                 Configure another project estimate
               </button>
@@ -243,8 +242,8 @@ export default function HeroMockup() {
           </AnimatePresence>
         ) : (
           <form onSubmit={handleSubmitEstimate} className="space-y-2 pt-1">
-            <label className="text-[11px] font-extrabold uppercase text-[#6B7280] tracking-wider block">
-              3. Where should we send the architecture blueprint &amp; quote?
+            <label className="text-[11px] font-mono font-bold uppercase text-neutral-400 tracking-wider block">
+              3. Deliver Architecture Blueprint To:
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -253,12 +252,12 @@ export default function HeroMockup() {
                 value={contactInput}
                 onChange={(e) => setContactInput(e.target.value)}
                 placeholder="Your work email or WhatsApp (with country code)"
-                className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] text-[#1C1C1C] focus:bg-white focus:outline-none focus:border-[#FF9D00] transition-colors"
+                className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-neutral-500 focus:bg-white/[0.07] focus:outline-none focus:border-[#FFB800] transition-colors font-mono"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-4 py-2 bg-[#FF9D00] hover:bg-[#E68E00] text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                className="px-4 py-2 bg-gradient-to-r from-[#FFB800] to-[#FF9500] hover:scale-105 text-black rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md transition-all disabled:opacity-50 cursor-pointer shrink-0"
               >
                 {submitting ? (
                   <span>Sending...</span>
@@ -272,15 +271,15 @@ export default function HeroMockup() {
             </div>
 
             {/* Micro Trust Proof */}
-            <div className="flex items-center justify-between text-[10px] text-[#6B7280] font-semibold pt-1">
+            <div className="flex items-center justify-between text-[10px] text-neutral-400 font-mono pt-1">
               <span className="flex items-center gap-1">
-                <Clock size={11} className="text-[#FF9D00]" /> 12h SLA Guaranteed
+                <Clock size={11} className="text-[#FFB800]" /> 12h SLA
               </span>
               <span className="flex items-center gap-1">
-                <ShieldCheck size={11} className="text-[#3B82F6]" /> 60% Lower Offshore Cost
+                <ShieldCheck size={11} className="text-[#3B82F6]" /> 60% Lower Cost
               </span>
               <span className="flex items-center gap-1">
-                <CheckCircle2 size={11} className="text-[#10B981]" /> 100% Free Consultation
+                <CheckCircle2 size={11} className="text-[#10B981]" /> Free Strategy
               </span>
             </div>
           </form>
