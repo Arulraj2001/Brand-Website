@@ -39,7 +39,12 @@ body {
   background-attachment: fixed;
 }
 
-h1, h2, h3, h4, h5, h6 {
+body:not(.admin-scope) h1,
+body:not(.admin-scope) h2,
+body:not(.admin-scope) h3,
+body:not(.admin-scope) h4,
+body:not(.admin-scope) h5,
+body:not(.admin-scope) h6 {
   color: var(--text-primary);
 }
 
@@ -228,4 +233,88 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-pulse-glow {
   animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* ============================================================
+   ADMIN CONSOLE THEME (High-Productivity Enterprise Light Theme)
+   ============================================================ */
+.admin-scope {
+  background-color: #F8FAFC !important;
+  background-image: none !important;
+  color: #1E293B !important;
+}
+
+.admin-scope h1,
+.admin-scope h2,
+.admin-scope h3,
+.admin-scope h4,
+.admin-scope h5,
+.admin-scope h6 {
+  color: #0F172A !important;
+  font-family: inherit !important;
+}
+
+.admin-scope .hf-card,
+.admin-scope .hf-card-featured {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 16px !important;
+  color: #1E293B !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-scope .hf-card:hover,
+.admin-scope .hf-card-featured:hover {
+  transform: none !important;
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.admin-scope .btn-secondary {
+  background-color: #FFFFFF !important;
+  color: #334155 !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: none !important;
+}
+
+.admin-scope .btn-secondary:hover {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.admin-scope .gradient-text,
+.admin-scope span.font-serif {
+  font-family: inherit !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  color: #FF9D00 !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+.admin-scope table {
+  color: #1E293B !important;
+}
+
+.admin-scope input:not([type="checkbox"]):not([type="radio"]),
+.admin-scope select,
+.admin-scope textarea {
+  color: #0F172A !important;
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+.admin-scope input:not([type="checkbox"]):not([type="radio"]):focus,
+.admin-scope select:focus,
+.admin-scope textarea:focus {
+  border-color: #FF9D00 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 157, 0, 0.2) !important;
 }

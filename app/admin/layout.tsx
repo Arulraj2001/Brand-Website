@@ -17,5 +17,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <div className="admin-scope min-h-screen bg-[#F8FAFC] text-[#1E293B] antialiased">
+      {children}
+    </div>
+  );
 }

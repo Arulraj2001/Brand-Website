@@ -1419,19 +1419,19 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="pt-[56px] min-h-screen bg-[#F9FAFB] flex flex-col md:flex-row text-[#1C1C1C]">
+    <div className="admin-scope min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row text-[#1E293B]">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
-      {/* 220px LIGHT SURFACE SIDEBAR */}
-      <aside className="w-full md:w-[220px] bg-[#F9FAFB] border-r border-[#E5E7EB] p-4 flex flex-col justify-between shrink-0">
+      {/* 230px LIGHT SURFACE STICKY SIDEBAR */}
+      <aside className="w-full md:w-[230px] bg-white border-r border-[#E2E8F0] p-4 flex flex-col justify-between shrink-0 md:h-screen md:sticky md:top-0 md:overflow-y-auto shadow-xs">
         <div className="space-y-6">
           <div className="flex items-center gap-2.5 px-1 py-1">
             <ArusythApexLogo size={32} />
             <div>
-              <span className="font-extrabold text-base text-[#1C1C1C] tracking-tight block">
+              <span className="font-extrabold text-base text-[#0F172A] tracking-tight block">
                 {settings.brand_name || 'Ostrune'}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                 Admin Console
               </span>
             </div>
@@ -1445,10 +1445,10 @@ export default function AdminDashboardPage() {
                 <button
                   key={nav.id}
                   onClick={() => setActiveTab(nav.id)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-xs ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all text-xs font-semibold ${
                     isActive
                       ? 'bg-[#FF9D00] text-white font-bold shadow-xs'
-                      : 'text-[#6B7280] hover:text-[#1C1C1C] hover:bg-white border border-transparent hover:border-[#E5E7EB]'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]'
                   }`}
                 >
                   <Icon size={16} />
@@ -1459,10 +1459,10 @@ export default function AdminDashboardPage() {
           </nav>
         </div>
 
-        <div className="pt-3 border-t border-[#E5E7EB] space-y-2">
+        <div className="pt-3 border-t border-[#E2E8F0] space-y-2 mt-4">
           <div className="text-[11px]">
-            <p className="text-[#6B7280]">Logged in as:</p>
-            <p className="font-bold text-[#1C1C1C] truncate">{userEmail}</p>
+            <p className="text-[#64748B]">Logged in as:</p>
+            <p className="font-bold text-[#0F172A] truncate">{userEmail}</p>
           </div>
           <button
             onClick={handleSignOut}
@@ -1475,7 +1475,7 @@ export default function AdminDashboardPage() {
       </aside>
 
       {/* MAIN ADMIN CONTENT AREA */}
-      <main className="flex-1 p-5 sm:p-6 space-y-5 bg-white overflow-x-hidden">
+      <main className="flex-1 p-5 sm:p-6 space-y-6 bg-[#F8FAFC] min-h-screen overflow-x-hidden">
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="space-y-5">

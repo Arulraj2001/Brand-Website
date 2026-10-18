@@ -1,12 +1,18 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import WhatsAppIcon from './WhatsAppIcon';
 import { useSiteSettings } from '@/lib/useSiteData';
 
 export default function WhatsAppFloatingButton() {
+  const pathname = usePathname();
   const { settings } = useSiteSettings();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const activeSettings = settings;
   const phoneNumber = activeSettings.whatsapp_number.replace(/[^0-9]/g, '');

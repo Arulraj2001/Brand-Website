@@ -32,7 +32,7 @@ export default function Button({
     primary:
       'btn-shimmer-effect bg-gradient-to-r from-[#FFB800] via-[#FFD21E] to-[#FF9500] text-black font-extrabold hover:shadow-[0_0_30px_rgba(255,184,0,0.45)] hover:-translate-y-0.5 border border-[#FFB800]/60',
     secondary:
-      'bg-white/[0.05] text-white border border-white/[0.12] hover:bg-white/[0.1] hover:border-[#FFB800]/50 hover:shadow-[0_0_20px_rgba(255,184,0,0.15)] hover:-translate-y-0.5 backdrop-blur-md',
+      'btn-secondary bg-white/[0.05] text-white border border-white/[0.12] hover:bg-white/[0.1] hover:border-[#FFB800]/50 hover:shadow-[0_0_20px_rgba(255,184,0,0.15)] hover:-translate-y-0.5 backdrop-blur-md',
     ghost:
       'text-gray-300 hover:text-white hover:bg-white/[0.06]',
     featured:

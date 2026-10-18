@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
-import GradientText from '@/components/ui/GradientText';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import ArusythApexLogo from '@/components/ui/ArusythApexLogo';
@@ -62,70 +61,70 @@ export default function LoginPageClient() {
   };
 
   return (
-    <div className="pt-28 pb-20 bg-[#F9FAFB] min-h-screen flex items-center justify-center px-4 bg-line-pattern">
-      <Card className="w-full max-w-md bg-white border border-[#E5E7EB] p-6 sm:p-8 space-y-5">
+    <div className="admin-scope min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4 py-12">
+      <Card className="w-full max-w-md bg-white border border-[#E2E8F0] shadow-xl rounded-2xl p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <div className="flex justify-center">
-            <ArusythApexLogo size={40} />
+          <div className="flex justify-center mb-2">
+            <ArusythApexLogo size={44} />
           </div>
-          <h1 className="text-2xl font-bold text-[#1C1C1C]">
-            {activeSettings.brand_name || 'Ostrune'} <GradientText>Admin Portal</GradientText>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+            {activeSettings.brand_name || 'Ostrune'} <span className="text-[#FF9D00]">Admin Portal</span>
           </h1>
-          <p className="text-xs text-[#6B7280]">
-            Sign in with your admin credentials
+          <p className="text-sm text-[#64748B]">
+            Sign in with your enterprise credentials
           </p>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/20 text-xs font-semibold text-[#EF4444] flex items-center gap-2">
-            <AlertCircle size={15} className="shrink-0 text-[#EF4444]" />
+          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-600 flex items-center gap-2">
+            <AlertCircle size={16} className="shrink-0 text-red-500" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-3.5">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[#1C1C1C] uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-[#334155] uppercase tracking-wider mb-1.5">
               Admin Email
             </label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3 top-3 text-[#9CA3AF]" />
+              <Mail size={16} className="absolute left-3.5 top-3.5 text-[#94A3B8]" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={`admin@${(activeSettings.brand_name || 'ostrune').toLowerCase()}.com`}
-                className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
+                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#FF9D00] focus:ring-2 focus:ring-[#FF9D00]/20 bg-white transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#1C1C1C] uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-[#334155] uppercase tracking-wider mb-1.5">
               Password
             </label>
             <div className="relative">
-              <Lock size={16} className="absolute left-3 top-3 text-[#9CA3AF]" />
+              <Lock size={16} className="absolute left-3.5 top-3.5 text-[#94A3B8]" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#1C1C1C] focus:outline-none focus:border-[#FF9D00] bg-white"
+                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#FF9D00] focus:ring-2 focus:ring-[#FF9D00]/20 bg-white transition-all"
               />
             </div>
           </div>
 
-          <Button type="submit" disabled={loading} variant="primary" size="md" className="w-full pt-2.5">
+          <Button type="submit" disabled={loading} variant="primary" size="md" className="w-full py-3 mt-2 shadow-sm font-semibold">
             {loading ? 'Authenticating...' : 'Sign In to Admin Dashboard'}
           </Button>
         </form>
 
-        <div className="pt-2 border-t border-[#E5E7EB] text-center">
-          <p className="text-[11px] text-[#6B7280]">
-            Protected by Supabase Auth (Email/Password) & RLS policies.
+        <div className="pt-3 border-t border-[#F1F5F9] text-center">
+          <p className="text-xs text-[#94A3B8]">
+            Protected by Supabase Auth (Email/Password) & RLS security.
           </p>
         </div>
       </Card>
